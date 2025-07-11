@@ -148,7 +148,7 @@
                 <th>#</th>
                 <th>Description</th>
                 <th>Qty</th>
-                <th>Rate</th>
+                <th>Unit Price</th>
                 <th>Amount</th>
             </tr>
         </thead>
@@ -158,9 +158,10 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item->description }}</td>
                     <td>{{ $item->quantity }}</td>
-                    <td>{{ number_format($item->rate, 2) }}</td>
-                    {{-- <td>{{ number_format($item->quantity * $item->rate, 2) }}</td> --}}
-                    <td>{{ number_format($item->unit_price, 2) }}</td>
+                    {{-- <td>{{ number_format($item->rate, 2) }}</td> --}}
+                     <td>{{ number_format($item->unit_price, 2) }}</td>
+                    <td>{{ number_format($item->quantity * $item->unit_price, 2) }}</td>
+                   
                 </tr>
             @endforeach
         </tbody>
