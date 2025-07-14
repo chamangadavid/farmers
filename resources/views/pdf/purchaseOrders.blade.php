@@ -197,12 +197,21 @@
         </div>
     @endif
 
-    {{-- @if($purchaseOrder->notes)
+    @if($purchaseOrder->notes)
         <div style="margin-top: 20px;">
             <h3 style="margin-bottom: 5px; color: #2c3e50;">Notes</h3>
             <p style="white-space: pre-line;">{{ $purchaseOrder->notes }}</p>
         </div>
-    @endif --}}
+    @endif
+
+        <div class="bank-details">
+        <h3>Bank Payment Details</h3>
+        <p><strong>Bank Name:</strong> INDO ZAMBIA BANK</p>
+        <p><strong>Account Name:</strong> MARZ INNOVATIONS LIMITED</p>
+        <p><strong>Account Number:</strong> 0142030001151</p>
+        <p><strong>Sort Code:</strong> 090014</p>
+        <p><strong>Mobile #:</strong> +260 976 212 184</p>
+    </div>
 
     <div class="footer">
         <p>Creating Value Togther!</p>

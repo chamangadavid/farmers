@@ -94,7 +94,10 @@
         .totals p {
             margin: 4px 0;
         }
-
+        .bank-details {
+            margin-top: -15px;
+            font-size: 12px;
+        }
         .footer {
             margin-top: 50px;
             text-align: center;
@@ -173,8 +176,21 @@
         <p><strong>Total:</strong> {{ number_format($invoice->total, 2) }}</p>
     </div>
 
-    <div class="footer">
+       <!-- Bank Details (always shown) -->
+    <div class="bank-details">
+        <h3>Bank Payment Details</h3>
+        <p><strong>Bank Name:</strong> INDO ZAMBIA BANK</p>
+        <p><strong>Account Name:</strong> MARZ INNOVATIONS LIMITED</p>
+        <p><strong>Account Number:</strong> 0142030001151</p>
+        <p><strong>Sort Code:</strong> 090014</p>
+        <p><strong>Mobile #:</strong> +260 976 212 184</p>
+    </div>
+    {{-- <div class="footer">
         Creating Values Together!
+    </div> --}}
+     <div class="footer">
+        <p>Creating value together!</p>
+        <p>{{ config('app.name') }} | www.marzinnovationsltd.com</p>
     </div>
 
 </body>
