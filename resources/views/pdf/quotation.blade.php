@@ -167,7 +167,7 @@
         <p><strong>Account Name:</strong> MARZ INNOVATIONS LIMITED</p>
         <p><strong>Account Number:</strong> 0142030001151</p>
         <p><strong>Sort Code:</strong> 090014</p>
-        <p><strong>Mobile #:</strong> +260 976 212 184</p>
+        {{-- <p><strong>Mobile #:</strong> +260 976 212 184</p> --}}
     </div>
 
     @if($quotation->terms)
