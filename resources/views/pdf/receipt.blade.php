@@ -15,13 +15,14 @@
             flex-wrap: wrap;
             margin-bottom: 20px;
         }
+
         .company-info {
-            flex: 1 1 45%;
-            min-width: 250px;
+            /* margin-top: -60px; */
+            width: 45%;
         }
+
          .company-info img {
             max-width: 100px; /* Reduced from 150px */
-            /* height: auto; */
             margin-bottom: 2px;
         }
         .document-info {
@@ -48,11 +49,10 @@
             margin-top: 15px;
         }
         .footer {
-            margin-top: 30px;
-            font-size: 10px;
+            margin-top: 50px;
             text-align: center;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
+            font-size: 12px;
+            color: #888;
         }
         table {
             width: 100%;
@@ -97,7 +97,7 @@
                 <img src="{{ public_path('assets/marz-logo.png') }}" alt="Company Logo">
                 <h2>{{ config('app.name') }}</h2>
                 <p>Permanent House, Cairo Road 2nd Floor 253A, Lusaka, Zambia</p>
-                <p>Phone: +260 966 390 807 | Email: info@marzinnovationsltd.com</p>
+                <p>Phone: +260 966 390 807 | +260 976 212 184 Email: info@marzinnovationsltd.com</p>
                 <p>Tpin #: 2003431233</p>
             </div>
             <div class="document-info">
@@ -155,7 +155,7 @@
 
         <div class="footer">
             <p>Creating Value Together.</p>
-            <p>{{ config('app.name') }} </p>
+              <p>{{ config('app.name') }} | www.marzinnovationsltd.com</p>
         </div>
     </div>
 </body>

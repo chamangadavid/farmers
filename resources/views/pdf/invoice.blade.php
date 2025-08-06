@@ -17,12 +17,14 @@
             margin-bottom: 20px;
         }
 
-        /* .company-info {
-            flex: 1;
-        } */
+
          .company-info {
             /* margin-top: -60px; */
             width: 60%;
+        }
+
+        .company-info p {
+            font-size: 11px; /* Adjust the value as needed */
         }
 
          .company-info img {
@@ -30,6 +32,11 @@
             /* height: auto; */
             margin-bottom: 2px;
         }
+
+         .document-info p {
+            font-size: 11px; /* Adjust the value as needed */
+        }
+
 
         .document-info {
             margin-top: -400px;
@@ -60,14 +67,15 @@
             font-weight: bold;
         }
 
+        .
         .bill-to {
-            margin-top: 120px;
-            margin-bottom: 30px;
+            margin-top: 110px;
         }
 
-        .bill-to h3 {
-            margin-bottom: 5px;
+        .bill-to p{
+            font-size: 12px;
         }
+
 
         table {
             width: 100%;
@@ -83,6 +91,11 @@
 
         table th {
             background-color: #f2f2f2;
+            font-size: 12px;
+        }
+
+        table td {
+            font-size: 11px;
         }
 
         .totals {
@@ -92,16 +105,22 @@
         }
 
         .totals p {
+            font-size: 12px;
             margin: 4px 0;
         }
+
+
         .bank-details {
             margin-top: -15px;
-            font-size: 12px;
+            font-size: 11px;
+        }
+        .bank-details p {
+            font-size: 11px;
         }
         .footer {
             margin-top: 50px;
             text-align: center;
-            font-size: 14px;
+            font-size: 12px;
             color: #888;
         }
     </style>
@@ -111,18 +130,18 @@
     <div class="header">
         <div class="company-info">
             <img src="{{ public_path('assets/marz-logo.png') }}" alt="Company Logo">
-            <h2>{{ config('app.name') }}</h2>
+            <h4>{{ config('app.name') }}</h4>
             <p>Permanent House, Cairo Road 2nd Floor 253A, Lusaka, Zambia</p>
-            <p>Phone: +260 966 390 807 | Email: info@marzinnovationsltd.com</p>
+            <p>Phone: +260 966 390 807 | +260 976 212 184 Email: info@marzinnovationsltd.com</p>
             <p>Tpin #: 2003431233</p>
         </div>
 
         <div class="document-info">
-            <h2>INVOICE</h2>
+            <h4>INVOICE</h4>
             <p><strong>Invoice #:</strong> {{ $invoice->invoice_number }}</p>
             <p><strong>Date:</strong> {{ $invoice->date->format('d/m/Y') }}</p>
             <p>
-                <strong>Validity Date:</strong>
+                <strong>Validity:</strong>
                 <span class="{{ \Carbon\Carbon::now()->gt($invoice->due_date) ? 'due-date' : '' }}">
                     {{ $invoice->due_date->format('d/m/Y') }}
                 </span>
@@ -137,7 +156,7 @@
     </div>
 
     <div class="bill-to">
-        <h3>Bill To:</h3>
+        <h4>Bill To:</h4>
         <p>
             {{ $invoice->customer->name ?? 'N/A' }}<br>
             {{ $invoice->customer->address ?? 'N/A' }}<br>
@@ -161,10 +180,8 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item->description }}</td>
                     <td>{{ $item->quantity }}</td>
-                    {{-- <td>{{ number_format($item->rate, 2) }}</td> --}}
                      <td>{{ number_format($item->unit_price, 2) }}</td>
                     <td>{{ number_format($item->quantity * $item->unit_price, 2) }}</td>
-                   
                 </tr>
             @endforeach
         </tbody>
@@ -178,12 +195,11 @@
 
        <!-- Bank Details (always shown) -->
     <div class="bank-details">
-        <h3>Bank Payment Details</h3>
+        <h4>Bank Payment Details</h4>
         <p><strong>Bank Name:</strong> INDO ZAMBIA BANK</p>
         <p><strong>Account Name:</strong> MARZ INNOVATIONS LIMITED</p>
         <p><strong>Account Number:</strong> 0142030001151</p>
         <p><strong>Sort Code:</strong> 090014</p>
-        <p><strong>Mobile #:</strong> +260 976 212 184</p>
     </div>
     {{-- <div class="footer">
         Creating Values Together!

@@ -9,16 +9,43 @@
         }
 
         .header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 20px;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
+        .company-info {
+            flex: 1;
         }
 
-        .header p {
+        .company-info img {
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .company-info h4 {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .company-info p {
+            font-size: 10px;
+            margin: 3px 0;
+            line-height: 1.3;
+        }
+
+        .delivery-note-header {
+            text-align: right;
+        }
+
+        .delivery-note-header h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .delivery-note-header p {
+            font-size: 12px;
             margin: 5px 0;
         }
 
@@ -31,6 +58,12 @@
         .info-table td {
             padding: 5px;
             vertical-align: top;
+            font-size: 12px;
+        }
+
+        /* Align second column (right side) text to the right */
+        .info-table td:last-child {
+            text-align: right;
         }
 
         .items-table {
@@ -48,6 +81,11 @@
 
         .items-table th {
             background-color: #f2f2f2;
+            font-size: 12px;
+        }
+
+          .items-table td {
+            font-size: 11px;
         }
 
         .signature {
@@ -61,21 +99,32 @@
         .signature-table td {
             width: 50%;
             padding: 10px;
+            font-size: 12px;
         }
 
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
+         .footer {
+            margin-top: 50px;
             text-align: center;
+            font-size: 12px;
+            color: #888;
         }
     </style>
 </head>
 
 <body>
     <div class="header">
-        <h1>DELIVERY NOTE</h1>
-        <p>No: {{ $deliveryNote->delivery_note_number }}</p>
-        <p>Date: {{ $deliveryNote->date->format('d/m/Y') }}</p>
+        <div class="company-info">
+            <img src="{{ public_path('assets/marz-logo.png') }}" alt="Company Logo">
+            <h4>{{ config('app.name') }}</h4>
+            <p>Permanent House, Cairo Road 2nd Floor 253A, Lusaka, Zambia</p>
+            <p>Phone: +260 966 390 807 | +260 976 212 184 Email: info@marzinnovationsltd.com</p>
+            <p>Tpin #: 2003431233</p>
+        </div>
+        {{-- <div class="delivery-note-header">
+            <h3>DELIVERY NOTE</h3>
+            <p>No: {{ $deliveryNote->delivery_note_number }}</p>
+            <p>Date: {{ $deliveryNote->date->format('d/m/Y') }}</p>
+        </div> --}}
     </div>
 
     <table class="info-table">
@@ -92,7 +141,11 @@
                 @endif
             </td>
             <td width="50%">
-                <strong>Details:</strong><br>
+                {{-- <strong>Details:</strong><br> --}}
+                <h4>DELIVERY NOTE</h4>
+                <p>No: {{ $deliveryNote->delivery_note_number }}</p>
+                <p>Date: {{ $deliveryNote->date->format('d/m/Y') }}</p>
+
                 @if($deliveryNote->reference_number)
                     Reference: {{ $deliveryNote->reference_number }}<br>
                 @endif
@@ -133,7 +186,7 @@
     </table>
 
     @if($deliveryNote->notes)
-        <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 20px; font-size: 12px;">
             <strong>Notes:</strong><br>
             {{ $deliveryNote->notes }}
         </div>
@@ -160,8 +213,10 @@
     </div>
 
     <div class="footer">
-        Thank you for your business!
+        <p>Creating value together!</p>
+        <p>{{ config('app.name') }} | www.marzinnovationsltd.com</p>
     </div>
+
 </body>
 
 </html>

@@ -18,6 +18,11 @@
             width: 60%;
         }
 
+         .company-info p {
+            font-size: 11px; /* Adjust the value as needed */
+        }
+
+
         .company-info img {
             max-width: 100px; /* Reduced from 150px */
             /* height: auto; */
@@ -27,6 +32,11 @@
             flex: 1;
             text-align: right;
         }
+
+          .document-info p {
+            font-size: 11px; /* Adjust the value as needed */
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -37,21 +47,38 @@
             padding: 6px;
             text-align: left;
         }
-        th {
+        table th {
             background-color: #f2f2f2;
+            font-size: 12px;
         }
-        .totals {
-            float: right;
-            width: 250px;
-            margin-top: 15px;
+
+        table td {
+            font-size: 11px;
         }
+
+         .totals {
+            margin-top: 20px;
+            width: 100%;
+            text-align: right;
+        }
+
+          .totals p {
+            font-size: 12px;
+            margin: 4px 0;
+        }
+
         .bank-details {
             margin-top: 30px;
             font-size: 12px;
         }
+
+         .bank-details p {
+            font-size: 11px;
+        }
+
         .footer {
             margin-top: 30px;
-            font-size: 10px;
+            font-size: 12px;
             text-align: center;
         }
         .customer-info {
@@ -59,6 +86,11 @@
         }
         .terms-conditions, .notes {
             margin-top: 20px;
+            font-size: 11px;
+        }
+
+        .terms-conditions p {
+            font-size: 11px;
         }
     </style>
 </head>
@@ -67,7 +99,7 @@
     <div class="header">
     <!-- Right side: QUOTATION info (move it first so it's visually at top-right) -->
     <div class="document-info">
-        <h2 style="margin-bottom: 5px;">QUOTATION</h2>
+        <h4 style="margin-bottom: 5px;">QUOTATION</h4>
         <p><strong>Quotation #:</strong> {{ $quotation->quotation_number }}</p>
         <p><strong>Date:</strong> {{ $quotation->date->format('d/m/Y') }}</p>
         <p><strong>Validity Date:</strong> {{ $quotation->expiry_date->format('d/m/Y') }}</p>
@@ -93,7 +125,6 @@
         <p>{{ $quotation->customer->address }}</p>
     @endif
 
-    {{-- Wrap phone and email in a flex container --}}
     <div class="contact-info" style="display: flex; gap: 15px; margin-bottom: 5px;">
         @if($quotation->customer->phone)
             <span>Phone: {{ $quotation->customer->phone }}</span>
@@ -107,27 +138,6 @@
         <p>Tax ID: {{ $quotation->customer->tax_id }}</p>
     @endif
 </div>
-
-
-{{-- 
-    <div class="customer-info">
-        <h3 style="margin-bottom: 5px;">To:</h3>
-        @if($quotation->customer->name)
-            <p><strong>{{ $quotation->customer->name }}</strong></p>
-        @endif
-        @if($quotation->customer->address)
-            <p>{{ $quotation->customer->address }}</p>
-        @endif
-        @if($quotation->customer->phone)
-            <p>Phone: {{ $quotation->customer->phone }}</p>
-        @endif
-        @if($quotation->customer->email)
-            <p>Email: {{ $quotation->customer->email }}</p>
-        @endif
-        @if($quotation->customer->tax_id)
-            <p>Tax ID: {{ $quotation->customer->tax_id }}</p>
-        @endif
-    </div> --}}
 
     <table>
         <thead>
@@ -155,24 +165,23 @@
     <div class="totals">
         <p><strong>Sub Total:</strong> {{ number_format($quotation->subtotal, 2) }}</p>
         <p><strong>Tax:</strong> {{ number_format($quotation->tax, 2) }}</p>
-        <p style="font-size: 14px; font-weight: bold;">
+        <p style="font-size: 12px; font-weight: bold;">
             <strong>Total:</strong> {{ number_format($quotation->total, 2) }}
         </p>
     </div>
 
     <!-- Bank Details (always shown) -->
     <div class="bank-details">
-        <h3>Bank Payment Details</h3>
+        <h4>Bank Payment Details</h4>
         <p><strong>Bank Name:</strong> INDO ZAMBIA BANK</p>
         <p><strong>Account Name:</strong> MARZ INNOVATIONS LIMITED</p>
         <p><strong>Account Number:</strong> 0142030001151</p>
         <p><strong>Sort Code:</strong> 090014</p>
-        {{-- <p><strong>Mobile #:</strong> +260 976 212 184</p> --}}
     </div>
 
     @if($quotation->terms)
     <div class="terms-conditions">
-        <h3>Terms & Conditions</h3>
+        <h4>Terms & Conditions</h4>
         <p style="white-space: pre-line;">{{ $quotation->terms }}</p>
     </div>
     @endif

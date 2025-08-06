@@ -114,6 +114,15 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+
+          .bank-details {
+            margin-top: -15px;
+            font-size: 11px;
+        }
+        .bank-details p {
+            font-size: 11px;
+        }
+        
     </style>
 </head>
 
@@ -123,11 +132,11 @@
              <img src="{{ public_path('assets/marz-logo.png') }}" alt="Company Logo">
             <h2 style="margin-bottom: 5px; color: #2c3e50;">{{ config('app.name') }}</h2>
              <p>Permanent House, Cairo Road 2nd Floor 253A, Lusaka, Zambia</p>
-                <p>Phone: +260 966 390 807 | Email: info@marzinnovationsltd.com</p>
+                <p>Phone: +260 966 390 807 | +260 976 212 184 Email: info@marzinnovationsltd.com</p>
                 <p>Tpin #: 2003431233</p>
         </div>
         <div class="document-info">
-            <h2 style="margin-bottom: 10px; color: #3498db;">PURCHASE ORDER</h2>
+            <h4 style="margin-bottom: 10px; color: #3498db;">PURCHASE ORDER</h4>
             <p><strong>PO #:</strong> {{ $purchaseOrder->po_number }}</p>
             <p><strong>Date:</strong> {{ $purchaseOrder->date->format('d/m/Y') }}</p>
             <p><strong>Status:</strong>
@@ -153,7 +162,7 @@
     </div>
 
     <div class="delivery-info">
-        <h3 style="margin-bottom: 8px; color: #2c3e50;">Delivery Address:</h3>
+        <h4 style="margin-bottom: 8px; color: #2c3e50;">Delivery Address:</h4>
         <p style="white-space: pre-line;">{{ $purchaseOrder->delivery_address }}</p>
     </div>
 
