@@ -1,4 +1,47 @@
+<!-- resources\js\Pages\Welcome.vue -->
 <script setup>
+import { Head, Link } from '@inertiajs/vue3';
+import AppNavbar from '@/Components/AppNavbar.vue';
+import HeroSection from '@/Components/HeroSection.vue';
+import ServicesList from '@/Components/ServicesList.vue';
+import GallerySection from '@/Components/GallerySection.vue';
+import AppFooter from '@/Components/AppFooter.vue';
+import LatestNewsEventsSection from '@/Components/LatestNewsEventsSection.vue';
+
+defineProps({
+    canLogin: { type: Boolean },
+    canRegister: { type: Boolean },
+    laravelVersion: { type: String, required: true },
+    phpVersion: { type: String, required: true },
+});
+</script>
+
+<template>
+    <Head title="Marz Innovations" />
+    
+    <div class="min-h-screen bg-white text-gray-900 antialiased">
+        <div class="relative flex flex-col min-h-screen overflow-hidden">
+            <AppNavbar 
+                :can-login="canLogin" 
+                :can-register="canRegister" 
+                :auth-user="$page.props.auth.user" 
+            />
+            
+            <main class="flex-grow">
+                <HeroSection/>
+                <LatestNewsEventsSection />
+                <ServicesList />
+                <GallerySection />
+            </main>
+            
+            <AppFooter />
+        </div>
+    </div>
+</template>
+
+
+
+<!-- <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import AppNavbar from '@/Components/AppNavbar.vue';
 import HeroSection from '@/Components/HeroSection.vue';
@@ -34,4 +77,4 @@ defineProps({
             <AppFooter />
         </div>
     </div>
-</template>
+</template> -->
