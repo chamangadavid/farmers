@@ -77,7 +77,7 @@ class ServicesController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5120',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif',
             'is_active' => 'boolean',
         ]);
         
@@ -112,7 +112,7 @@ class ServicesController extends Controller
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
             'price' => 'sometimes|numeric|min:0',
-            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif,',
             'is_active' => 'sometimes|boolean',
         ]);
         

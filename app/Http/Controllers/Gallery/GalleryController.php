@@ -16,30 +16,6 @@ class GalleryController extends Controller
         return Inertia::render('MyMARZ/Gallery/Index');
     }
 
-    // public function getAllGallery(Request $request)
-    // {
-    //     $query = Gallery::query();
-
-    //     // Search functionality
-    //     if ($request->has('search')) {
-    //         $search = $request->input('search');
-    //         $query->where(function($q) use ($search) {
-    //             $q->where('title', 'like', "%{$search}%")
-    //               ->orWhere('description', 'like', "%{$search}%");
-    //         });
-    //     }
-
-    //     // Date range filter
-    //     if ($request->has(['start_date', 'end_date'])) {
-    //         $query->whereBetween('created_at', [
-    //             $request->input('start_date'),
-    //             $request->input('end_date')
-    //         ]);
-    //     }
-
-    //     return $query->get();
-    // }
-
     public function getAllGallery(Request $request)
     {
         $query = Gallery::with('category');
@@ -97,7 +73,7 @@ class GalleryController extends Controller
         $request->validate([
             'title' => 'nullable|string|max:255',
             'images' => 'required|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:gallery_categories,id'
         ]);
