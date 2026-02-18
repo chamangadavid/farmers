@@ -44,70 +44,88 @@ const can = (permission, auth) => {
 
                                 <div class="flex flex-wrap gap-4">
                                                   
-                                  <Card v-if="can('manage transactions', auth)"
+                                  <!-- <Card v-if="can('manage transactions', auth)"
                                   title="Transactions" 
                                   subTitle="Create, edit, update and delete of Transactions" 
                                   routeName="transactions.index">
                                   <template #icon>
                                   <SwapOutlined style="font-size: 24px;" />
                                   </template>
-                                  </Card>
+                                  </Card> -->
 
-                                  <Card v-if="can('manage receipts', auth)"
+                                  <!-- <Card v-if="can('manage receipts', auth)"
                                   title="Receipts" 
                                   subTitle="Create, edit, update and delete of Receipts" 
                                   routeName="receipts.quotations">
                                   <template #icon>
                                   <FileDoneOutlined style="font-size: 24px;" />
                                   </template>
-                                  </Card>
+                                  </Card> -->
 
-                                  <Card  v-if="can('manage news management', auth)"
+                                  <!-- <Card  v-if="can('manage news management', auth)"
                                   title="News" 
                                   subTitle="Create, edit, update and delete of News" 
                                   routeName="news.index">
                                   <template #icon>
                                   <ReadOutlined style="font-size: 24px;" />
                                   </template>
-                                  </Card>
+                                  </Card> -->
 
-                                  <Card v-if="can('manage promotions', auth)"
+                                  <!-- <Card v-if="can('manage promotions', auth)"
                                   title="Promotions" 
                                   subTitle="Create, edit, update and delete of Promotion" 
                                   routeName="promotions.index">
                                   <template #icon>
                                   <GiftOutlined style="font-size: 24px;" />
                                   </template>
-                                  </Card>
+                                  </Card> -->
 
-                                  <Card v-if="can('manage services', auth)"
+                                  <!-- <Card v-if="can('manage services', auth)"
                                   title="Services" 
                                   subTitle="Create, edit, update and delete of Services" 
                                   routeName="services.index">
                                   <template #icon>
                                   <AppstoreOutlined style="font-size: 24px;" />
                                   </template>
-                                  </Card>
+                                  </Card> -->
 
-                                  <Card v-if="can('manage gallery', auth)"
+                                  <!-- <Card v-if="can('manage gallery', auth)"
                                   title="Gallary" 
                                   subTitle="Create, edit, update and delete of Gallery" 
                                   routeName="gallery.index">
                                   <template #icon>
                                   <FileTextOutlined style="font-size: 24px;" />
                                   </template>
-                                  </Card>
+                                  </Card> -->
 
-                                  <Card v-if="can('manage contact', auth)"
+                                  <!-- <Card v-if="can('manage contact', auth)"
                                   title="Contact" 
                                   subTitle="Create, edit, update and delete of Contact" 
                                   routeName="contacts.index">
                                   <template #icon>
                                   <PhoneOutlined style="font-size: 24px;" />
                                   </template>
+                                  </Card> -->
+
+                                  <!-- <Card v-if="can('manage access control', auth)"
+                                  title="Access Control" 
+                                  subTitle="Create, edit, update and delete of Access Control" 
+                                  routeName="admin.rolesAndPermission">
+                                  <template #icon>
+                                  <SettingOutlined style="font-size: 24px;" />
+                                  </template>
+                                  </Card> -->
+
+                                  <Card 
+                                  title="E-Business Cards" 
+                                  subTitle="Create, edit, update and delete of E-Business Cards" 
+                                  routeName="admin.eBusinessCards">
+                                  <template #icon>
+                                  <SettingOutlined style="font-size: 24px;" />
+                                  </template>
                                   </Card>
 
-                                  <Card v-if="can('manage access control', auth)"
+                                  <Card 
                                   title="Access Control" 
                                   subTitle="Create, edit, update and delete of Access Control" 
                                   routeName="admin.rolesAndPermission">

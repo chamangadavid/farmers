@@ -1,5 +1,4 @@
-
- <script setup>
+<script setup>
 import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
@@ -34,17 +33,28 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
-        <div class="min-h-screen flex items-center justify-center bg-white">
-            <!-- <div class="w-full bg-white shadow-xl rounded-2xl overflow-hidden flex flex-col md:flex-row"> -->
-            <div class="w-full h-screen bg-white shadow-xl rounded-2xl overflow-hidden flex flex-col md:flex-row">
+        <div class="min-h-screen flex items-center justify-center ">
+            <div class="w-full max-w-5xl bg-white shadow-xl rounded-2xl overflow-hidden flex flex-col md:flex-row">
  
-                <!-- Left: Form -->
+                <!-- Left: Image with blue overlay -->
+                <div class="hidden md:block md:w-1/2 relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[#0078D4]/30 to-[#00BCF2]/30 mix-blend-overlay"></div>
+                    <img
+                        src="/assets/one.png"
+                        alt="Login Visual"
+                        class="h-full w-full object-cover"
+                    />
+                </div>
+
+                 <!-- Right: Form -->
                 <div class="w-full md:w-1/2 p-8 md:p-16">
                     <div class="text-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2 flex justify-center items-center gap-2"> MyMARZ </h2>
+                        <h2 class="text-2xl font-bold mb-2 flex justify-center items-center gap-2">
+                            <span class="bg-gradient-to-r from-[#0078D4] to-[#00BCF2] bg-clip-text text-transparent">MYQR</span>
+                        </h2>
                         <p class="text-gray-900">
                           Already Registered <br />
-                          Sign in
+                          <span class="font-semibold bg-gradient-to-r from-[#0078D4] to-[#00BCF2] bg-clip-text text-transparent">Sign in</span>
                         </p>
                       </div>
 
@@ -54,7 +64,7 @@ const submit = () => {
                             <TextInput
                                 id="email"
                                 type="email"
-                                class="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                                class="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-[#0078D4] focus:ring focus:ring-[#0078D4]/20 focus:ring-opacity-50"
                                 placeholder="Example@email.com"
                                 v-model="form.email"
                                 required
@@ -69,7 +79,7 @@ const submit = () => {
                             <TextInput
                                 id="password"
                                 type="password"
-                                class="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                                class="mt-1 block w-full rounded-md border border-gray-300 p-2 focus:border-[#0078D4] focus:ring focus:ring-[#0078D4]/20 focus:ring-opacity-50"
                                 placeholder="At least 8 characters"
                                 v-model="form.password"
                                 required
@@ -80,19 +90,20 @@ const submit = () => {
 
                         <div class="flex justify-between items-center text-sm">
                             <label class="flex items-center gap-2">
-                                <Checkbox name="remember" v-model:checked="form.remember" />
-                                Remember me
+                                <Checkbox name="remember" v-model:checked="form.remember" class="text-[#0078D4] focus:ring-[#0078D4]/20" />
+                                <span class="text-gray-600">Remember me</span>
                             </label>
                             <Link
                                 v-if="canResetPassword"
                                 :href="route('password.request')"
-                                class="text-purple-900 font-semibold hover:underline"
+                                class="bg-gradient-to-r from-[#0078D4] to-[#00BCF2] bg-clip-text text-transparent font-semibold hover:from-[#00BCF2] hover:to-[#0078D4] transition-all duration-300"
                             >
                                 Forgot Password?
                             </Link>
                         </div>
+                        
                         <PrimaryButton
-                            class="w-full bg-purple-900 hover:bg-purple-800 text-white py-2 rounded-md flex justify-center items-center"
+                            class="w-full bg-gradient-to-r from-[#0078D4] to-[#00BCF2] hover:from-[#00BCF2] hover:to-[#0078D4] text-white py-2 rounded-md flex justify-center items-center transition-all duration-300 shadow-lg hover:shadow-[#0078D4]/30"
                             :class="{ 'opacity-25': form.processing }"
                             :disabled="form.processing"
                         >
@@ -102,22 +113,12 @@ const submit = () => {
 
                     <p class="mt-6 text-sm text-center text-gray-600">
                         Don't you have an account? 
-                        <Link href="/register" class="text-purple-900 font-medium hover:underline">Sign up</Link>
-                    </p>
-
-                    <p class="mt-6 text-xs text-center text-gray-400">
-                        © 2025 ALL RIGHTS RESERVED
+                        <Link href="/register" class="bg-gradient-to-r from-[#0078D4] to-[#00BCF2] bg-clip-text text-transparent font-medium hover:from-[#00BCF2] hover:to-[#0078D4] transition-all duration-300">
+                            Sign up
+                        </Link>
                     </p>
                 </div>
 
-                <!-- Right: Image -->
-                <div class="hidden md:block md:w-1/2">
-                    <img
-                        src="/assets/login-3.jpg"
-                        alt="Login Visual"
-                        class="h-full w-full object-cover"
-                    />
-                </div>
             </div>
         </div>
     </GuestLayout>

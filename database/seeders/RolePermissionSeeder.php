@@ -18,14 +18,14 @@ class RolePermissionSeeder extends Seeder
     {
         // Define permissions
         $permissions = [
-            'manage transactions',
-            'manage news management',
-            'manage promotions',
-            'manage services',
-            'manage gallery',
-            'manage contact',
-            'manage receipts',
-            'manage access control',
+            // 'manage transactions',
+            // 'manage news management',
+            // 'manage promotions',
+            // 'manage services',
+            // 'manage gallery',
+            // 'manage contact',
+            // 'manage receipts',
+            // 'manage access control',
         ];
 
         // Create and store all permissions

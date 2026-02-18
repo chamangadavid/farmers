@@ -9,6 +9,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 import axios from 'axios'; // Make sure axios is imported
+import { Tabs } from 'ant-design-vue';
 
 const page = usePage();
 const auth = page.props.auth;
@@ -96,7 +97,9 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="min-h-screen bg-gray-100">
-      <nav class="bg-purple-900 text-white shadow rounded-lg px-6 mx-4 mt-3">
+      <nav class="bg-blue-900 text-white shadow rounded-lg px-6 mx-4 mt-3">
+        <!-- <nav class="bg-[#0078D4] text-white shadow rounded-lg px-6 mx-4 mt-3"> -->
+
         <!-- Primary Navigation Menu -->
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 justify-between">
@@ -267,13 +270,17 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Page Heading slot below navigation -->
-        <div class="mt-6 pt-6">
-            <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
-              <h1 class="text-xl  font-semibold text-white">Manage Sales Progress</h1>
-              <p class="mt-1 text-sm text-white/80">Keep an eye on how well your branding and printing services are selling.</p>
-            </div>
-          </div>
+      <!-- Page Heading slot below navigation -->
+      <div class="mt-6 pt-6">
+        <div class="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
+          <h1 class="text-xl font-semibold text-white">
+            QR Code Generator & History
+          </h1>
+          <p class="text-sm text-white/80">
+            Create, manage, and track all your generated QR codes in one place.
+          </p>
+        </div>
+      </div>
       </nav>
 
       <!-- Responsive Navigation Menu -->
@@ -317,3 +324,28 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Tab text */
+.qr-header-tabs :deep(.ant-tabs-tab) {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Active tab text */
+.qr-header-tabs :deep(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+    color: #ffffff !important;
+}
+
+/* Ink bar (underline) */
+.qr-header-tabs :deep(.ant-tabs-ink-bar) {
+    background-color: #ffffff !important;
+}
+
+/* Remove blue hover */
+.qr-header-tabs :deep(.ant-tabs-tab:hover) {
+    color: #ffffff !important;
+}
+
+
+
+</style>

@@ -12,7 +12,12 @@ class RolePermissionController extends Controller
 {
     public function rolesAndPermission()
     {
-        return Inertia::render('MyMARZ/Admin/rolesAndPermission');
+        return Inertia::render('MyQR/Admin/rolesAndPermission');
+    }
+
+    public function eBusinessCards()
+    {
+        return Inertia::render('MyQR/Cards/Index');
     }
 
     public function roles()

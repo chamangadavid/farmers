@@ -2,10 +2,10 @@
     <div class="loading-screen">
       <div class="loading-content">
         <div class="logo-container">
-          <img src="/assets/favivon.png" alt="Marz Innovation Logo" class="logo" />
+          <img src="/assets/favivon.png" alt="QR Generator" class="logo" />
 
         </div>
-        <h1 class="company-name">Marz Innovations Ltd</h1>
+        <h1 class="company-name">CAA QR GENERATOR</h1>
         <a-progress
           :percent="progress"
           :stroke-color="['#7e22ce', '#a855f7']"

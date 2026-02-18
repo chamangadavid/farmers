@@ -37,7 +37,7 @@ class UserSearchController extends Controller
 
     public function show(User $user)
     {
-        return Inertia::render('MyMARZ/Users/Show', [
+        return Inertia::render('MyQR/Users/Show', [
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
