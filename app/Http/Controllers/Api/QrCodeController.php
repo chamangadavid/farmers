@@ -69,98 +69,54 @@ class QrCodeController extends Controller
         ]);
     }
 
-    // private function buildContent($type, $data)
-    // {
-    //     // Ensure data is an array
-    //     if (!is_array($data)) {
-    //         $data = [];
-    //     }
-        
-    //     switch ($type) {
-    //         case 'vcard':
-    //             return $this->buildVCard($data);
-    //         case 'email':
-    //             // Add null coalescing for email fields
-    //             $email = $data['email'] ?? '';
-    //             $subject = $data['subject'] ?? '';
-    //             $body = $data['body'] ?? '';
-    //             return "mailto:{$email}?subject=" . urlencode($subject) . "&body=" . urlencode($body);
-    //         case 'sms':
-    //             $number = $data['number'] ?? '';
-    //             $message = $data['message'] ?? '';
-    //             return "smsto:{$number}:" . urlencode($message);
-    //         case 'url':
-    //             return $data['url'] ?? '';
-    //         case 'social':
-    //             return $this->buildSocialContent($data);
-    //         case 'text':  // Add this case
-    //             $text = $data['text'] ?? '';
-    //             // Trim and check if empty
-    //             $text = trim($text);
-    //             if (empty($text)) {
-    //                 throw new \InvalidArgumentException('Text content cannot be empty');
-    //             }
-    //             return $text;
-    //         case 'wifi':  // Add wifi case if you have it
-    //             return $this->buildWifiContent($data);
-    //         case 'event':  // Add event case if you have it
-    //             return $this->buildEventContent($data);
-    //         default:
-    //             return '';
-    //     }
-    // }
-
     private function buildContent($type, $data)
-{
-    // Ensure data is an array
-    if (!is_array($data)) {
-        $data = [];
-    }
-    
-    // Handle individual social platform types
-    $socialPlatforms = ['facebook', 'twitter', 'linkedin', 'instagram', 'youtube', 'tiktok', 'pinterest', 'snapchat'];
-    
-    if (in_array($type, $socialPlatforms)) {
-        // Add the platform to the data array
-        $data['platform'] = $type;
-        return $this->buildSocialContent($data);
-    }
-    
-    switch ($type) {
-        case 'vcard':
-            return $this->buildVCard($data);
-        case 'email':
-            $email = $data['email'] ?? '';
-            $subject = $data['subject'] ?? '';
-            $body = $data['body'] ?? '';
-            return "mailto:{$email}?subject=" . urlencode($subject) . "&body=" . urlencode($body);
-        case 'sms':
-            $number = $data['number'] ?? '';
-            $message = $data['message'] ?? '';
-            return "smsto:{$number}:" . urlencode($message);
-        case 'url':
-            return $data['url'] ?? '';
-        case 'social':
+    {
+        // Ensure data is an array
+        if (!is_array($data)) {
+            $data = [];
+        }
+        
+        // Handle individual social platform types
+        $socialPlatforms = ['facebook', 'twitter', 'linkedin', 'instagram', 'youtube', 'tiktok', 'pinterest', 'snapchat'];
+        
+        if (in_array($type, $socialPlatforms)) {
+            // Add the platform to the data array
+            $data['platform'] = $type;
             return $this->buildSocialContent($data);
-        case 'text':
-            $text = $data['text'] ?? '';
-            $text = trim($text);
-            if (empty($text)) {
-                throw new \InvalidArgumentException('Text content cannot be empty');
-            }
-            return $text;
-        case 'wifi':
-            return $this->buildWifiContent($data);
-        case 'event':
-            return $this->buildEventContent($data);
-        default:
-            return '';
+        }
+        
+        switch ($type) {
+            case 'vcard':
+                return $this->buildVCard($data);
+            case 'email':
+                $email = $data['email'] ?? '';
+                $subject = $data['subject'] ?? '';
+                $body = $data['body'] ?? '';
+                return "mailto:{$email}?subject=" . urlencode($subject) . "&body=" . urlencode($body);
+            case 'sms':
+                $number = $data['number'] ?? '';
+                $message = $data['message'] ?? '';
+                return "smsto:{$number}:" . urlencode($message);
+            case 'url':
+                return $data['url'] ?? '';
+            case 'social':
+                return $this->buildSocialContent($data);
+            case 'text':
+                $text = $data['text'] ?? '';
+                $text = trim($text);
+                if (empty($text)) {
+                    throw new \InvalidArgumentException('Text content cannot be empty');
+                }
+                return $text;
+            case 'wifi':
+                return $this->buildWifiContent($data);
+            case 'event':
+                return $this->buildEventContent($data);
+            default:
+                return '';
+        }
     }
-}
 
-    /**
-     * Generate a name for the QR code based on type and data
-     */
     private function generateQrName($type, $data)
     {
         switch ($type) {
@@ -296,7 +252,7 @@ class QrCodeController extends Controller
 
     private function buildQrCode($content, $settings)
     {
-        $qrCode = QrCodeFacade::format('svg')   // ✅ SWITCHED TO SVG
+        $qrCode = QrCodeFacade::format('svg')   // SWITCHED TO SVG
             ->size($settings['size'] ?? 300)
             ->margin($settings['margin'] ?? 1)
             ->encoding('UTF-8')
@@ -322,130 +278,93 @@ class QrCodeController extends Controller
         return $qrCode->generate($content);
     }
 
-    // private function buildSocialContent($data)
-    // {
-    //     $platform = $data['platform'] ?? '';
-    //     $username = $data['username'] ?? '';
-    //     $url = $data['url'] ?? '';
-        
-    //     // If URL is directly provided, use it
-    //     if (!empty($url)) {
-    //         return $url;
-    //     }
-        
-    //     // Otherwise build URL from platform and username
-    //     switch ($platform) {
-    //         case 'facebook':
-    //             return "https://facebook.com/{$username}";
-    //         case 'twitter':
-    //             return "https://twitter.com/{$username}";
-    //         case 'instagram':
-    //             return "https://instagram.com/{$username}";
-    //         case 'linkedin':
-    //             return "https://linkedin.com/in/{$username}";
-    //         case 'youtube':
-    //             return "https://youtube.com/@{$username}";
-    //         case 'tiktok':
-    //             return "https://tiktok.com/@{$username}";
-    //         case 'pinterest':
-    //             return "https://pinterest.com/{$username}";
-    //         case 'snapchat':
-    //             return "https://snapchat.com/add/{$username}";
-    //         default:
-    //             return '';
-    //     }
-    // }
-
     private function buildSocialContent($data)
-{
-    // Log the incoming data for debugging (remove in production)
-    \Log::info('Social data received:', $data);
-    
-    // Case 1: If URL is directly provided (from a combined social form)
-    if (!empty($data['url'] ?? '')) {
-        return $data['url'];
-    }
-    
-    // Case 2: If platform and username are provided (from individual social forms)
-    $platform = $data['platform'] ?? '';
-    $username = $data['username'] ?? $data['handle'] ?? $data['profile'] ?? '';
-    
-    // Case 3: If it's from a multi-social form with profiles array
-    if (!empty($data['profiles'] ?? []) && is_array($data['profiles'])) {
-        // For now, just use the first profile
-        $firstProfile = $data['profiles'][0] ?? [];
-        if (!empty($firstProfile['url'])) {
-            return $firstProfile['url'];
-        }
-        if (!empty($firstProfile['platform']) && !empty($firstProfile['username'])) {
-            return $this->buildSocialUrl($firstProfile['platform'], $firstProfile['username']);
-        }
-    }
-    
-    // If we have both platform and username, build the URL
-    if (!empty($platform) && !empty($username)) {
-        return $this->buildSocialUrl($platform, $username);
-    }
-    
-    // If we have only a username, assume it's for the platform specified in the type
-    if (!empty($username) && !empty($data['type'])) {
-        return $this->buildSocialUrl($data['type'], $username);
-    }
-    
-    // If we have a direct link field
-    if (!empty($data['link'] ?? '')) {
-        return $data['link'];
-    }
-    
-    // If we have a custom field
-    if (!empty($data['custom'] ?? '')) {
-        return $data['custom'];
-    }
-    
-    // Log the error for debugging
-    \Log::error('Could not build social content from data:', $data);
-    
-    // Throw exception instead of returning empty string
-    throw new \InvalidArgumentException('Social media profile information is incomplete. Please provide a username or URL.');
-}
+    {
 
-
-private function buildSocialUrl($platform, $username)
-{
-    // Clean username (remove @ if present)
-    $username = ltrim($username, '@');
-    
-    // Platform-specific URL formats
-    $platforms = [
-        'facebook' => "https://facebook.com/{$username}",
-        'fb' => "https://facebook.com/{$username}",
-        'twitter' => "https://twitter.com/{$username}",
-        'x' => "https://twitter.com/{$username}",
-        'instagram' => "https://instagram.com/{$username}",
-        'ig' => "https://instagram.com/{$username}",
-        'linkedin' => "https://linkedin.com/in/{$username}",
-        'linkedin-profile' => "https://linkedin.com/in/{$username}",
-        'youtube' => "https://youtube.com/@{$username}",
-        'yt' => "https://youtube.com/@{$username}",
-        'tiktok' => "https://tiktok.com/@{$username}",
-        'pinterest' => "https://pinterest.com/{$username}",
-        'snapchat' => "https://snapchat.com/add/{$username}",
-        'sc' => "https://snapchat.com/add/{$username}",
-        'whatsapp' => "https://wa.me/{$username}",
-        'telegram' => "https://t.me/{$username}",
-        'github' => "https://github.com/{$username}",
-        'git' => "https://github.com/{$username}",
-    ];
-    
-    $platform = strtolower($platform);
-    
-    if (isset($platforms[$platform])) {
-        return $platforms[$platform];
+        // Case 1: If URL is directly provided (from a combined social form)
+        if (!empty($data['url'] ?? '')) {
+            return $data['url'];
+        }
+        
+        // Case 2: If platform and username are provided (from individual social forms)
+        $platform = $data['platform'] ?? '';
+        $username = $data['username'] ?? $data['handle'] ?? $data['profile'] ?? '';
+        
+        // Case 3: If it's from a multi-social form with profiles array
+        if (!empty($data['profiles'] ?? []) && is_array($data['profiles'])) {
+            // For now, just use the first profile
+            $firstProfile = $data['profiles'][0] ?? [];
+            if (!empty($firstProfile['url'])) {
+                return $firstProfile['url'];
+            }
+            if (!empty($firstProfile['platform']) && !empty($firstProfile['username'])) {
+                return $this->buildSocialUrl($firstProfile['platform'], $firstProfile['username']);
+            }
+        }
+        
+        // If we have both platform and username, build the URL
+        if (!empty($platform) && !empty($username)) {
+            return $this->buildSocialUrl($platform, $username);
+        }
+        
+        // If we have only a username, assume it's for the platform specified in the type
+        if (!empty($username) && !empty($data['type'])) {
+            return $this->buildSocialUrl($data['type'], $username);
+        }
+        
+        // If we have a direct link field
+        if (!empty($data['link'] ?? '')) {
+            return $data['link'];
+        }
+        
+        // If we have a custom field
+        if (!empty($data['custom'] ?? '')) {
+            return $data['custom'];
+        }
+        
+        // Log the error for debugging
+        //\Log::error('Could not build social content from data:', $data);
+        
+        // Throw exception instead of returning empty string
+        throw new \InvalidArgumentException('Social media profile information is incomplete. Please provide a username or URL.');
     }
-    
-    // If platform not recognized, try to use as-is
-    return $username;
-}
+
+    private function buildSocialUrl($platform, $username)
+    {
+        // Clean username (remove @ if present)
+        $username = ltrim($username, '@');
+        
+        // Platform-specific URL formats
+        $platforms = [
+            'facebook' => "https://facebook.com/{$username}",
+            'fb' => "https://facebook.com/{$username}",
+            'twitter' => "https://twitter.com/{$username}",
+            'x' => "https://twitter.com/{$username}",
+            'instagram' => "https://instagram.com/{$username}",
+            'ig' => "https://instagram.com/{$username}",
+            'linkedin' => "https://linkedin.com/in/{$username}",
+            'linkedin-profile' => "https://linkedin.com/in/{$username}",
+            'youtube' => "https://youtube.com/@{$username}",
+            'yt' => "https://youtube.com/@{$username}",
+            'tiktok' => "https://tiktok.com/@{$username}",
+            'pinterest' => "https://pinterest.com/{$username}",
+            'snapchat' => "https://snapchat.com/add/{$username}",
+            'sc' => "https://snapchat.com/add/{$username}",
+            'whatsapp' => "https://wa.me/{$username}",
+            'telegram' => "https://t.me/{$username}",
+            'github' => "https://github.com/{$username}",
+            'git' => "https://github.com/{$username}",
+        ];
+        
+        $platform = strtolower($platform);
+        
+        if (isset($platforms[$platform])) {
+            return $platforms[$platform];
+        }
+        
+        // If platform not recognized, try to use as-is
+        return $username;
+    }
     private function buildWifiContent($data)
     {
         $ssid = $data['ssid'] ?? '';
@@ -506,9 +425,6 @@ private function buildSocialUrl($platform, $username)
         ]);
     }
 
-    /**
-     * Download a previously saved QR code
-     */
     public function download($id)
     {
         $qrCode = QrCode::where('user_id', auth()->id())
@@ -530,9 +446,6 @@ private function buildSocialUrl($platform, $username)
         );
     }
 
-    /**
-     * Delete a QR code
-     */
     public function destroy($id)
     {
         $qrCode = QrCode::where('user_id', auth()->id())

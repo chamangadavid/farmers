@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class QrTypeController extends Controller
 {
+
     public function index()
     {
         $types = QrType::where('is_active', true)
@@ -31,4 +32,5 @@ class QrTypeController extends Controller
             'data' => $type
         ]);
     }
+    
 }

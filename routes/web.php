@@ -2,26 +2,8 @@
 
 use App\Http\Controllers\Api\QrCodeController;
 use App\Http\Controllers\Api\QrTypeController;
-use App\Http\Controllers\Contacts\ContactController;
-use App\Http\Controllers\Gallery\GalleryCategoryController;
-use App\Http\Controllers\Gallery\GalleryController;
-use App\Http\Controllers\News\NewsController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Promotions\PromotionController;
-use App\Http\Controllers\Receipts\CustomerController;
-use App\Http\Controllers\Receipts\DeliveryNoteController;
-use App\Http\Controllers\Receipts\InvoiceController;
-use App\Http\Controllers\Receipts\NavigationLinkController;
-use App\Http\Controllers\Receipts\PurchaseOrderController;
-use App\Http\Controllers\Receipts\QuotationController;
-use App\Http\Controllers\Receipts\ReceiptController;
-use App\Http\Controllers\Receipts\SupplierController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\RolesAndPermissions\RolesAndPermissionController;
-use App\Http\Controllers\Services\ServicesController;
-use App\Http\Controllers\Transactions\TransactionsController;
 use App\Http\Controllers\UserSearchController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -57,31 +39,25 @@ Route::get('/dashboard', function () {
 Route::get('/test-imagick', function() {
     phpinfo();
 });
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::get('/roles-permissions', fn () => Inertia::render('RolesPermissions'))
-        ->name('roles.permissions');
-
+    Route::get('/roles-permissions', fn () => Inertia::render('RolesPermissions'))->name('roles.permissions');
     Route::get('/roles', [RolePermissionController::class, 'roles']);
     Route::post('/roles', [RolePermissionController::class, 'storeRole']);
     Route::put('/roles/{id}', [RolePermissionController::class, 'update']);
     Route::delete('/roles/{id}', [RolePermissionController::class, 'destroy']);
     Route::post('/roles/bulk-delete', [RolePermissionController::class, 'bulkDestroy']);
-
     Route::get('/permissions', [RolePermissionController::class, 'permissions']);
     Route::post('/permissions', [RolePermissionController::class, 'storePermission']);
     Route::get('/rolesAndPermission', [RolePermissionController::class, 'rolesAndPermission'])->name('admin.rolesAndPermission');
-
+    Route::get('/rolesAndPermission', [RolePermissionController::class, 'rolesAndPermission'])->name('admin.rolesAndPermission');
     
-     Route::get('/rolesAndPermission', [RolePermissionController::class, 'rolesAndPermission'])->name('admin.rolesAndPermission');
-     Route::get('/eBusinessCards', [RolePermissionController::class, 'eBusinessCards'])->name('admin.eBusinessCards');
-
-
-
+    //Cards & Assign
+    Route::get('/eBusinessCards', [RolePermissionController::class, 'eBusinessCards'])->name('admin.eBusinessCards');
     Route::get('/users', [RolePermissionController::class, 'users']);
     Route::post('/users/assign-role', [RolePermissionController::class, 'assignRole']);
 
@@ -94,11 +70,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/qr/generate', [QrCodeController::class, 'generate']);
     Route::get('/qr/history', [QrCodeController::class, 'history']);
     Route::delete('/qr/{id}', [QrCodeController::class, 'destroy']);
-
     Route::get('/qr/{id}', [QrCodeController::class, 'show']);
     Route::get('/qr/{id}/download', [QrCodeController::class, 'download']);
     Route::delete('/qr/{id}', [QrCodeController::class, 'destroy']);
-
     Route::get('/search-users', [UserSearchController::class, 'search'])->name('users.search');
     Route::get('/users/{user}', [UserSearchController::class, 'show'])->name('users.show');
 
@@ -111,16 +85,16 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/about-us', function () {
-    return Inertia::render('Site/aboutUs');
-})->name('aboutUs');
+// Route::get('/about-us', function () {
+//     return Inertia::render('Site/aboutUs');
+// })->name('aboutUs');
 
-Route::get('/services-list', function () {
-    return Inertia::render('MyMARZ/Services/ServicesList');
-})->name('servicesList');
+// Route::get('/services-list', function () {
+//     return Inertia::render('MyMARZ/Services/ServicesList');
+// })->name('servicesList');
 
-Route::get('/contact-us', function () {
-    return Inertia::render('Site/Contact');
-})->name('contactDetails');
+// Route::get('/contact-us', function () {
+//     return Inertia::render('Site/Contact');
+// })->name('contactDetails');
 
 require __DIR__ . '/auth.php';

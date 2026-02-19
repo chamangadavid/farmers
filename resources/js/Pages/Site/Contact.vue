@@ -195,20 +195,13 @@ const submitForm = () => {
                 referrerpolicy="no-referrer-when-downgrade"
             ></iframe>
         </section>
+
         <!-- footer -->
         <AppFooter />
-    
-      <!-- <section class="w-full">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3846.2669301014835!2d28.27688937078971!3d-15.416137880960099!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1940f30037258aa7%3A0x2840383e00a328ba!2sPermanent%20house!5e0!3m2!1sen!2szm!4v1748444539131!5m2!1sen!2szm" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        <img src="https://placehold.co/1200x400/cccccc/333333?text=Map+Placeholder" alt="Location Map" class="w-full h-auto object-cover">
-      </section> -->
+
     </div>
   </template>
   
   <style>
-  /* You can add custom styles here if needed, but Tailwind CSS should handle most of it. */
-  /* For example, if you want a specific font: */
-  /* body {
-    font-family: 'Inter', sans-serif;
-  } */
+
   </style>
