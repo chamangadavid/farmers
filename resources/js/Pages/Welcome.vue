@@ -193,7 +193,7 @@ const toggleMobileMenu = () => {
                             </template>
 
                             <!-- Additional Mobile Menu Items -->
-                            <div class="pt-4 mt-4 border-t border-[#00BCF2]/20">
+                            <!-- <div class="pt-4 mt-4 border-t border-[#00BCF2]/20">
                                 <Link
                                     href="#features"
                                     class="block px-4 py-3 text-white/80 hover:text-[#00BCF2] hover:bg-gradient-to-r hover:from-[#0078D4]/10 hover:to-[#00BCF2]/10 rounded-lg transition-all duration-300"
@@ -215,7 +215,7 @@ const toggleMobileMenu = () => {
                                 >
                                     Contact
                                 </Link>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
