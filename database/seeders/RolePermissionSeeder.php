@@ -18,14 +18,7 @@ class RolePermissionSeeder extends Seeder
     {
         // Define permissions
         $permissions = [
-            // 'manage transactions',
-            // 'manage news management',
-            // 'manage promotions',
-            // 'manage services',
-            // 'manage gallery',
-            // 'manage contact',
-            // 'manage receipts',
-            // 'manage access control',
+            'manage access control',
         ];
 
         // Create and store all permissions
@@ -48,5 +41,8 @@ class RolePermissionSeeder extends Seeder
 
         // Assign Super Admin role to user
         $admin->assignRole($superAdminRole);
+
+        //to run seeder
+        //php artisan db:seed --class=RolePermissionSeeder
     }
 }

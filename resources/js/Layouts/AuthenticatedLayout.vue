@@ -22,13 +22,6 @@ const can = (permission) => {
   return auth?.permissions?.includes(permission);
 };
 
-// Function to check if user has a permission requires to pass auth like  v-if="can('manage access control', auth)"
-// const can = (permission, auth) => {
-//   return auth?.permissions?.includes(permission);
-// };
-
-
-
 const showingNavigationDropdown = ref(false);
 const searchValue = ref('');
 const searchResults = ref([]);
@@ -98,7 +91,6 @@ onUnmounted(() => {
   <div>
     <div class="min-h-screen bg-gray-100">
       <nav class="bg-blue-900 text-white shadow rounded-lg px-6 mx-4 mt-3">
-        <!-- <nav class="bg-[#0078D4] text-white shadow rounded-lg px-6 mx-4 mt-3"> -->
 
         <!-- Primary Navigation Menu -->
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -116,7 +108,7 @@ onUnmounted(() => {
                 <NavLink
                   :href="route('dashboard')"
                   :active="route().current('dashboard')"
-                  class="text-white"
+                 class="text-white hover:text-white hover:bg-blue-800"
                 >
                   Dashboard
                 </NavLink>
@@ -125,7 +117,7 @@ onUnmounted(() => {
                     v-if="can('manage access control')"
                     :href="route('admin.rolesAndPermission')"
                     :active="route().current('admin.rolesAndPermission')"
-                    class="text-white"
+                    class="text-white hover:text-white hover:bg-blue-800 px-2"
                   >
                     Roles & Permissions
                   </NavLink>

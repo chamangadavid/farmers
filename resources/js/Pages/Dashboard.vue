@@ -121,12 +121,12 @@ const can = (permission, auth) => {
                                   subTitle="Create, edit, update and delete of E-Business Cards" 
                                   routeName="admin.eBusinessCards">
                                   <template #icon>
-                                  <SettingOutlined style="font-size: 24px;" />
+                                  <SwapOutlined style="font-size: 24px;" />
                                   </template>
                                   </Card>
 
                                   <Card 
-                                  title="Access Control" 
+                                  title="Access Control" v-if="can('manage access control', auth)"
                                   subTitle="Create, edit, update and delete of Access Control" 
                                   routeName="admin.rolesAndPermission">
                                   <template #icon>

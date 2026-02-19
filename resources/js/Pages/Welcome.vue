@@ -286,7 +286,7 @@ const toggleMobileMenu = () => {
 
                                     <div class="relative z-10">
                                         <h3 class="text-xl sm:text-2xl font-semibold mb-6 bg-gradient-to-r from-white via-[#E1F0FF] to-[#B3E0FF] bg-clip-text text-transparent">
-                                            E-Business Card Generator
+                                            E-Business Card
                                         </h3>
 
                                         <div class="space-y-4">
