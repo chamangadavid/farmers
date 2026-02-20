@@ -291,7 +291,7 @@ const toggleMobileMenu = () => {
 
                                         <div class="space-y-4">
                                             <div class="flex justify-between items-center pb-4 border-b border-[#00BCF2]/20">
-                                                <span class="text-white/60">Staffs</span>
+                                                <span class="text-white/60">Staff</span>
                                                 <span class="font-medium text-white bg-gradient-to-r from-[#0078D4]/30 to-[#00BCF2]/30 px-3 py-1 rounded-full text-sm border border-[#00BCF2]/30">All Staff</span>
                                             </div>
                                             <div class="flex justify-between items-center pb-4 border-b border-[#00BCF2]/20">
