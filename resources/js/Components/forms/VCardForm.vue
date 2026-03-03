@@ -1,4 +1,3 @@
-// resources/js/Components/forms/VCardForm.vue
 <script setup>
 import { ref, watch } from 'vue';
 
@@ -115,23 +114,23 @@ watch(localData, (value) => {
                     placeholder="Enter phone number">
             </div>
 
-            <div>
+            <!-- <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Home Phone</label>
                 <input v-model="localData.phoneHome" type="tel"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter home phone number">
-            </div>
+            </div> -->
 
-            <div>
+            <!-- <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Fax</label>
                 <input v-model="localData.fax" type="tel"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter fax number">
-            </div>
+            </div> -->
         </div>
 
         <!-- Address -->
-        <div class="space-y-3">
+        <!-- <div class="space-y-3">
             <label class="block text-sm font-medium text-gray-700">Address</label>
 
             <input v-model="localData.addressStreet" type="text"
@@ -155,31 +154,31 @@ watch(localData, (value) => {
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter country">
             </div>
-        </div>
+        </div> -->
 
         <!-- Additional Information -->
-        <div>
+        <!-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Website</label>
             <input v-model="localData.website" type="url"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter website URL">
-        </div>
+        </div> -->
 
-        <div>
+        <!-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Birthday</label>
             <input v-model="localData.birthday" type="date"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-        </div>
+        </div> -->
 
-        <div>
+        <!-- <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
             <textarea v-model="localData.note" rows="3"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Additional notes about the contact"></textarea>
-        </div>
+        </div> -->
 
         <!-- Social Profiles -->
-        <div>
+        <!-- <div>
             <div class="flex justify-between items-center mb-2">
                 <label class="block text-sm font-medium text-gray-700">Social Profiles</label>
                 <button @click="addSocialProfile" type="button" class="text-sm text-blue-600 hover:text-blue-800">
@@ -204,7 +203,7 @@ watch(localData, (value) => {
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-        </div>
+        </div> -->
 
         <p class="text-xs text-gray-500">
             <span class="text-red-500">*</span> Required fields for vCard format

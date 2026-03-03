@@ -90,7 +90,11 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="min-h-screen bg-gray-100">
-      <nav class="bg-blue-900 text-white shadow rounded-lg px-6 mx-4 mt-3">
+      
+      <div class="min-h-screen bg-gray-100">
+  <div class="max-w-7xl mx-auto px-4">
+      <!-- everything inside here -->
+             <nav class="bg-blue-900 text-white shadow rounded-lg px-6 mx-4 mt-3">
 
         <!-- Primary Navigation Menu -->
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -313,6 +317,10 @@ onUnmounted(() => {
       <main>
         <slot />
       </main>
+  </div>
+</div>
+      
+
     </div>
   </div>
 </template>
