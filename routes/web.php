@@ -40,6 +40,73 @@ Route::get('/test-imagick', function() {
     phpinfo();
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| Site Pages
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/about-us', function () {
+    return Inertia::render('Site/aboutUs');
+})->name('aboutUs');
+
+Route::get('/job-vacancies', function () {
+    return Inertia::render('Site/JobVacancies');
+})->name('jobVacancies');
+
+Route::get('/report-accident', function () {
+    return Inertia::render('Site/ReportAccident');
+})->name('reportAccident');
+
+Route::get('/faq', function () {
+    return Inertia::render('Site/FAQ');
+})->name('faq');
+
+Route::get('/contact-us', function () {
+    return Inertia::render('Site/Contact');
+})->name('contactDetails');
+
+Route::get('/management-team', function () {
+    return Inertia::render('Site/ManagementTeam');
+})->name('managementTeam');
+
+Route::get('/mandates', function () {
+    return Inertia::render('Site/Mandate');
+})->name('mandate');
+
+Route::get('/history-details', function () {
+    return Inertia::render('Site/History');
+})->name('history');
+
+Route::get('/icao-annex', function () {
+    return Inertia::render('Site/ICAOAnnex');
+})->name('icaoAnnex');
+
+Route::get('/national-regulation', function () {
+    return Inertia::render('Site/NationalRegulation');
+})->name('nationalRegulation');
+
+Route::get('/investigation-process', function () {
+    return Inertia::render('Site/InvestigationProcess');
+})->name('investigationPage');
+
+Route::get('/accident-reports', function () {
+    return Inertia::render('Site/AccidentReports');
+})->name('accidentPage');
+
+Route::get('/news', function () {
+    return Inertia::render('Site/News');
+})->name('newsPage');
+
+Route::get('/press-releases', function () {
+    return Inertia::render('Site/PressReleases');
+})->name('pressReleasesPage');
+
+Route::get('/announcements', function () {
+    return Inertia::render('Site/Announcements');
+})->name('announcementsPage');
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -79,22 +146,10 @@ Route::middleware('auth')->group(function () {
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| Site Pages
-|--------------------------------------------------------------------------
-*/
 
-// Route::get('/about-us', function () {
-//     return Inertia::render('Site/aboutUs');
-// })->name('aboutUs');
 
-// Route::get('/services-list', function () {
-//     return Inertia::render('MyMARZ/Services/ServicesList');
-// })->name('servicesList');
 
-// Route::get('/contact-us', function () {
-//     return Inertia::render('Site/Contact');
-// })->name('contactDetails');
+
+
 
 require __DIR__ . '/auth.php';

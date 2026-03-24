@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f4f6;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+  }
+
+  .dark {
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --border-color: #374151;
+  }
+}
+
 
 /* Loading screen transitions */
 #app-loading {
@@ -17,26 +35,9 @@
   #app-loading.fade-out {
     opacity: 0;
   }
-  
-
-  /* #app-loading {
-  position: fixed;
-  inset: 0;
-  background-color: white;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.5s ease;
-}
-
-#app-loading.fade-out {
-  opacity: 0;
-  pointer-events: none;
-} */
 
 
-  /* Ant Design Progress Bar customization */
+
   .ant-progress-inner {
     height: 8px !important;
     border-radius: 4px !important;
@@ -49,33 +50,50 @@
   }
 
 
-/* Import Google Fonts - keep this at the very top of your custom styles */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-/* Base/Root styles that might not be covered by Tailwind's reset or need specific overrides */
 body {
     font-family: 'Montserrat', sans-serif;
-    /* Tailwind's base will often handle margin/padding, but ensure no unwanted defaults */
-    box-sizing: border-box; /* Good practice for all elements */
-    color: #333; /* Default text color if not set by Tailwind */
-    overflow-x: hidden; /* Prevent horizontal scroll due to hero image positioning */
+    box-sizing: border-box; 
+    color: #333; 
+    overflow-x: hidden; 
+
+    background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
-/* Custom utility-like classes that are hard to do with standard Tailwind */
-/* These could also be inline styles or calculated in JS if dynamic */
+
+/* Custom scrollbar for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
 .hero-image-positioning {
     position: relative;
-    right: -100px; /* Moves image 100px to the right of its natural position */
-    top: -20px; /* Moves image 20px up from its natural position */
+    right: -100px; 
+    top: -20px; 
 }
 
-/* You can define custom colors in your tailwind.config.js for better management */
-/* For now, direct colors are used as per your original CSS */
 
-/* Using @apply for semantic component classes (optional but recommended for complex styles) */
-/* This makes your HTML cleaner, but moves styles to CSS */
-
-/* Example: Navbar styling (if not fully covered by utility classes in HTML) */
 @layer components {
     .navbar-contact-button {
         @apply bg-[#28a745] text-white px-5 py-2 rounded-md font-semibold text-lg no-underline transition-colors duration-300;
@@ -92,27 +110,16 @@ body {
         @apply bg-transparent text-white border-2 border-white px-8 py-4 rounded-md text-lg cursor-pointer transition-colors duration-300;
     }
     .btn-secondary:hover {
-        @apply bg-white bg-opacity-10; /* Tailwind's rgba syntax */
+        @apply bg-white bg-opacity-10; 
     }
 
-    /* You would define classes for other complex elements if you choose this path */
-    /* .feature-item-card { @apply bg-white p-8 rounded-lg shadow-md; } */
 }
 
 
-/* Responsive adjustments for custom properties or overrides that Tailwind doesn't handle easily */
-/* Most responsive adjustments will be done with Tailwind's responsive prefixes (md:, lg:) */
 @media (max-width: 992px) {
-    /* If you hide navbar links, this might be a custom rule */
-    /* .navbar .nav-links { display: none; } */
-
-    /* If hero-image-positioning needs to be overridden */
     .hero-image-positioning {
-        position: static; /* Reset positioning on smaller screens */
+        position: static; 
         right: 0;
         top: 0;
     }
 }
-/* You can delete all other media queries if you commit to Tailwind's responsive prefixes */
-/* @media (max-width: 768px) { ... } */
-/* @media (max-width: 480px) { ... } */
