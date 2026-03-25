@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
+            $table->string('fullname');
+            $table->string('position');
+            $table->text('content');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

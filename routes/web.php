@@ -16,6 +16,7 @@ use App\Http\Controllers\Regulation\IcaoAnnexController;
 use App\Http\Controllers\Report\ReportsController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserSearchController;
+use App\Models\Management\Team;
 use App\Models\Regulation\NationalRegulations;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -119,6 +120,15 @@ Route::get('/announcements', function () {
     return Inertia::render('Site/Announcements');
 })->name('announcementsPage');
 
+    Route::get('/management-team/{id}', function ($id) {
+    $member = Team::findOrFail($id);
+
+    return Inertia::render('Site/ManagementTeamDetails', [
+        'member' => $member
+    ]);
+});
+
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -137,7 +147,21 @@ Route::middleware('auth')->group(function () {
 
     //Management routes
     Route::get('/managment-team', [TeamController::class, 'managementTeam'])->name('management.index');
-    
+    Route::get('/members', [TeamController::class, 'index']);
+    Route::post('/members', [TeamController::class, 'store']);
+    // Route::get('/members/{id}', [TeamController::class, 'show']);
+    Route::put('/members/{id}', [TeamController::class, 'update']);
+    Route::delete('/members/{id}', [TeamController::class, 'destroy']);
+
+
+    Route::get('/managment-team-details', [TeamController::class, 'managementTeamDetails'])->name('team-details.index');
+
+
+
+
+
+
+
 
     //Job Vacancies routes
     Route::get('/jobs', [jobController::class, 'JobVacancies'])->name('job.index');
