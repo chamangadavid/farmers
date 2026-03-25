@@ -4,6 +4,7 @@ use App\Http\Controllers\Accident\AccidentsController;
 use App\Http\Controllers\Api\QrCodeController;
 use App\Http\Controllers\Api\QrTypeController;
 use App\Http\Controllers\Contacts\ContactController;
+use App\Http\Controllers\Faqs\FaqController;
 use App\Http\Controllers\Incident\IncidentsController;
 use App\Http\Controllers\Investigation\InvestigationsController;
 use App\Http\Controllers\Jobs\JobController;
@@ -160,7 +161,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
     
     
+    //FAQs routes
+    Route::get('/faqs', [JobController::class, 'GetFaqs'])->name('faq.index');
+    Route::get('/all-faqs', [FaqController::class, 'index']);        // List & search FAQs
+    Route::post('/faqs', [FaqController::class, 'store']);       // Create FAQ
+    Route::get('/faqs/{faq}', [FaqController::class, 'show']);    // View single FAQ
+    Route::put('/faqs/{faq}', [FaqController::class, 'update']);  // Update FAQ
+    Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']); // Delete FAQ
 
+
+
+    
 
 
 
@@ -168,8 +179,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobs', [jobController::class, 'JobVacancies'])->name('job.index');
     
 
-    //FAQs routes
-    Route::get('/faqs', [JobController::class, 'GetFaqs'])->name('faq.index');
 
 
   
