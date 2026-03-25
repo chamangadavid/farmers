@@ -120,13 +120,16 @@ Route::get('/announcements', function () {
     return Inertia::render('Site/Announcements');
 })->name('announcementsPage');
 
-    Route::get('/management-team/{id}', function ($id) {
+//details page for management team members
+Route::get('/management-team/{id}', function ($id) {
     $member = Team::findOrFail($id);
 
     return Inertia::render('Site/ManagementTeamDetails', [
         'member' => $member
     ]);
 });
+
+Route::post('/contact', [ContactController::class, 'store']);
 
 
 Route::middleware('auth')->group(function () {
@@ -144,21 +147,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/permissions', [RolePermissionController::class, 'storePermission']);
     Route::get('/rolesAndPermission', [RolePermissionController::class, 'rolesAndPermission'])->name('admin.rolesAndPermission');
 
-
     //Management routes
     Route::get('/managment-team', [TeamController::class, 'managementTeam'])->name('management.index');
     Route::get('/members', [TeamController::class, 'index']);
     Route::post('/members', [TeamController::class, 'store']);
-    // Route::get('/members/{id}', [TeamController::class, 'show']);
     Route::put('/members/{id}', [TeamController::class, 'update']);
     Route::delete('/members/{id}', [TeamController::class, 'destroy']);
 
-
-    Route::get('/managment-team-details', [TeamController::class, 'managementTeamDetails'])->name('team-details.index');
-
-
-
-
+    //contact routes
+    Route::get('/contact-messages', [ContactController::class, 'ContactUs'])->name('contact.index');
+    Route::get('/contacts', [ContactController::class, 'index']);
+    Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
+    
+    
 
 
 
@@ -171,9 +172,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/faqs', [JobController::class, 'GetFaqs'])->name('faq.index');
 
 
-    //contact routes
-    Route::get('/contact-messages', [ContactController::class, 'ContactUs'])->name('contact.index');
-    
+  
 
 
     

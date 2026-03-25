@@ -16,11 +16,6 @@ class TeamController extends Controller
         return Inertia::render('MyAAIB/Management/Index');
     }
 
-     public function managementTeamDetails()
-    {
-        return Inertia::render('MyAAIB/Management/Index');
-    }
-
     public function index()
     {
         $members = Team::orderBy('created_at', 'desc')->get();
@@ -89,10 +84,5 @@ class TeamController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function show($id)
-    {
-        $member = Team::findOrFail($id);
-        return response()->json(['member' => $member]);
-    }
 
 }
