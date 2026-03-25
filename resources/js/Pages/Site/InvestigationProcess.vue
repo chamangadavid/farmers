@@ -1,6 +1,8 @@
 <!-- Resources/js/Pages/Site/InvestigationProcess.vue -->
 <script setup>
 import PageLayout from '@/Components/PageLayout.vue';
+import RecentInvestigations from '@/Components/RecentInvestigations.vue';
+
 
 defineProps({
     canLogin: Boolean,
@@ -55,7 +57,7 @@ const steps = [
 
 <template>
     <PageLayout 
-        title="Investigation Process" 
+        title="Our Investigations" 
         :canLogin="canLogin"
         :canRegister="canRegister"
         :showHero="true"
@@ -65,7 +67,7 @@ const steps = [
             <div class="text-center mt-12">
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
                     <span class="bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-300 bg-clip-text text-transparent">
-                        Investigation Process
+                        Our Investigation
                     </span>
                 </h1>
                 <p class="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
@@ -76,8 +78,14 @@ const steps = [
 
         <!-- Main Content -->
         <div class="space-y-8">
+
+            <!-- Recent Investigations Section -->
+                    <div class="mb-12">
+                        <RecentInvestigations />
+                    </div>
+
             <!-- Introduction -->
-            <div class="text-center mb-8">
+            <div class="text-center mb-12">
                 <p class="text-gray-600 leading-relaxed max-w-3xl mx-auto">
                     Our investigation process follows international standards to ensure thorough, independent, 
                     and timely investigations focused on preventing future occurrences.
@@ -135,6 +143,7 @@ const steps = [
                     </div>
                 </div>
             </section>
+
         </div>
     </PageLayout>
 </template>

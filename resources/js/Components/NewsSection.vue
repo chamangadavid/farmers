@@ -5,31 +5,31 @@ import { ref, computed } from 'vue';
 const news = ref([
     {
         id: 1,
-        title: 'AAIB Launches Advanced Investigation Training Program',
-        date: 'March 18, 2024',
+        title: 'AAIB Training Program',
+        date: 'Mar 18, 2024',
         category: 'Training',
         summary: 'New program to enhance investigation capabilities using modern technologies and methodologies.',
         image: '/assets/news/training-program.jpg',
         featured: true,
-        readTime: '5 min read'
+        readTime: '5 min'
     },
     {
         id: 2,
-        title: 'International Safety Conference Highlights AAIB Contributions',
-        date: 'March 10, 2024',
+        title: 'Highlights AAIB Contributions',
+        date: 'Mar 10, 2024',
         category: 'Event',
         summary: 'AAIB presented key findings on emerging aviation safety challenges at the global conference.',
         image: '/assets/news/conference.jpg',
-        readTime: '4 min read'
+        readTime: '4 min'
     },
     {
         id: 3,
-        title: 'Annual Safety Report Shows Positive Trends',
-        date: 'February 28, 2024',
+        title: 'Annual Safety Reports',
+        date: 'Feb 28, 2024',
         category: 'Report',
         summary: 'The 2023 annual report reveals significant improvements in safety indicators.',
         image: '/assets/news/safety-report.jpg',
-        readTime: '6 min read'
+        readTime: '6 min'
     }
 ]);
 
@@ -77,7 +77,7 @@ const getCategoryColor = (category) => {
                     <div class="flex items-center gap-3 text-sm text-gray-500 mb-2">
                         <span>{{ item.date }}</span>
                         <span>•</span>
-                        <span>📖 {{ item.readTime }}</span>
+                        <span>{{ item.readTime }}</span>
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 group-hover:text-teal-600 transition-colors mb-2">
                         {{ item.title }}

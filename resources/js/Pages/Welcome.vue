@@ -8,7 +8,7 @@ import AnimatedHero from '@/Components/AnimatedHero.vue';
 import NewsSection from '@/Components/NewsSection.vue';
 import AnnouncementsSection from '@/Components/AnnouncementsSection.vue';
 import SearchSection from '@/Components/SearchSection.vue';
-import RecentInvestigations from '@/Components/RecentInvestigations.vue';
+import PartnersSlider from '@/Components/PartnersSlider.vue'; 
 
 defineProps({
     canLogin: Boolean,
@@ -39,15 +39,15 @@ defineProps({
                         <SearchSection />
                     </div>
 
-                    <!-- Recent Investigations Section -->
-                    <div class="mb-12">
-                        <RecentInvestigations />
-                    </div>
-
                     <!-- News and Announcements Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                         <NewsSection />
                         <AnnouncementsSection />
+                    </div>
+
+                    <!-- Partners Slider Section -->
+                    <div class="mb-12">
+                        <PartnersSlider />
                     </div>
 
                     <!-- Additional Quick Links Section -->
@@ -71,6 +71,7 @@ defineProps({
                             <a href="/report-accident" class="inline-block mt-3 text-teal-400 text-sm hover:text-teal-300">Report now →</a>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

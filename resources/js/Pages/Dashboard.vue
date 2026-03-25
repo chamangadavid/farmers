@@ -30,7 +30,8 @@ import {
   HomeOutlined,
   StarOutlined,
   RocketOutlined,
-  TrophyOutlined
+  TrophyOutlined,
+  UsergroupAddOutlined
 } from '@ant-design/icons-vue'
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
@@ -110,9 +111,11 @@ const quickStats = [
         <!-- Main Card with Tabs -->
         <div class="overflow-hidden bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700">
           <div class="p-6">
+
             <!-- Professional Tabs -->
             <div class="dashboard-tabs">
               <a-tabs v-model:activeKey="activeKey" class="custom-tabs">
+                
                 <a-tab-pane key="1">
                   <template #tab>
                     <div class="flex items-center gap-2">
@@ -124,12 +127,142 @@ const quickStats = [
                   <div class="mt-6">
                     <div class="flex flex-wrap gap-4">
                       <Card 
-                        title="Access Control" 
+                        title="Access Control Management" 
                         v-if="can('manage access control')"
-                        subTitle="Create, edit, update and delete of Access Control" 
+                        subTitle="Create, edit and delete of Access Control" 
                         routeName="admin.rolesAndPermission">
                         <template #icon>
                           <SettingOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                        <Card 
+                        title="Team Member Management" 
+                        v-if="can('manage management team')"
+                        subTitle="Create, edit & delete management team" 
+                        routeName="management.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Job Vacancies Management" 
+                        v-if="can('manage job vacancies')"
+                        subTitle="Create, edit & delete job vacancies" 
+                        routeName="job.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
+                        title="FAQs Management" 
+                        v-if="can('manage faqs')"
+                        subTitle="Create, edit & delete FAQs" 
+                        routeName="faq.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Contacts Management" 
+                        v-if="can('manage contact us')"
+                        subTitle="Create, edit & delete Contact messages" 
+                        routeName="contact.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
+                        title="Accidents Management" 
+                        v-if="can('manage all accidents')"
+                        subTitle="Create, edit & delete all accidents" 
+                        routeName="accidents.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
+                        title="Incidents Management" 
+                        v-if="can('manage all incidents')"
+                        subTitle="Create, edit & delete all incidents" 
+                        routeName="incidents.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Investigation Management" 
+                        v-if="can('manage all investigagtions')"
+                        subTitle="Create, edit & delete all investigations" 
+                        routeName="investigations.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="News Management" 
+                        v-if="can('manage all latest news')"
+                        subTitle="Create, edit & delete latest news" 
+                        routeName="news.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Press Releases Management" 
+                        v-if="can('manage all press releases')"
+                        subTitle="Create, edit & delete press releases" 
+                        routeName="press.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Announcements Management" 
+                        v-if="can('manage all announcements')"
+                        subTitle="Create, edit & delete announcements" 
+                        routeName="announcement.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="National Regulations Management" 
+                        v-if="can('manage all national regulations')"
+                        subTitle="Create, edit & delete national regulations" 
+                        routeName="regulations.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="ICAO Annex Management" 
+                        v-if="can('manage all icao annex')"
+                        subTitle="Create, edit & delete icao annex" 
+                        routeName="icao.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Reports Management" 
+                        v-if="can('manage all reports')"
+                        subTitle="View and generate system reports" 
+                        routeName="reports.index">
+                        <template #icon>
+                          <FileTextOutlined style="font-size: 24px; color: #10b981;" />
                         </template>
                       </Card>
 
@@ -142,23 +275,9 @@ const quickStats = [
                         </template>
                       </Card>
 
-                      <Card 
-                        title="QR Code Generator" 
-                        subTitle="Create and manage QR codes for various purposes" 
-                        routeName="dashboard">
-                        <template #icon>
-                          <AppstoreOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card>
+                     
 
-                      <Card 
-                        title="Reports" 
-                        subTitle="View and generate system reports" 
-                        routeName="dashboard">
-                        <template #icon>
-                          <FileTextOutlined style="font-size: 24px; color: #10b981;" />
-                        </template>
-                      </Card>
+
                     </div>
                   </div>
                 </a-tab-pane>
@@ -222,6 +341,7 @@ const quickStats = [
                     </div>
                   </div>
                 </a-tab-pane>
+
               </a-tabs>
             </div>
           </div>

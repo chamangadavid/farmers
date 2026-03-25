@@ -19,22 +19,22 @@ const announcements = ref([
         summary: 'The 2023 Annual Safety Report highlights key findings and safety improvements achieved over the past year.',
         category: 'Publication'
     },
-    {
-        id: 3,
-        title: 'AAIB Participates in International Aviation Safety Conference',
-        date: 'February 10, 2024',
-        priority: 'Medium',
-        summary: 'Board members will present findings at the International Aviation Safety Conference.',
-        category: 'Event'
-    },
-    {
-        id: 4,
-        title: 'Call for Experts: Technical Advisory Panel',
-        date: 'January 25, 2024',
-        priority: 'High',
-        summary: 'We are seeking aviation experts to join our Technical Advisory Panel.',
-        category: 'Recruitment'
-    }
+    // {
+    //     id: 3,
+    //     title: 'AAIB Participates in International Aviation Safety Conference',
+    //     date: 'February 10, 2024',
+    //     priority: 'Medium',
+    //     summary: 'Board members will present findings at the International Aviation Safety Conference.',
+    //     category: 'Event'
+    // },
+    // {
+    //     id: 4,
+    //     title: 'Call for Experts: Technical Advisory Panel',
+    //     date: 'January 25, 2024',
+    //     priority: 'High',
+    //     summary: 'We are seeking aviation experts to join our Technical Advisory Panel.',
+    //     category: 'Recruitment'
+    // }
 ]);
 
 const getPriorityColor = (priority) => {
@@ -77,7 +77,7 @@ const getPriorityColor = (priority) => {
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-1">{{ item.title }}</h3>
                         <p class="text-gray-600 text-sm">{{ item.summary }}</p>
-                        <a href="#" class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium mt-2 hover:gap-2 transition-all">
+                        <a href="#" class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium hover:gap-2 transition-all">
                             Read more
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

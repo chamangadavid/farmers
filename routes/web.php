@@ -1,10 +1,22 @@
 <?php
 
+use App\Http\Controllers\Accident\AccidentsController;
 use App\Http\Controllers\Api\QrCodeController;
 use App\Http\Controllers\Api\QrTypeController;
+use App\Http\Controllers\Contacts\ContactController;
+use App\Http\Controllers\Incident\IncidentsController;
+use App\Http\Controllers\Investigation\InvestigationsController;
+use App\Http\Controllers\Jobs\JobController;
+use App\Http\Controllers\Management\TeamController;
+use App\Http\Controllers\Media\AnnouncementsController;
+use App\Http\Controllers\Media\NewsController;
+use App\Http\Controllers\Media\PressController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Regulation\IcaoAnnexController;
+use App\Http\Controllers\Report\ReportsController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserSearchController;
+use App\Models\Regulation\NationalRegulations;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -121,7 +133,81 @@ Route::middleware('auth')->group(function () {
     Route::get('/permissions', [RolePermissionController::class, 'permissions']);
     Route::post('/permissions', [RolePermissionController::class, 'storePermission']);
     Route::get('/rolesAndPermission', [RolePermissionController::class, 'rolesAndPermission'])->name('admin.rolesAndPermission');
-    Route::get('/rolesAndPermission', [RolePermissionController::class, 'rolesAndPermission'])->name('admin.rolesAndPermission');
+
+
+    //Management routes
+    Route::get('/managment-team', [TeamController::class, 'managementTeam'])->name('management.index');
+    
+
+    //Job Vacancies routes
+    Route::get('/jobs', [jobController::class, 'JobVacancies'])->name('job.index');
+    
+
+    //FAQs routes
+    Route::get('/faqs', [JobController::class, 'GetFaqs'])->name('faq.index');
+
+
+    //contact routes
+    Route::get('/contact-messages', [ContactController::class, 'ContactUs'])->name('contact.index');
+    
+
+
+    
+    //accidents routes
+    Route::get('/all-accidents', [AccidentsController::class, 'GetAccidents'])->name('accidents.index');
+    
+
+
+     //incident routes
+    Route::get('/all-incidents', [IncidentsController::class, 'GetIncidents'])->name('incidents.index');
+    
+    
+   //incident routes
+    Route::get('/all-investigations', [InvestigationsController::class, 'GetInvestigations'])->name('investigations.index');
+    
+
+    //News routes
+    Route::get('/latest-news', [NewsController::class, 'GetNews'])->name('news.index');
+    
+
+    //press releases routes
+    Route::get('/all-press-releases', [PressController::class, 'GetPressReleases'])->name('press.index');
+    
+
+    //announcements routes
+    Route::get('/all-announcements', [AnnouncementsController::class, 'GetAnnouncements'])->name('announcement.index');
+    
+    
+
+
+     //reports routes
+    Route::get('/all-reports', [ReportsController::class, 'GetReports'])->name('reports.index');
+    
+    
+
+     //national regulational routes
+    Route::get('/all-nation-regulations', [NationalRegulations::class, 'GetNationalRegulations'])->name('regulations.index');
+    
+
+    //icao annex routes
+    Route::get('/all-icao-annex', [IcaoAnnexController::class, 'GetIcaoAnnex'])->name('icao.index');
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     //Cards & Assign
     Route::get('/eBusinessCards', [RolePermissionController::class, 'eBusinessCards'])->name('admin.eBusinessCards');

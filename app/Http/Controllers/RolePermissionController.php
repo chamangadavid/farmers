@@ -10,9 +10,14 @@ use Spatie\Permission\Models\Role;
 
 class RolePermissionController extends Controller
 {
+    // public function rolesAndPermission()
+    // {
+    //     return Inertia::render('MyQR/Admin/rolesAndPermission');
+    // }
+
     public function rolesAndPermission()
     {
-        return Inertia::render('MyQR/Admin/rolesAndPermission');
+        return Inertia::render('MyAAIB/Admin/rolesAndPermission');
     }
 
     public function eBusinessCards()
