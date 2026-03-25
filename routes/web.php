@@ -131,6 +131,7 @@ Route::get('/management-team/{id}', function ($id) {
 });
 
 Route::post('/contact', [ContactController::class, 'store']);
+Route::get('/faqs/all', [FaqController::class, 'getfrontIndex']); // For your FAQ page
 
 
 Route::middleware('auth')->group(function () {
@@ -160,18 +161,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/contacts', [ContactController::class, 'index']);
     Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
     
-    
     //FAQs routes
     Route::get('/faqs', [JobController::class, 'GetFaqs'])->name('faq.index');
-    Route::get('/all-faqs', [FaqController::class, 'index']);        // List & search FAQs
-    Route::post('/faqs', [FaqController::class, 'store']);       // Create FAQ
-    Route::get('/faqs/{faq}', [FaqController::class, 'show']);    // View single FAQ
-    Route::put('/faqs/{faq}', [FaqController::class, 'update']);  // Update FAQ
-    Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']); // Delete FAQ
+    Route::get('/all-faqs', [FaqController::class, 'index']);        
+    Route::post('/faqs', [FaqController::class, 'store']);      
+    Route::get('/faqs/{faq}', [FaqController::class, 'show']);    
+    Route::put('/faqs/{faq}', [FaqController::class, 'update']);  
+    Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']); 
 
 
 
-    
+
 
 
 

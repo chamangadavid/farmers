@@ -10,48 +10,30 @@ use Illuminate\Support\Facades\Validator;
 
 class FaqController extends Controller
 {
+
     public function JobVacancies()
     {
         return Inertia::render('MyAAIB/Faqs/Index');
     }
 
-    // List FAQs with optional search
-    // public function index(Request $request)
-    // {
-    //     $search = $request->query('search', '');
-    //     $faqs = Faq::query()
-    //         ->when($search, function($query, $search) {
-    //             $query->where('question', 'like', "%{$search}%")
-    //                   ->orWhere('answer', 'like', "%{$search}%")
-    //                   ->orWhere('category', 'like', "%{$search}%");
-    //         })
-    //         ->orderBy('created_at', 'desc')
-    //         ->get();
-
-    //     return response()->json(['faqs' => $faqs]);
-    // }
-
-
     public function index(Request $request)
-{
-    $search = $request->query('search', []);
+    {
+        $search = $request->query('search', []);
 
-    $faqs = Faq::query()
-        ->when(!empty($search['query']), function($query) use ($search) {
-            $query->where('question', 'like', "%{$search['query']}%")
-                  ->orWhere('answer', 'like', "%{$search['query']}%");
-        })
-        ->when(!empty($search['category']), function($query) use ($search) {
-            $query->where('category', $search['category']);
-        })
-        ->orderBy('created_at', 'desc')
-        ->get();
+        $faqs = Faq::query()
+            ->when(!empty($search['query']), function($query) use ($search) {
+                $query->where('question', 'like', "%{$search['query']}%")
+                    ->orWhere('answer', 'like', "%{$search['query']}%");
+            })
+            ->when(!empty($search['category']), function($query) use ($search) {
+                $query->where('category', $search['category']);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    return response()->json(['faqs' => $faqs]);
-}
+        return response()->json(['faqs' => $faqs]);
+    }
 
-
-    // Store new FAQ
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -100,6 +82,41 @@ class FaqController extends Controller
         return response()->json(['message' => 'FAQ deleted successfully']);
     }
 
+
+    public function getfrontIndex(Request $request)
+    {
+        // Optional category filter
+        $category = $request->query('category', null);
+        $search = $request->query('search', null);
+
+        $query = Faq::query();
+
+        if ($category && $category !== 'all') {
+            $query->where('category', $category);
+        }
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('question', 'like', "%{$search}%")
+                  ->orWhere('answer', 'like', "%{$search}%");
+            });
+        }
+
+        $faqs = $query->orderBy('category')->get();
+
+        // Group by category
+        $grouped = $faqs->groupBy('category')->map(function($items, $key) {
+            return [
+                'category' => $key,
+                'questions' => $items->map(fn($faq) => [
+                    'q' => $faq->question,
+                    'a' => $faq->answer
+                ])->toArray()
+            ];
+        })->values();
+
+        return response()->json($grouped);
+    }
 
 
 }
