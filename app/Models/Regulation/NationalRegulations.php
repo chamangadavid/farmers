@@ -2,14 +2,22 @@
 
 namespace App\Models\Regulation;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Inertia\Inertia;
 
 class NationalRegulations extends Model
 {
+    use HasFactory;
     
-    public function GetNationalRegulations()
-    {
-        return Inertia::render('MyAAIB/Regulations/NationalRegulations');
-    }
+    protected $table = 'national_regulations';
+
+protected $fillable = [
+        'title',
+        'document_type',
+        'regulation_file',
+    ];
+
+ 
+
+  
 }

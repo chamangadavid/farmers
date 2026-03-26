@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('national_regulations', function (Blueprint $table) {
+        Schema::create('document_folders', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('document_type');
-            $table->string('regulation_file'); // PDF path
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('national_regulations');
+        Schema::dropIfExists('document_folders');
     }
 };

@@ -4,6 +4,7 @@ use App\Http\Controllers\Accident\AccidentsController;
 use App\Http\Controllers\Api\QrCodeController;
 use App\Http\Controllers\Api\QrTypeController;
 use App\Http\Controllers\Contacts\ContactController;
+use App\Http\Controllers\Documents\DocumentController;
 use App\Http\Controllers\Faqs\FaqController;
 use App\Http\Controllers\Incident\IncidentsController;
 use App\Http\Controllers\Investigation\InvestigationsController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Media\NewsController;
 use App\Http\Controllers\Media\PressController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Regulation\IcaoAnnexController;
+use App\Http\Controllers\Regulation\NationalRegulationsController;
 use App\Http\Controllers\Report\ReportsController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserSearchController;
@@ -97,6 +99,11 @@ Route::get('/icao-annex', function () {
     return Inertia::render('Site/ICAOAnnex');
 })->name('icaoAnnex');
 
+Route::get('/document-repository', function () {
+    return Inertia::render('Site/Documents');
+})->name('documentRepository');
+
+
 Route::get('/national-regulation', function () {
     return Inertia::render('Site/NationalRegulation');
 })->name('nationalRegulation');
@@ -136,7 +143,10 @@ Route::get('/faqs/all', [FaqController::class, 'getfrontIndex']); // For your FA
 Route::get('/public/presses', [PressController::class, 'publicIndex']);
 Route::get('/public/announcements', [AnnouncementsController::class, 'publicAnnouncementsIndex']);
 Route::get('/public/news', [NewsController::class, 'publicNewsIndex']);
+Route::get('/public/regulations', [NationalRegulationsController::class, 'publicIndex']);
 Route::get('/all-news/{id}', [NewsController::class, 'show']);
+Route::get('/publick-documents/folders', [DocumentController::class, 'Publicindex']);
+
 
 
 Route::middleware('auth')->group(function () {
@@ -183,22 +193,40 @@ Route::middleware('auth')->group(function () {
     Route::delete('/presses/{id}', [PressController::class, 'destroy']);
     Route::get('/presses/download/{id}', [PressController::class, 'download']);
 
-   //announcements routes
+    //announcements routes
     Route::get('/all-announcements', [AnnouncementsController::class, 'GetAnnouncements'])->name('announcement.index');
     Route::get('/announcements', [AnnouncementsController::class, 'index']);
     Route::post('/announcements', [AnnouncementsController::class, 'store']);
     Route::put('/announcements/{id}', [AnnouncementsController::class, 'update']);
     Route::delete('/announcements/{id}', [AnnouncementsController::class, 'destroy']);
 
-
-
-        //News routes
+    //News routes
     Route::get('/latest-news', [NewsController::class, 'GetNews'])->name('news.index');
     Route::get('/news', [NewsController::class, 'index']);
     Route::post('/news', [NewsController::class, 'store']);
     Route::put('/news/{id}', [NewsController::class, 'update']);
     Route::delete('/news/{id}', [NewsController::class, 'destroy']);
 
+
+    //annexes & regulational routes
+    Route::get('/all-regulations', [NationalRegulationsController::class, 'Regulations'])->name('regulations.index');
+    Route::get('/regulations', [NationalRegulationsController::class, 'index']);
+    Route::post('/regulations', [NationalRegulationsController::class, 'store']);
+    Route::put('/regulations/{id}', [NationalRegulationsController::class, 'update']);
+    Route::delete('/regulations/{id}', [NationalRegulationsController::class, 'destroy']);
+
+
+
+     //document repository routes
+    Route::get('/all-documents', [DocumentController::class, 'GetIDocuments'])->name('document.index');
+    Route::get('/documents/folders', [DocumentController::class, 'index']);
+    Route::post('/documents/folder', [DocumentController::class, 'storeFolder']);
+    Route::post('/documents/upload', [DocumentController::class, 'upload']);
+    Route::put('/documents/{id}/rename', [DocumentController::class, 'rename']);
+    Route::delete('/documents/{id}', [DocumentController::class, 'destroy']);
+
+// Route::post('/documents/upload', [DocumentController::class, 'upload']);
+    
 
 
 
@@ -239,9 +267,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/all-reports', [ReportsController::class, 'GetReports'])->name('reports.index');
     
     
+ 
+
 
      //national regulational routes
-    Route::get('/all-nation-regulations', [NationalRegulations::class, 'GetNationalRegulations'])->name('regulations.index');
+    //Route::get('/all-nation-regulations', [NationalRegulations::class, 'GetNationalRegulations'])->name('regulations.index');
     
 
     //icao annex routes
@@ -250,6 +280,8 @@ Route::middleware('auth')->group(function () {
 
 
 
+
+    
 
 
 

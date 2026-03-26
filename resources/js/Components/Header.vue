@@ -247,18 +247,18 @@ const handleDropdownClick = () => {
                         @mouseleave="hideDropdown"
                     >
                         <Link 
-                            :href="route('icaoAnnex')"
+                            :href="route('documentRepository')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick"
                         >
-                            ICAO Annex 13
+                            Document Repository
                         </Link>
                         <Link 
                             :href="route('nationalRegulation')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick"
                         >
-                            National Regulation
+                            Regulation & Annexes
                         </Link>
                         <Link 
                             :href="route('investigationPage')"
@@ -391,11 +391,11 @@ const handleDropdownClick = () => {
                             </svg>
                         </button>
                         <div v-if="openMobileDropdown === 'accidents'" class="pl-6 space-y-1">
-                            <Link :href="route('icaoAnnex')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
-                                ICAO Annex 13
+                            <Link :href="route('documentRepository')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
+                                Document Repository
                             </Link>
                             <Link :href="route('nationalRegulation')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
-                                National Regulation
+                                Regulation & Annexes
                             </Link>
                             <Link :href="route('investigationPage')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Investigation Process

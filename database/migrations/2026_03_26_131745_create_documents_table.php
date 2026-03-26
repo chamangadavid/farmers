@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('national_regulations', function (Blueprint $table) {
+        Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('document_type');
-            $table->string('regulation_file'); // PDF path
+            $table->foreignId('folder_id')
+                ->constrained('document_folders')
+                ->onDelete('cascade');
+            $table->string('name');
+            $table->string('file_path');
+            $table->string('file_type')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('national_regulations');
+        Schema::dropIfExists('documents');
     }
 };

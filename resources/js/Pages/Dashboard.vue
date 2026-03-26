@@ -248,9 +248,9 @@ const quickStats = [
 
                        <Card 
                         title="Document Repository" 
-                        v-if="can('manage all icao annex')"
+                        v-if="can('manage document repository')"
                         subTitle="Create, edit & delete icao annex" 
-                        routeName="icao.index">
+                        routeName="document.index">
                         <template #icon>
                           <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
