@@ -117,7 +117,7 @@ Route::get('/press-releases', function () {
     return Inertia::render('Site/PressReleases');
 })->name('pressReleasesPage');
 
-Route::get('/announcements', function () {
+Route::get('/announcement', function () {
     return Inertia::render('Site/Announcements');
 })->name('announcementsPage');
 
@@ -171,18 +171,24 @@ Route::middleware('auth')->group(function () {
     Route::put('/faqs/{faq}', [FaqController::class, 'update']);  
     Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']); 
 
-    
     //press releases routes
     Route::get('/all-press-releases', [PressController::class, 'GetPressReleases'])->name('press.index');
     Route::get('/presses', [PressController::class, 'index']);
     Route::post('/presses', [PressController::class, 'store']);
     Route::get('/presses/{id}', [PressController::class, 'show']);
-    Route::post('/presses/{id}', [PressController::class, 'update']); // using POST for file upload
+    Route::post('/presses/{id}', [PressController::class, 'update']); 
     Route::delete('/presses/{id}', [PressController::class, 'destroy']);
-    
-Route::get('/presses/download/{id}', [PressController::class, 'download']);
+    Route::get('/presses/download/{id}', [PressController::class, 'download']);
 
 
+
+   //announcements routes
+    Route::get('/all-announcements', [AnnouncementsController::class, 'GetAnnouncements'])->name('announcement.index');
+    Route::get('/announcements', [AnnouncementsController::class, 'index']);
+    Route::get('/public/announcements', [AnnouncementsController::class, 'publicAnnouncementsIndex']);
+    Route::post('/announcements', [AnnouncementsController::class, 'store']);
+    Route::put('/announcements/{id}', [AnnouncementsController::class, 'update']);
+    Route::delete('/announcements/{id}', [AnnouncementsController::class, 'destroy']);
 
 
 
@@ -218,9 +224,7 @@ Route::get('/presses/download/{id}', [PressController::class, 'download']);
 
 
 
-    //announcements routes
-    Route::get('/all-announcements', [AnnouncementsController::class, 'GetAnnouncements'])->name('announcement.index');
-    
+ 
     
 
 
