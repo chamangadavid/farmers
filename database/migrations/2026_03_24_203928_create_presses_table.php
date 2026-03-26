@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('presses', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->date('date');
+            $table->longText('summary'); // Quill content
+            $table->string('pdf'); // file path
             $table->timestamps();
         });
     }

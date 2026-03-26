@@ -130,8 +130,10 @@ Route::get('/management-team/{id}', function ($id) {
     ]);
 });
 
+//public
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/faqs/all', [FaqController::class, 'getfrontIndex']); // For your FAQ page
+Route::get('/public/presses', [PressController::class, 'publicIndex']);
 
 
 Route::middleware('auth')->group(function () {
@@ -169,6 +171,17 @@ Route::middleware('auth')->group(function () {
     Route::put('/faqs/{faq}', [FaqController::class, 'update']);  
     Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']); 
 
+    
+    //press releases routes
+    Route::get('/all-press-releases', [PressController::class, 'GetPressReleases'])->name('press.index');
+    Route::get('/presses', [PressController::class, 'index']);
+    Route::post('/presses', [PressController::class, 'store']);
+    Route::get('/presses/{id}', [PressController::class, 'show']);
+    Route::post('/presses/{id}', [PressController::class, 'update']); // using POST for file upload
+    Route::delete('/presses/{id}', [PressController::class, 'destroy']);
+    
+Route::get('/presses/download/{id}', [PressController::class, 'download']);
+
 
 
 
@@ -202,9 +215,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/latest-news', [NewsController::class, 'GetNews'])->name('news.index');
     
 
-    //press releases routes
-    Route::get('/all-press-releases', [PressController::class, 'GetPressReleases'])->name('press.index');
-    
+
+
 
     //announcements routes
     Route::get('/all-announcements', [AnnouncementsController::class, 'GetAnnouncements'])->name('announcement.index');

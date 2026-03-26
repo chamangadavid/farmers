@@ -82,7 +82,7 @@ class FaqController extends Controller
         return response()->json(['message' => 'FAQ deleted successfully']);
     }
 
-
+    // Frontend FAQ retrieval with optional category and search filters
     public function getfrontIndex(Request $request)
     {
         // Optional category filter
