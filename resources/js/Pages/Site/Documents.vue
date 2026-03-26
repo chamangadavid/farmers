@@ -30,7 +30,7 @@ const isSearching = ref(false);
 const fetchFolders = async () => {
     loading.value = true;
     try {
-        const res = await axios.get('/documents/folders');
+        const res = await axios.get('/public-documents/folders');
         folders.value = res.data;
     } catch (error) {
         console.error(error);

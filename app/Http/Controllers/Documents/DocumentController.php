@@ -11,6 +11,7 @@ use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
+    
     public function GetIDocuments()
     {
         return Inertia::render('MyAAIB/Documents/Index');
@@ -34,82 +35,39 @@ class DocumentController extends Controller
         return response()->json($folder);
     }
 
-    //Upload File
-    // public function upload(Request $request, $folderId)
-    // {
-    //     $request->validate([
-    //         'file' => 'required|file|max:20480'
-    //     ]);
-
-    //     $file = $request->file('file');
-
-    //     $path = $file->store('documents', 'public');
-
-    //     $document = Document::create([
-    //         'folder_id' => $folderId,
-    //         'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
-    //         'file_path' => $path,
-    //         'file_type' => $file->getClientOriginalExtension()
-    //     ]);
-
-    //     return response()->json($document);
-    // }
-
-
     public function upload(Request $request)
-{
-    try {
-        $request->validate([
-            'folder_id' => 'required|exists:document_folders,id',
-            'file' => 'required|file|max:10240'
-        ]);
+    {
+        try {
+            $request->validate([
+                'folder_id' => 'required|exists:document_folders,id',
+                'file' => 'required|file|max:10240'
+            ]);
 
-        $file = $request->file('file');
+            $file = $request->file('file');
 
-        if (!$file) {
-            return response()->json(['message' => 'No file received'], 422);
+            if (!$file) {
+                return response()->json(['message' => 'No file received'], 422);
+            }
+
+            $path = $file->store('documents', 'public');
+
+            $doc = Document::create([
+                'folder_id' => $request->folder_id,
+                'name' => $file->getClientOriginalName(),
+                'file_path' => $path,
+                'file_type' => $file->getMimeType(),
+                'extension' => $file->getClientOriginalExtension(),
+            ]);
+
+            return response()->json($doc);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        $path = $file->store('documents', 'public');
-
-        $doc = Document::create([
-            'folder_id' => $request->folder_id,
-            'name' => $file->getClientOriginalName(),
-            'file_path' => $path,
-            'file_type' => $file->getMimeType(),
-            'extension' => $file->getClientOriginalExtension(),
-        ]);
-
-        return response()->json($doc);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => $e->getMessage()
-        ], 500);
     }
-}
 
-// public function upload(Request $request)
-// {
-//     $request->validate([
-//         'folder_id' => 'required',
-//         'file' => 'required|file'
-//     ]);
-
-//     $file = $request->file('file');
-//     $path = $file->store('documents', 'public');
-
-//     $doc = Document::create([
-//         'folder_id' => $request->folder_id,
-//         'name' => $file->getClientOriginalName(),
-//         'file_path' => $path,
-//         'file_type' => $file->getClientMimeType(),
-//         'extension' => $file->getClientOriginalExtension(),
-//     ]);
-
-//     return response()->json($doc);
-// }
-    //Rename File
     public function rename(Request $request, $id)
     {
         $request->validate([
@@ -122,24 +80,23 @@ class DocumentController extends Controller
         return response()->json($doc);
     }
 
-    //Delete file
     public function destroy($id)
-{
-    $doc = Document::findOrFail($id);
+    {
+        $doc = Document::findOrFail($id);
 
-    Storage::disk('public')->delete($doc->file_path);
+        Storage::disk('public')->delete($doc->file_path);
 
-    $doc->delete();
+        $doc->delete();
 
-    return response()->json(['message' => 'Deleted']);
-}
+        return response()->json(['message' => 'Deleted']);
+    }
 
-public function PublicIndex()
-{
-    return response()->json(
-        DocumentFolder::with('documents')->get()
-    );
-}
+    public function PublicIndex()
+    {
+        return response()->json(
+            DocumentFolder::with('documents')->get()
+        );
+    }
 
 
     

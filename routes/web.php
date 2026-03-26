@@ -145,7 +145,7 @@ Route::get('/public/announcements', [AnnouncementsController::class, 'publicAnno
 Route::get('/public/news', [NewsController::class, 'publicNewsIndex']);
 Route::get('/public/regulations', [NationalRegulationsController::class, 'publicIndex']);
 Route::get('/all-news/{id}', [NewsController::class, 'show']);
-Route::get('/publick-documents/folders', [DocumentController::class, 'Publicindex']);
+Route::get('/public-documents/folders', [DocumentController::class, 'Publicindex']);
 
 
 
