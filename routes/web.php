@@ -109,7 +109,7 @@ Route::get('/accident-reports', function () {
     return Inertia::render('Site/AccidentReports');
 })->name('accidentPage');
 
-Route::get('/news', function () {
+Route::get('/all-news', function () {
     return Inertia::render('Site/News');
 })->name('newsPage');
 
@@ -134,6 +134,9 @@ Route::get('/management-team/{id}', function ($id) {
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/faqs/all', [FaqController::class, 'getfrontIndex']); // For your FAQ page
 Route::get('/public/presses', [PressController::class, 'publicIndex']);
+Route::get('/public/announcements', [AnnouncementsController::class, 'publicAnnouncementsIndex']);
+Route::get('/public/news', [NewsController::class, 'publicNewsIndex']);
+Route::get('/all-news/{id}', [NewsController::class, 'show']);
 
 
 Route::middleware('auth')->group(function () {
@@ -180,15 +183,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/presses/{id}', [PressController::class, 'destroy']);
     Route::get('/presses/download/{id}', [PressController::class, 'download']);
 
-
-
    //announcements routes
     Route::get('/all-announcements', [AnnouncementsController::class, 'GetAnnouncements'])->name('announcement.index');
     Route::get('/announcements', [AnnouncementsController::class, 'index']);
-    Route::get('/public/announcements', [AnnouncementsController::class, 'publicAnnouncementsIndex']);
     Route::post('/announcements', [AnnouncementsController::class, 'store']);
     Route::put('/announcements/{id}', [AnnouncementsController::class, 'update']);
     Route::delete('/announcements/{id}', [AnnouncementsController::class, 'destroy']);
+
+
+
+        //News routes
+    Route::get('/latest-news', [NewsController::class, 'GetNews'])->name('news.index');
+    Route::get('/news', [NewsController::class, 'index']);
+    Route::post('/news', [NewsController::class, 'store']);
+    Route::put('/news/{id}', [NewsController::class, 'update']);
+    Route::delete('/news/{id}', [NewsController::class, 'destroy']);
+
+
+
 
 
 
@@ -216,11 +228,6 @@ Route::middleware('auth')->group(function () {
    //incident routes
     Route::get('/all-investigations', [InvestigationsController::class, 'GetInvestigations'])->name('investigations.index');
     
-
-    //News routes
-    Route::get('/latest-news', [NewsController::class, 'GetNews'])->name('news.index');
-    
-
 
 
 

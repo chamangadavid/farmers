@@ -1,46 +1,76 @@
 <!-- Resources/js/Components/NewsSection.vue -->
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import axios from 'axios';
+import { router } from '@inertiajs/vue3';
 
-const news = ref([
-    {
-        id: 1,
-        title: 'AAIB Training Program',
-        date: 'Mar 18, 2024',
-        category: 'Training',
-        summary: 'New program to enhance investigation capabilities using modern technologies and methodologies.',
-        image: '/assets/news/training-program.jpg',
-        featured: true,
-        readTime: '5 min'
-    },
-    {
-        id: 2,
-        title: 'Highlights AAIB Contributions',
-        date: 'Mar 10, 2024',
-        category: 'Event',
-        summary: 'AAIB presented key findings on emerging aviation safety challenges at the global conference.',
-        image: '/assets/news/conference.jpg',
-        readTime: '4 min'
-    },
-    {
-        id: 3,
-        title: 'Annual Safety Reports',
-        date: 'Feb 28, 2024',
-        category: 'Report',
-        summary: 'The 2023 annual report reveals significant improvements in safety indicators.',
-        image: '/assets/news/safety-report.jpg',
-        readTime: '6 min'
+const news = ref([]);
+const loading = ref(false);
+
+const fetchNews = async () => {
+    try {
+        loading.value = true;
+
+        const res = await axios.get('/public/news');
+
+        news.value = res.data.data.map(item => ({
+            ...item,
+            image: item.image
+                ? item.image.startsWith('http')
+                    ? item.image
+                    : `/storage/${item.image}`
+                : '/assets/placeholder-news.jpg'
+        }));
+
+    } catch (err) {
+        console.error(err);
+    } finally {
+        loading.value = false;
     }
-]);
+};
 
+// =======================
+// CATEGORY COLORS
+// =======================
 const getCategoryColor = (category) => {
     const colors = {
         Training: 'bg-blue-100 text-blue-700',
         Event: 'bg-purple-100 text-purple-700',
-        Report: 'bg-green-100 text-green-700'
+        Report: 'bg-green-100 text-green-700',
+        Guidelines: 'bg-orange-100 text-orange-700',
+        Partnership: 'bg-indigo-100 text-indigo-700',
+        Announcement: 'bg-red-100 text-red-700',
+        Accident: 'bg-yellow-100 text-yellow-700',
+        Incidents: 'bg-gray-200 text-gray-800'
     };
+
     return colors[category] || 'bg-gray-100 text-gray-700';
 };
+
+onMounted(fetchNews);
+
+const goToDetails = (id) => {
+    router.visit(`/all-news/${id}`);
+};
+
+
+const viewAllDetails = () => {
+    router.visit(`/all-news`);
+};
+
+const limitedNews = computed(() => {
+    return news.value.slice(0, 3);
+});
+
+
+const trimText = (text, length) => {
+    if (!text) return '';
+    return text.length > length
+        ? text.substring(0, length) + '...'
+        : text;
+};
+
+
 </script>
 
 <template>
@@ -48,27 +78,25 @@ const getCategoryColor = (category) => {
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Latest News</h2>
-                <p class="text-gray-600 mt-1">Stay updated with our latest activities and announcements</p>
             </div>
-            <a href="/news" class="text-teal-600 hover:text-teal-700 font-medium inline-flex items-center text-xs gap-1">
-                View All
+            <button @click="viewAllDetails()"
+                class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium mt-3 group-hover:gap-2 transition-all">
+                All
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
-            </a>
+            </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="item in news" :key="item.id" class="group cursor-pointer">
+            <div v-for="item in limitedNews" :key="item.id" class="group cursor-pointer">
                 <div class="relative h-48 overflow-hidden rounded-xl bg-gray-100">
-                    <img 
-                        :src="item.image" 
-                        :alt="item.title"
+                    <img :src="item.image" :alt="item.title"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        @error="(e) => e.target.src = '/assets/placeholder-news.jpg'"
-                    />
+                        @error="(e) => e.target.src = '/assets/placeholder-news.jpg'" />
                     <div class="absolute top-3 left-3">
-                        <span :class="['px-2 py-1 rounded-full text-xs font-semibold', getCategoryColor(item.category)]">
+                        <span
+                            :class="['px-2 py-1 rounded-full text-xs font-semibold', getCategoryColor(item.category)]">
                             {{ item.category }}
                         </span>
                     </div>
@@ -77,18 +105,22 @@ const getCategoryColor = (category) => {
                     <div class="flex items-center gap-3 text-sm text-gray-500 mb-2">
                         <span>{{ item.date }}</span>
                         <span>•</span>
-                        <span>{{ item.readTime }}</span>
+                        <span>{{ item.read_time }}</span>
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 group-hover:text-teal-600 transition-colors mb-2">
-                        {{ item.title }}
+                        {{ trimText(item.title, 14) }}
                     </h3>
-                    <p class="text-gray-600 text-sm line-clamp-2">{{ item.summary }}</p>
-                    <a href="#" class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium mt-3 group-hover:gap-2 transition-all">
+                    <p class="text-gray-600 text-sm line-clamp-2">
+                        {{ trimText(item.summary, 15) }}
+                    </p>
+                    <button @click="goToDetails(item.id)"
+                        class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium mt-3 group-hover:gap-2 transition-all">
                         Read more
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
                         </svg>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>

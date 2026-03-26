@@ -14,24 +14,6 @@ defineProps({
 const team = ref([]);
 const loading = ref(true);
 
-// const fetchTeam = async () => {
-//     try {
-//         loading.value = true;
-//         const response = await axios.get('/members');
-//         team.value = response.data.members.map(member => ({
-//             id: member.id, 
-//             name: member.fullname,
-//             title: member.position,
-//             bio: member.content,
-//             image: member.image // optional: for profile pics
-//         }));
-//     } catch (error) {
-//         console.error('Failed to fetch team members', error);
-//     } finally {
-//         loading.value = false;
-//     }
-// };
-
 const fetchTeam = async () => {
     try {
         loading.value = true;
@@ -44,9 +26,6 @@ const fetchTeam = async () => {
             bio: member.content,
             image: member.image
         }));
-
-        // ✅ ADD THIS HERE
-        console.log('TEAM DATA:', team.value);
 
     } catch (error) {
         console.error('Failed to fetch team members', error);
@@ -98,14 +77,8 @@ const goToDetails = (member) => {
         <div class="space-y-8">
             <div v-if="loading" class="text-center py-8 text-white/80">Loading team members...</div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- <div v-for="member in team" :key="member.name"
-                    class="bg-gray-50 rounded-xl p-6 border border-gray-200 text-center"> -->
-                    <div 
-    v-for="member in team" 
-    :key="member.id"
-    @click="goToDetails(member)"
-    class="bg-gray-50 rounded-xl p-6 border border-gray-200 text-center cursor-pointer hover:shadow-lg transition"
->
+                   <div v-for="member in team" :key="member.id" @click="goToDetails(member)"
+                    class="bg-gray-50 rounded-xl p-6 border border-gray-200 text-center cursor-pointer hover:shadow-lg transition">
                     <div
                         class="w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden border">
                         <img v-if="member.image" :src="`/storage/${member.image}`" alt="Profile"

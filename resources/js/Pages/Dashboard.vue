@@ -237,7 +237,7 @@ const quickStats = [
                       </Card>
 
                        <Card 
-                        title="National Regulations Management" 
+                        title="Regulations Management" 
                         v-if="can('manage all national regulations')"
                         subTitle="Create, edit & delete national regulations" 
                         routeName="regulations.index">
@@ -247,7 +247,7 @@ const quickStats = [
                       </Card>
 
                        <Card 
-                        title="ICAO Annex Management" 
+                        title="Document Repository" 
                         v-if="can('manage all icao annex')"
                         subTitle="Create, edit & delete icao annex" 
                         routeName="icao.index">
