@@ -17,7 +17,7 @@ const loading = ref(true);
 const fetchTeam = async () => {
     try {
         loading.value = true;
-        const response = await axios.get('/members');
+        const response = await axios.get('/public-members');
 
         team.value = response.data.members.map(member => ({
             id: member.id, 

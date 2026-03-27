@@ -151,7 +151,7 @@ Route::post('/report-accident', [AccidentReportController::class, 'store']);
 Route::get('/public-accident-reports', [AccidentReportController::class, 'publicReports']);
 Route::get('/search-investigations', [AccidentReportController::class, 'search'])->name('searchInvestigations');
 Route::get('/jobs/active', [JobController::class, 'getActiveJobs']);
-
+Route::get('/public-members', [TeamController::class, 'publicMember']);
 
 
 Route::middleware('auth')->group(function () {

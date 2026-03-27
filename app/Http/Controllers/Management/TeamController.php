@@ -22,6 +22,13 @@ class TeamController extends Controller
         return response()->json(['members' => $members]);
     }
 
+    public function publicMember()
+    {
+        $members = Team::orderBy('created_at', 'desc')->get();
+        return response()->json(['members' => $members]);
+    }
+
+
     public function store(Request $request)
     {
         $request->validate([
