@@ -1,283 +1,601 @@
 <script setup>
-import { ref, onMounted, h, computed } from 'vue';
+import { ref, h, onMounted, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Tabs, Table, Button, Modal, Input, Select, Tag, message, Popconfirm } from 'ant-design-vue';
+import { Button, Input, Popconfirm, message, Table, Tooltip, Tag, Space, Card } from 'ant-design-vue';
+import { EyeOutlined, EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, ClearOutlined } from '@ant-design/icons-vue';
+import dayjs from 'dayjs';
 import axios from 'axios';
+import { debounce } from 'lodash';
 
-// State management
-const activeTab = ref('roles');
+import CreateJob from './CreateJob.vue';
+import EditJob from './EditJob.vue';
+import ViewJob from './ViewJob.vue';
 
-// Roles state
-const roles = ref([]);
-const selectedRoleIds = ref([]);
-const roleForm = ref({
-    id: null,
-    name: '',
-    permissions: []
-});
-const showRoleModal = ref(false);
-const isEditingRole = ref(false);
+const jobs = ref([]);
+const selectedJob = ref(null);
 
-// Permissions state
-const permissions = ref([]);
-const permissionForm = ref({
-    name: '',
-    guard_name: 'web'
-});
-const showPermissionModal = ref(false);
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const showViewModal = ref(false);
 
-// Users state
-const users = ref([]);
-const userForm = ref({
-    userId: null,
-    userName: '',
-    roles: []
-});
-const showUserRoleModal = ref(false);
+const searchTerm = ref('');
+const loading = ref(false);
 
-// Color mapping for guard names
-const guardColors = {
-    web: 'blue',
-    api: 'green',
-    admin: 'purple',
-    default: 'gray'
+// Status color mapping
+const getStatusColor = (status) => {
+    const colors = {
+        'Open': 'green',
+        'Closed': 'red',
+        'Pending': 'orange',
+        'Draft': 'default',
+        'Published': 'blue',
+        'Filled': 'purple'
+    };
+    return colors[status] || 'default';
 };
 
-// Row selection configuration
-const rowSelection = computed(() => {
-    return {
-        selectedRowKeys: selectedRoleIds.value,
-        onChange: (selectedRowKeys) => {
-            selectedRoleIds.value = selectedRowKeys;
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record.name === 'Super Admin',
-            name: record.name,
-        }),
-    };
-});
-
-// Fetch data
-const fetchData = async () => {
+// Fetch Jobs
+const fetchJobs = async () => {
+    loading.value = true;
     try {
-        const [rolesRes, permissionsRes, usersRes] = await Promise.all([
-            axios.get('/roles'),
-            axios.get('/permissions'),
-            axios.get('/users')
-        ]);
-
-        roles.value = rolesRes.data.roles || [];
-        permissions.value = permissionsRes.data.permissions || [];
-        users.value = usersRes.data.users || [];
-        selectedRoleIds.value = []; // Clear selection on refresh
-    } catch (error) {
-        message.error('Failed to fetch data');
-        console.error(error);
+        const res = await axios.get('/jobs', { params: { search: searchTerm.value } });
+        jobs.value = res.data.jobs;
+    } catch (err) {
+        message.error('Failed to fetch jobs');
+        console.error(err);
+    } finally {
+        loading.value = false;
     }
 };
 
-onMounted(fetchData);
+// Search with debounce
+const handleSearch = debounce(() => {
+    fetchJobs();
+}, 500);
 
-const openEditRoleModal = (role) => {
-    roleForm.value = {
-        id: role.id,
-        name: role.name,
-        permissions: role.permissions.map(p => p.name)
-    };
-    isEditingRole.value = true;
-    showRoleModal.value = true;
+// Clear search
+const clearSearch = () => {
+    searchTerm.value = '';
+    fetchJobs();
 };
 
+// Delete job
+const deleteJob = async (id) => {
+    try {
+        await axios.delete(`/jobs/${id}`);
+        message.success('Job deleted successfully');
+        fetchJobs();
+    } catch (err) {
+        message.error('Failed to delete job');
+    }
+};
 
+// Helper to truncate text
+const truncate = (text, length = 30) => {
+    if (!text) return '';
+    return text.trim().length > length 
+        ? text.trim().substring(0, length) + '...' 
+        : text.trim();
+};
 
+// Format deadline
+const formatDeadline = (deadline) => {
+    if (!deadline) return 'Not specified';
+    const date = dayjs(deadline);
+    const today = dayjs();
+    const daysUntil = date.diff(today, 'day');
+    
+    if (daysUntil < 0) return `Expired (${date.format('YYYY-MM-DD')})`;
+    if (daysUntil === 0) return `Today (${date.format('YYYY-MM-DD')})`;
+    if (daysUntil <= 7) return `In ${daysUntil} day(s) - ${date.format('YYYY-MM-DD')}`;
+    return date.format('YYYY-MM-DD');
+};
+
+// Table Columns with professional styling
+const columns = [
+    { 
+        title: 'Job Title', 
+        dataIndex: 'title',
+        width: '25%',
+        customRender: ({ record }) => h('div', { class: 'font-medium text-gray-900' }, truncate(record.title, 35))
+    },
+    { 
+        title: 'Type', 
+        dataIndex: 'type',
+        width: '12%',
+        customRender: ({ record }) => record.type 
+            ? h(Tag, { color: 'blue', class: 'px-2 py-1' }, record.type)
+            : h('span', { class: 'text-gray-400' }, '—')
+    },
+    { 
+        title: 'Location', 
+        dataIndex: 'location',
+        width: '15%',
+        customRender: ({ record }) => record.location 
+            ? h('div', { class: 'flex items-center gap-1' }, [
+                h('span', '📍'),
+                h('span', truncate(record.location, 20))
+              ])
+            : h('span', { class: 'text-gray-400' }, '—')
+    },
+    {
+        title: 'Deadline',
+        dataIndex: 'deadline',
+        width: '18%',
+        customRender: ({ record }) => {
+            if (!record.deadline) return h('span', { class: 'text-gray-400' }, 'Not specified');
+            const isExpired = dayjs(record.deadline).isBefore(dayjs());
+            return h('div', { class: 'flex items-center gap-1' }, [
+                h('span', '⏰'),
+                h('span', { 
+                    class: isExpired ? 'text-red-600 font-medium' : 'text-gray-700' 
+                }, formatDeadline(record.deadline))
+            ]);
+        }
+    },
+    { 
+        title: 'Status', 
+        dataIndex: 'status',
+        width: '12%',
+        customRender: ({ record }) => record.status 
+            ? h(Tag, { 
+                color: getStatusColor(record.status),
+                class: 'px-2 py-1 font-medium'
+              }, record.status.toUpperCase())
+            : h(Tag, { color: 'default' }, 'UNKNOWN')
+    },
+    {
+        title: 'Actions',
+        width: '18%',
+        align: 'center',
+        customRender: ({ record }) => h(Space, { size: 'small' }, [
+            h(Tooltip, { title: 'View Job Details' }, {
+                default: () => h(Button, { 
+                    size: 'small', 
+                    type: 'link',
+                    icon: h(EyeOutlined),
+                    onClick: () => { 
+                        selectedJob.value = record; 
+                        showViewModal.value = true; 
+                    },
+                    class: 'text-blue-600 hover:text-blue-800'
+                })
+            }),
+            h(Tooltip, { title: 'Edit Job' }, {
+                default: () => h(Button, { 
+                    size: 'small', 
+                    type: 'link',
+                    icon: h(EditOutlined),
+                    onClick: () => { 
+                        selectedJob.value = record; 
+                        showEditModal.value = true; 
+                    },
+                    class: 'text-amber-600 hover:text-amber-800'
+                })
+            }),
+            h(Tooltip, { title: 'Delete Job' }, {
+                default: () => h(Popconfirm, { 
+                    title: 'Delete Job',
+                    description: 'Are you sure you want to delete this job? This action cannot be undone.',
+                    okText: 'Yes, Delete',
+                    cancelText: 'Cancel',
+                    okType: 'danger',
+                    onConfirm: () => deleteJob(record.id) 
+                }, {
+                    default: () => h(Button, { 
+                        danger: true, 
+                        size: 'small', 
+                        type: 'link',
+                        icon: h(DeleteOutlined),
+                        class: 'text-red-600 hover:text-red-800'
+                    })
+                })
+            })
+        ])
+    }
+];
+
+onMounted(() => {
+    fetchJobs();
+});
 </script>
 
 <template>
+  <Head title="Job Vacancies" />
 
-    <Head title="Roles & Permissions" />
-
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Roles & Permissions
-            </h2>
-        </template>
-
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-
-                    <div class="p-6">
-                        <a-tabs v-model:activeKey="activeTab">
-                            <!-- Roles Tab -->
-                            <a-tab-pane key="roles" tab="Job Management">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-lg font-medium">Manage Jobs</h3>
-                                    <div class="flex gap-2">
-                                        <Button type="primary">
-                                            Add New Member
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <a-table :dataSource="roles" :columns="[
-                                    {
-                                        title: 'fullname',
-                                        dataIndex: 'name',
-                                        sorter: (a, b) => a.name.localeCompare(b.name),
-                                        width: '20%'
-                                    },
-                                    {
-                                        title: 'Position',
-                                        dataIndex: 'permissions',
-                                        customRender: ({ text }) => {
-                                            return h('div', { class: 'flex flex-wrap gap-1' },
-                                                text.map(p => h(Tag, {
-                                                    color: guardColors[p.guard_name] || guardColors.default
-                                                }, p.name))
-                                            );
-                                        }
-                                    },
-                                    {
-                                        title: 'Actions',
-                                        customRender: ({ record }) => {
-                                            return h('div', { class: 'flex gap-2' }, [
-                                                h(Button, {
-                                                    type: 'primary',
-                                                    size: 'small',
-                                                    onClick: () => openEditRoleModal(record)
-                                                }, 'Edit'),
-
-                                                record.name !== 'Super Admin' && h(Popconfirm, {
-                                                    title: 'Are you sure to delete this role?',
-                                                    onConfirm: () => deleteRole(record.id),
-                                                    okText: 'Yes',
-                                                    cancelText: 'No'
-                                                }, {
-                                                    default: () => h(Button, {
-                                                        type: 'primary',
-                                                        danger: true,
-                                                        size: 'small'
-                                                    }, 'Delete')
-                                                })
-                                            ]);
-                                        },
-                                        width: '150px',
-                                        align: 'center'
-                                    }
-                                ]" :rowSelection="rowSelection" rowKey="id"
-                                    :pagination="{ pageSize: 10, showSizeChanger: true }" size="small" />
-                            </a-tab-pane>
-                        </a-tabs>
-                    </div>
-
-                    <!-- Create/Edit Role Modal -->
-                    <a-modal v-model:open="showRoleModal" :title="isEditingRole ? 'Edit Role' : 'Create New Role'"
-                        @ok="handleAddRole" :ok-text="isEditingRole ? 'Update' : 'Create'" cancel-text="Cancel"
-                        :maskClosable="false">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Role Name</label>
-                                <a-input v-model:value="roleForm.name" placeholder="Enter role name" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Permissions</label>
-                                <a-select v-model:value="roleForm.permissions" mode="multiple"
-                                    placeholder="Select permissions" style="width: 100%" :options="permissions.map(p => ({
-                                        label: `${p.name} (${p.guard_name})`,
-                                        value: p.name
-                                    }))" />
-                            </div>
-                        </div>
-                    </a-modal>
-
-                    <!-- Create Permission Modal -->
-                    <a-modal v-model:open="showPermissionModal" title="Create New Permission" @ok="handleAddPermission"
-                        ok-text="Create" cancel-text="Cancel" :maskClosable="false">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Permission Name</label>
-                                <a-input v-model:value="permissionForm.name" placeholder="Enter permission name" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Guard Name</label>
-                                <a-select v-model:value="permissionForm.guard_name" style="width: 100%" :options="[
-                                    { label: 'Web', value: 'web' },
-                                    { label: 'API', value: 'api' },
-                                    { label: 'Admin', value: 'admin' }
-                                ]" />
-                            </div>
-                        </div>
-                    </a-modal>
-
-                    <!-- Assign Roles Modal -->
-                    <a-modal v-model:open="showUserRoleModal" :title="`Assign Roles to ${userForm.userName}`"
-                        @ok="handleAssignRoles" ok-text="Assign" cancel-text="Cancel" :maskClosable="false">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Select Roles</label>
-                            <a-select v-model:value="userForm.roles" mode="multiple" placeholder="Select roles"
-                                style="width: 100%" :options="roles.map(r => ({
-                                    label: r.name,
-                                    value: r.name
-                                }))" />
-                        </div>
-                    </a-modal>
-
-                </div>
-
-            </div>
+  <AuthenticatedLayout>
+    <template #header>
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">
+          Job Vacancies
+        </h2>
+        <div class="text-sm text-gray-500">
+          Manage and monitor job postings
         </div>
+      </div>
+    </template>
 
+    <div class="py-12">
+      <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+        <Card class="shadow-sm hover:shadow-md transition-shadow duration-300">
+          <!-- Header with Title and Add Button -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-200">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Job Management</h3>
+              <p class="text-sm text-gray-500 mt-1">Create, edit, and manage job vacancies</p>
+            </div>
+            <Button 
+              type="primary" 
+              @click="showCreateModal = true"
+              class="bg-teal-600 hover:bg-teal-700 border-teal-600 shadow-sm"
+            >
+              <PlusOutlined class="mr-2" />
+              Add New Job
+            </Button>
+          </div>
 
+          <!-- Search Bar - Aligned to Right -->
+          <div class="flex justify-end items-center mb-6">
+            <div class="w-full sm:w-auto">
+              <Input 
+                v-model:value="searchTerm" 
+                placeholder="Search by title, type, or location..." 
+                :prefix="h(SearchOutlined, { class: 'text-gray-400' })"
+                :suffix="searchTerm ? h(ClearOutlined, { class: 'text-gray-400 cursor-pointer hover:text-gray-600', onClick: clearSearch }) : null"
+                style="width: 320px" 
+                allowClear
+                @input="handleSearch"
+                class="search-input"
+              />
+            </div>
+          </div>
 
-    </AuthenticatedLayout>
+          <!-- Jobs Table -->
+          <Table 
+            :dataSource="jobs" 
+            :loading="loading" 
+            :columns="columns" 
+            rowKey="id"
+            :pagination="{ 
+              pageSize: 10, 
+              showSizeChanger: true, 
+              showTotal: (total) => `Total ${total} job${total !== 1 ? 's' : ''}`,
+              pageSizeOptions: ['10', '20', '50'],
+              showQuickJumper: true
+            }"
+            :scroll="{ x: 768 }"
+            class="jobs-table"
+          >
+            <template #emptyText>
+              <div class="py-16 text-center">
+                <div class="text-6xl mb-4">📄</div>
+                <p class="text-gray-500 text-lg mb-2 font-medium">
+                  {{ searchTerm ? 'No matching jobs found' : 'No jobs available' }}
+                </p>
+                <p class="text-gray-400 text-sm mb-4">
+                  {{ searchTerm 
+                    ? `No results for "${searchTerm}". Try adjusting your search.` 
+                    : 'Click "Add New Job" to create your first job posting.'
+                  }}
+                </p>
+                <div v-if="searchTerm" class="space-x-3">
+                  <Button type="primary" @click="clearSearch" class="bg-teal-600">
+                    Clear Search
+                  </Button>
+                  <Button @click="showCreateModal = true" class="border-teal-600 text-teal-600">
+                    Create New Job
+                  </Button>
+                </div>
+                <div v-else>
+                  <Button type="primary" @click="showCreateModal = true" class="bg-teal-600">
+                    <PlusOutlined class="mr-2" />
+                    Create Your First Job
+                  </Button>
+                </div>
+              </div>
+            </template>
+          </Table>
+
+          <!-- Quick Stats Footer -->
+          <div v-if="jobs.length > 0" class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center text-sm text-gray-500">
+            <div>
+              <span class="font-medium text-gray-700">{{ jobs.length }}</span> job{{ jobs.length !== 1 ? 's' : '' }} total
+            </div>
+            <div class="flex gap-4">
+              <div>
+                <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                Open: {{ jobs.filter(j => j.status === 'Open').length }}
+              </div>
+              <div>
+                <span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-1"></span>
+                Closed: {{ jobs.filter(j => j.status === 'Closed').length }}
+              </div>
+              <div>
+                <span class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+                Published: {{ jobs.filter(j => j.status === 'Published').length }}
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <CreateJob :open="showCreateModal" @update:open="showCreateModal = $event" @created="fetchJobs" />
+    <EditJob :open="showEditModal" :job="selectedJob" @update:open="showEditModal = $event" @updated="fetchJobs" />
+    <ViewJob :open="showViewModal" :job="selectedJob" @update:open="showViewModal = $event" />
+  </AuthenticatedLayout>
 </template>
 
 <style scoped>
-/* Custom table styling */
-:deep(.ant-table) {
-
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* Professional Table Styling */
+.jobs-table :deep(.ant-table) {
+  font-family: inherit;
 }
 
-:deep(.ant-table-thead > tr > th) {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #334155;
+.jobs-table :deep(.ant-table-thead > tr > th) {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #1e293b;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 12px 16px;
 }
 
-:deep(.ant-table-tbody > tr:hover > td) {
-    background-color: #f1f5f9 !important;
+.jobs-table :deep(.ant-table-tbody > tr > td) {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-/* Tab styling */
-:deep(.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab) {
-    background: #f8fafc;
-    border-color: #e2e8f0;
-    font-weight: 500;
+.jobs-table :deep(.ant-table-tbody > tr:hover > td) {
+  background: #fafbff;
 }
 
-:deep(.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active) {
-    background: #ffffff;
-    border-bottom-color: #ffffff;
-    color: #a515dd;
+/* Search Input Styling */
+.search-input :deep(.ant-input) {
+  border-radius: 8px;
+  border-color: #e2e8f0;
+  transition: all 0.3s ease;
 }
 
-/* Modal styling */
-:deep(.ant-modal-header) {
-    border-bottom: 1px solid #e2e8f0;
+.search-input :deep(.ant-input:focus) {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.1);
 }
 
-:deep(.ant-modal-footer) {
-    border-top: 1px solid #e2e8f0;
-    padding: 16px 24px;
+.search-input :deep(.ant-input:hover) {
+  border-color: #14b8a6;
 }
 
-/* Action buttons styling */
-:deep(.ant-btn-sm) {
+/* Button Styling */
+:deep(.ant-btn-primary) {
+  background: #14b8a6;
+  border-color: #14b8a6;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+:deep(.ant-btn-primary:hover) {
+  background: #0d9488;
+  border-color: #0d9488;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.ant-btn-link) {
+  border-radius: 6px;
+}
+
+:deep(.ant-btn-link:hover) {
+  transform: scale(1.05);
+}
+
+/* Tag Styling */
+:deep(.ant-tag) {
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-weight: 500;
+  border: none;
+}
+
+:deep(.ant-tag-green) {
+  background: #dcfce7;
+  color: #166534;
+}
+
+:deep(.ant-tag-red) {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+:deep(.ant-tag-orange) {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+:deep(.ant-tag-blue) {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+:deep(.ant-tag-purple) {
+  background: #f3e8ff;
+  color: #6b21a5;
+}
+
+/* Popconfirm Styling */
+:deep(.ant-popconfirm) {
+  border-radius: 8px;
+}
+
+/* Pagination Styling */
+:deep(.ant-pagination-item-active) {
+  border-color: #14b8a6;
+  background: #14b8a6;
+}
+
+:deep(.ant-pagination-item-active a) {
+  color: white;
+}
+
+:deep(.ant-pagination-item:hover) {
+  border-color: #14b8a6;
+}
+
+:deep(.ant-pagination-item:hover a) {
+  color: #14b8a6;
+}
+
+/* Card Hover Effect */
+:deep(.ant-card) {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+:deep(.ant-card:hover) {
+  transform: translateY(-2px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .search-input :deep(.ant-input) {
+    width: 100%;
+  }
+  
+  :deep(.ant-table) {
     font-size: 12px;
-    padding: 0 8px;
-    height: 24px;
+  }
+  
+  :deep(.ant-table-thead > tr > th),
+  :deep(.ant-table-tbody > tr > td) {
+    padding: 8px 12px;
+  }
 }
 </style>
+
+
+
+
+<!-- <script setup>
+import { ref, h, onMounted } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Button, Input, Popconfirm, message, Table, Tooltip } from 'ant-design-vue';
+import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import dayjs from 'dayjs';
+import axios from 'axios';
+import { debounce } from 'lodash';
+
+import CreateJob from './CreateJob.vue';
+import EditJob from './EditJob.vue';
+import ViewJob from './ViewJob.vue';
+
+const jobs = ref([]);
+const selectedJob = ref(null);
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const showViewModal = ref(false);
+const searchTerm = ref('');
+const loading = ref(false);
+
+
+const fetchJobs = async () => {
+    loading.value = true;
+    try {
+        const res = await axios.get('/jobs', { params: { search: searchTerm.value } });
+        jobs.value = res.data.jobs;
+    } catch (err) {
+        message.error('Failed to fetch jobs');
+        console.error(err);
+    } finally {
+        loading.value = false;
+    }
+};
+
+const handleSearch = debounce(() => fetchJobs(), 500);
+
+const deleteJob = async (id) => {
+    try {
+        await axios.delete(`/jobs/${id}`);
+        message.success('Job deleted successfully');
+        fetchJobs();
+    } catch (err) {
+        message.error('Failed to delete job');
+    }
+};
+
+const truncate = (text, length = 20) => (!text ? '' : text.trim().length > length ? text.trim().substring(0, length) + '...' : text.trim());
+
+const columns = [
+    { title: 'Title', dataIndex: 'title', customRender: ({ record }) => truncate(record.title, 20) },
+    { title: 'Type', dataIndex: 'type' },
+    { title: 'Location', dataIndex: 'location', customRender: ({ record }) => record.location ? record.location.trim() : '' },
+    {
+        title: 'Deadline',
+        dataIndex: 'deadline',
+        customRender: ({ record }) => record.deadline ? dayjs(record.deadline).format('YYYY-MM-DD') : ''
+    },
+    { title: 'Status', dataIndex: 'status' },
+    {
+        title: 'Actions',
+        customRender: ({ record }) => h('div', { class: 'flex gap-2' }, [
+            h(Tooltip, { title: 'View Job' }, {
+                default: () => h(Button, { size: 'small', type: 'primary', icon: h(EyeOutlined), onClick: () => { selectedJob.value = record; showViewModal.value = true; } })
+            }),
+            h(Tooltip, { title: 'Edit Job' }, {
+                default: () => h(Button, { size: 'small', type: 'default', icon: h(EditOutlined), onClick: () => { selectedJob.value = record; showEditModal.value = true; } })
+            }),
+            h(Tooltip, { title: 'Delete Job' }, {
+                default: () => h(Popconfirm, { title: 'Are you sure you want to delete this job?', onConfirm: () => deleteJob(record.id) }, {
+                    default: () => h(Button, { danger: true, size: 'small', icon: h(DeleteOutlined) })
+                })
+            })
+        ])
+    }
+];
+
+onMounted(fetchJobs);
+</script>
+
+<template>
+  <Head title="Job Vacancies" />
+
+  <AuthenticatedLayout>
+    <template #header>
+      <h2 class="text-xl font-semibold leading-tight text-gray-800">Job Vacancies</h2>
+    </template>
+
+    <div class="py-12">
+      <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+        <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium">Manage Jobs</h3>
+            <Button type="primary" @click="showCreateModal = true">Add Job</Button>
+          </div>
+
+          <div class="flex justify-between items-center mb-4">
+            <Input v-model:value="searchTerm" placeholder="Search jobs..." style="width: 300px" allowClear @input="handleSearch" />
+          </div>
+
+          <Table :dataSource="jobs" :loading="loading" :columns="columns" rowKey="id"
+                 :pagination="{ pageSize: 10, showSizeChanger: true, showTotal: total => `Total ${total} jobs` }"
+                 :scroll="{ x: 768 }">
+            <template #emptyText>
+              <div class="py-12 text-center">
+                <div class="text-6xl mb-4">📄</div>
+                <p class="text-gray-500 text-lg mb-2">No jobs found</p>
+                <p class="text-gray-400 text-sm">{{ searchTerm ? 'Try adjusting your search' : 'Jobs will appear here' }}</p>
+                <Button v-if="searchTerm" type="link" @click="searchTerm=''; fetchJobs()" class="mt-3">Clear search</Button>
+              </div>
+            </template>
+          </Table>
+        </div>
+      </div>
+    </div>
+
+    <CreateJob :open="showCreateModal" @update:open="showCreateModal = $event" @created="fetchJobs" />
+    <EditJob :open="showEditModal" :job="selectedJob" @update:open="showEditModal = $event" @updated="fetchJobs" />
+    <ViewJob :open="showViewModal" :job="selectedJob" @update:open="showViewModal = $event" />
+  </AuthenticatedLayout>
+</template> -->

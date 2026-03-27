@@ -150,6 +150,7 @@ Route::get('/public-documents/folders', [DocumentController::class, 'Publicindex
 Route::post('/report-accident', [AccidentReportController::class, 'store']);
 Route::get('/public-accident-reports', [AccidentReportController::class, 'publicReports']);
 Route::get('/search-investigations', [AccidentReportController::class, 'search'])->name('searchInvestigations');
+Route::get('/jobs/active', [JobController::class, 'getActiveJobs']);
 
 
 
@@ -227,28 +228,33 @@ Route::middleware('auth')->group(function () {
     Route::put('/documents/{id}/rename', [DocumentController::class, 'rename']);
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy']);
 
-    //accidents routes
+    //accidents & incidents routes
     Route::get('/all-accidents', [AccidentsController::class, 'GetAccidents'])->name('accidents.index');
     Route::get('/accident-reports', [AccidentReportController::class, 'index']);
     Route::delete('/accident-reports/{id}', [AccidentReportController::class, 'destroy']);
-
     Route::post('/accident-reports/{id}/resolve', [AccidentReportController::class, 'resolve']);
 
 
 
 
 
-
-
-
-
-
-
-
-
     //Job Vacancies routes
-    Route::get('/jobs', [jobController::class, 'JobVacancies'])->name('job.index');
+    Route::get('/all-jobs', [jobController::class, 'JobVacancies'])->name('job.index');
+
+Route::get('/jobs', [JobController::class, 'index']);
+Route::post('/jobs', [JobController::class, 'store']);
+Route::get('/jobs/{job}', [JobController::class, 'show']);
+Route::put('/jobs/{job}', [JobController::class, 'update']);
+Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
     
+
+
+
+
+
+
+
+
 
 
 
