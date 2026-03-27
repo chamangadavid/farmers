@@ -210,13 +210,13 @@ const handleDropdownClick = () => {
                         >
                             Who We Are
                         </Link>
-                        <Link 
+                        <!-- <Link 
                             :href="route('mandate')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick"
                         >
                             Mandate
-                        </Link>
+                        </Link> -->
                         <Link 
                             :href="route('history')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
@@ -260,19 +260,19 @@ const handleDropdownClick = () => {
                         >
                             Regulation & Annexes
                         </Link>
-                        <Link 
+                        <!-- <Link 
                             :href="route('investigationPage')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick"
                         >
                             Investigation Process
-                        </Link>
+                        </Link> -->
                         <Link 
                             :href="route('accidentPage')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick"
                         >
-                            Accident Reports
+                            Accident  Reports
                         </Link>
                     </div>
                 </div>
@@ -370,9 +370,9 @@ const handleDropdownClick = () => {
                             <Link :href="route('aboutUs')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Who We Are
                             </Link>
-                            <Link :href="route('mandate')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
+                            <!-- <Link :href="route('mandate')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Mandate
-                            </Link>
+                            </Link> -->
                             <Link :href="route('history')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 History
                             </Link>
@@ -397,9 +397,9 @@ const handleDropdownClick = () => {
                             <Link :href="route('nationalRegulation')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Regulation & Annexes
                             </Link>
-                            <Link :href="route('investigationPage')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
+                            <!-- <Link :href="route('investigationPage')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Investigation Process
-                            </Link>
+                            </Link> -->
                             <Link :href="route('accidentPage')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Accident Reports
                             </Link>

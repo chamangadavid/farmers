@@ -80,7 +80,7 @@ const save = async () => {
 <template>
 <a-modal :open="open" title="Upload Regulation" @cancel="emit('update:open', false)" :footer="null">
 
-    <Input v-model:value="form.title" placeholder="Enter document title" />
+    <Input v-model:value="form.title" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Enter document title" />
     <br/><br/>
 
     <Select v-model:value="form.document_type" placeholder="Document Type" style="width: 100%;" >

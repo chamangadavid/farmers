@@ -5,7 +5,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CreatePress from './CreatePress.vue';
 import EditPress from './EditPress.vue';
 import ViewPress from './ViewPress.vue';
-import { Tabs, Table, Button, Modal, Input, Select, Tag, message, Popconfirm } from 'ant-design-vue';
+import { Tabs, Table, Button, Modal, Input, Select, Tag, message, Popconfirm, Tooltip, } from 'ant-design-vue';
 import { SearchOutlined, PlusOutlined, ReloadOutlined, FilePdfOutlined, EyeOutlined, EditOutlined, DeleteOutlined, DownloadOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 import { debounce } from 'lodash';
@@ -96,61 +96,79 @@ const columns = [
             ])
     },
     {
-        title: 'Actions',
-        width: '15%',
-        align: 'center',
-        customRender: ({ record }) => {
-            return h('div', { class: 'flex gap-2 justify-center' }, [
-                h(Button, {
-                    size: 'small',
-                    type: 'link',
-                    icon: h(EyeOutlined),
-                    onClick: () => {
-                        selectedPress.value = record;
-                        showViewModal.value = true;
-                    },
-                    title: 'View Details'
-                }),
-                h(Button, {
-                    size: 'small',
-                    type: 'link',
-                    icon: h(EditOutlined),
-                    onClick: () => {
-                        selectedPress.value = record;
-                        showEditModal.value = true;
-                    },
-                    title: 'Edit Press Release'
-                }),
-                h('a', {
-                    href: `/presses/download/${record.id}`,
-                    class: 'inline-block'
-                }, [
-                    h(Button, { 
-                        size: 'small', 
+    title: 'Actions',
+    width: '15%',
+    align: 'center',
+    customRender: ({ record }) => {
+        return h('div', { class: 'flex gap-2 justify-center' }, [
+
+            // 👁 VIEW
+            h(Tooltip, { title: 'View Details' }, {
+                default: () =>
+                    h(Button, {
+                        size: 'small',
                         type: 'link',
-                        icon: h(DownloadOutlined),
-                        title: 'Download PDF'
+                        icon: h(EyeOutlined),
+                        onClick: () => {
+                            selectedPress.value = record;
+                            showViewModal.value = true;
+                        }
                     })
-                ]),
-                h(Popconfirm, {
-                    title: 'Are you sure you want to delete this record?',
-                    onConfirm: () => deletePress(record.id),
-                    okText: 'Yes',
-                    cancelText: 'No',
-                    okType: 'danger'
-                }, {
-                    default: () =>
-                        h(Button, { 
-                            danger: true, 
-                            size: 'small', 
+            }),
+
+            // ✏️ EDIT
+            h(Tooltip, { title: 'Edit Press Release' }, {
+                default: () =>
+                    h(Button, {
+                        size: 'small',
+                        type: 'link',
+                        icon: h(EditOutlined),
+                        onClick: () => {
+                            selectedPress.value = record;
+                            showEditModal.value = true;
+                        }
+                    })
+            }),
+
+            // 📥 DOWNLOAD
+            h(Tooltip, { title: 'Download PDF' }, {
+                default: () =>
+                    h('a', {
+                        href: `/presses/download/${record.id}`,
+                        class: 'inline-block'
+                    }, [
+                        h(Button, {
+                            size: 'small',
                             type: 'link',
-                            icon: h(DeleteOutlined),
-                            title: 'Delete Press Release'
+                            icon: h(DownloadOutlined)
                         })
-                })
-            ]);
-        }
+                    ])
+            }),
+
+            // 🗑 DELETE
+            h(Popconfirm, {
+                title: 'Are you sure you want to delete this record?',
+                onConfirm: () => deletePress(record.id),
+                okText: 'Yes',
+                cancelText: 'No',
+                okType: 'danger'
+            }, {
+                default: () =>
+                    h(Tooltip, { title: 'Delete Press Release', color: 'red' }, {
+                        default: () =>
+                            h(Button, {
+                                danger: true,
+                                size: 'small',
+                                type: 'link',
+                                icon: h(DeleteOutlined)
+                            })
+                    })
+            })
+
+        ]);
     }
+}
+
 ];
 
 onMounted(fetchPresses);

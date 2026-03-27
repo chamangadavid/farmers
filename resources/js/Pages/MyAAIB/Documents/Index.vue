@@ -3,7 +3,7 @@ import { ref, onMounted, h, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CreateDocument from './CreateDocument.vue';
-import { Tabs, Button, Input, message, Popconfirm, Upload, Tag, Empty, Spin } from 'ant-design-vue';
+import { Tabs, Button, Input, message, Popconfirm, Upload, Tag, Empty, Spin, Tooltip, } from 'ant-design-vue';
 import { 
   FolderOutlined, 
   FileOutlined, 
@@ -159,37 +159,81 @@ const columns = [
         customRender: ({ record }) => formatDate(record.created_at)
     },
     {
-        title: 'Actions',
-        key: 'actions',
-        width: '10%',
-        align: 'center',
-        customRender: ({ record }) => {
-            return h('div', { class: 'flex gap-2 justify-center' }, [
-                h('a', {
-                    href: `/storage/${record.file_path}`,
-                    target: '_blank',
-                    class: 'text-teal-600 hover:text-teal-700'
-                }, [
-                    h(DownloadOutlined, { class: 'text-lg' })
-                ]),
-                h(Popconfirm, {
-                    title: 'Are you sure you want to delete this file?',
-                    onConfirm: () => deleteFile(record.id),
-                    okText: 'Yes',
-                    cancelText: 'No',
-                    okType: 'danger'
-                }, {
-                    default: () => h(Button, { 
-                        type: 'link', 
-                        danger: true, 
-                        size: 'small',
-                        icon: h(DeleteOutlined),
-                        class: 'p-0'
+    title: 'Actions',
+    key: 'actions',
+    width: '10%',
+    align: 'center',
+    customRender: ({ record }) => {
+        return h('div', { class: 'flex gap-2 justify-center' }, [
+
+            // DOWNLOAD
+            h(Tooltip, { title: 'Download File' }, {
+                default: () =>
+                    h('a', {
+                        href: `/storage/${record.file_path}`,
+                        target: '_blank',
+                        class: 'text-teal-600 hover:text-teal-700'
+                    }, [
+                        h(DownloadOutlined, { class: 'text-lg' })
+                    ])
+            }),
+
+            // DELETE
+            h(Popconfirm, {
+                title: 'Are you sure you want to delete this file?',
+                onConfirm: () => deleteFile(record.id),
+                okText: 'Yes',
+                cancelText: 'No',
+                okType: 'danger'
+            }, {
+                default: () =>
+                    h(Tooltip, { title: 'Delete File' }, {
+                        default: () =>
+                            h(Button, {
+                                type: 'link',
+                                danger: true,
+                                size: 'small',
+                                icon: h(DeleteOutlined),
+                                class: 'p-0'
+                            })
                     })
-                })
-            ]);
-        }
+            })
+
+        ]);
     }
+}
+    // {
+    //     title: 'Actions',
+    //     key: 'actions',
+    //     width: '10%',
+    //     align: 'center',
+    //     customRender: ({ record }) => {
+    //         return h('div', { class: 'flex gap-2 justify-center' }, [
+    //             h('a', {
+    //                 href: `/storage/${record.file_path}`,
+    //                 target: '_blank',
+    //                 class: 'text-teal-600 hover:text-teal-700'
+    //             }, [
+    //                 h(DownloadOutlined, { class: 'text-lg' })
+    //             ]),
+    //             h(Popconfirm, {
+    //                 title: 'Are you sure you want to delete this file?',
+    //                 onConfirm: () => deleteFile(record.id),
+    //                 okText: 'Yes',
+    //                 cancelText: 'No',
+    //                 okType: 'danger'
+    //             }, {
+    //                 default: () => h(Button, { 
+    //                     type: 'link', 
+    //                     danger: true, 
+    //                     size: 'small',
+    //                     icon: h(DeleteOutlined),
+    //                     class: 'p-0'
+    //                 })
+    //             })
+    //         ]);
+    //     }
+    // }
 ];
 </script>
 

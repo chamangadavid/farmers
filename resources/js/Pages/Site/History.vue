@@ -77,26 +77,6 @@ const achievements = [
 
         <!-- Main Content -->
         <div class="space-y-12">
-            <!-- Introduction -->
-            <section class="text-center">
-                <p class="text-gray-600 leading-relaxed max-w-3xl mx-auto">
-                    Since our establishment, the Aircraft Accident Investigation Board has been at the forefront of 
-                    aviation safety, committed to independent, thorough, and timely investigations. Our history reflects 
-                    continuous growth, innovation, and dedication to making air travel safer for everyone.
-                </p>
-            </section>
-
-            <!-- Key Achievements -->
-            <section>
-                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Key Achievements</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div v-for="achievement in achievements" :key="achievement.label" class="text-center p-6 bg-gray-50 rounded-xl">
-                        <div class="text-4xl mb-3">{{ achievement.icon }}</div>
-                        <div class="text-3xl font-bold text-teal-600 mb-2">{{ achievement.number }}</div>
-                        <div class="text-gray-600 text-sm">{{ achievement.label }}</div>
-                    </div>
-                </div>
-            </section>
 
             <!-- Timeline -->
             <section>

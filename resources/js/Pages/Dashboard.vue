@@ -186,7 +186,7 @@ const quickStats = [
                         </template>
                       </Card>
 
-                      <Card 
+                      <!-- <Card 
                         title="Incidents Management" 
                         v-if="can('manage all incidents')"
                         subTitle="Create, edit & delete all incidents" 
@@ -194,7 +194,7 @@ const quickStats = [
                         <template #icon>
                           <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
-                      </Card>
+                      </Card> -->
 
                        <Card 
                         title="Investigation Management" 

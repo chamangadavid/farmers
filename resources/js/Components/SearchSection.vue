@@ -1,61 +1,88 @@
 <!-- Resources/js/Components/SearchSection.vue -->
 <script setup>
 import { ref, computed } from 'vue';
+import axios from 'axios';
 
 const searchQuery = ref('');
 const searchResults = ref([]);
 const isSearching = ref(false);
 const searchType = ref('accidents'); // 'accidents' or 'incidents'
 
-const searchInvestigations = () => {
+
+const searchInvestigations = async () => {
     if (!searchQuery.value.trim()) {
         searchResults.value = [];
         return;
     }
-    
+
     isSearching.value = true;
-    
-    // Simulate API search
-    setTimeout(() => {
-        const mockResults = [
-            {
-                id: 1,
-                title: 'Runway Excursion Investigation - 2023',
-                type: 'Accident',
-                date: 'December 2023',
-                location: 'Lusaka International Airport',
-                summary: 'Investigation into aircraft veering off runway during landing.',
-                status: 'Completed'
-            },
-            {
-                id: 2,
-                title: 'Engine Failure Incident - 2024',
-                type: 'Incident',
-                date: 'January 2024',
-                location: 'Kenneth Kaunda International',
-                summary: 'Technical investigation into engine malfunction during takeoff.',
-                status: 'Ongoing'
-            },
-            {
-                id: 3,
-                title: 'Bird Strike Investigation - 2023',
-                type: 'Incident',
-                date: 'November 2023',
-                location: 'Ndola Airport',
-                summary: 'Analysis of bird strike incident and preventive measures.',
-                status: 'Completed'
+
+    try {
+        const res = await axios.get('/search-investigations', {
+            params: {
+                q: searchQuery.value,
+                type: searchType.value === 'accidents' ? 'Accident' : 'Incident',
             }
-        ];
-        
-        searchResults.value = mockResults.filter(result => 
-            result.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            result.location.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            result.summary.toLowerCase().includes(searchQuery.value.toLowerCase())
-        );
-        
+        });
+
+        searchResults.value = res.data; // results from backend
+    } catch (e) {
+        console.error(e);
+        searchResults.value = [];
+    } finally {
         isSearching.value = false;
-    }, 500);
+    }
 };
+
+// const searchInvestigations = () => {
+//     if (!searchQuery.value.trim()) {
+//         searchResults.value = [];
+//         return;
+//     }
+    
+//     isSearching.value = true;
+    
+//     // Simulate API search
+//     setTimeout(() => {
+//         const mockResults = [
+//             {
+//                 id: 1,
+//                 title: 'Runway Excursion Investigation - 2023',
+//                 type: 'Accident',
+//                 date: 'December 2023',
+//                 location: 'Lusaka International Airport',
+//                 summary: 'Investigation into aircraft veering off runway during landing.',
+//                 status: 'Completed'
+//             },
+//             {
+//                 id: 2,
+//                 title: 'Engine Failure Incident - 2024',
+//                 type: 'Incident',
+//                 date: 'January 2024',
+//                 location: 'Kenneth Kaunda International',
+//                 summary: 'Technical investigation into engine malfunction during takeoff.',
+//                 status: 'Ongoing'
+//             },
+//             {
+//                 id: 3,
+//                 title: 'Bird Strike Investigation - 2023',
+//                 type: 'Incident',
+//                 date: 'November 2023',
+//                 location: 'Ndola Airport',
+//                 summary: 'Analysis of bird strike incident and preventive measures.',
+//                 status: 'Completed'
+//             }
+//         ];
+        
+//         searchResults.value = mockResults.filter(result => 
+//             result.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//             result.location.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+//             result.summary.toLowerCase().includes(searchQuery.value.toLowerCase())
+//         );
+        
+//         isSearching.value = false;
+//     }, 500);
+// };
 
 const getStatusColor = (status) => {
     return status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';

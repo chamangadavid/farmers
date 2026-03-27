@@ -8,7 +8,7 @@ import CreateAnnouncement from './CreateAnnouncements.vue';
 import EditAnnouncement from './EditAnnouncements.vue';
 import ViewAnnouncement from './ViewAnnouncements.vue';
 
-import { Tabs, Table, Button, Input, message, Popconfirm, Tag, Space } from 'ant-design-vue';
+import { Tabs, Table, Button, Input, message, Popconfirm, Tag, Space, Tooltip, } from 'ant-design-vue';
 import { 
   SearchOutlined, 
   PlusOutlined, 
@@ -157,50 +157,65 @@ const columns = [
         }
     },
     {
-        title: 'Actions',
-        key: 'actions',
-        width: '15%',
-        align: 'center',
-        customRender: ({ record }) => {
-            return h(Space, { size: 'small' }, [
-                h(Button, {
-                    type: 'link',
-                    size: 'small',
-                    icon: h(EyeOutlined),
-                    onClick: () => {
-                        selectedAnnouncement.value = record;
-                        showViewModal.value = true;
-                    },
-                    title: 'View Details'
-                }, ),
-                h(Button, {
-                    type: 'link',
-                    size: 'small',
-                    icon: h(EditOutlined),
-                    onClick: () => {
-                        selectedAnnouncement.value = record;
-                        showEditModal.value = true;
-                    },
-                    title: 'Edit Announcement'
-                }, ),
-                h(Popconfirm, {
-                    title: 'Are you sure you want to delete this announcement?',
-                    onConfirm: () => deleteAnnouncement(record.id),
-                    okText: 'Yes',
-                    cancelText: 'No',
-                    okType: 'danger'
-                }, {
-                    default: () => h(Button, { 
-                        type: 'link', 
-                        danger: true, 
-                        size: 'small', 
-                        icon: h(DeleteOutlined),
-                        title: 'Delete Announcement'
-                    },)
-                })
-            ]);
-        }
+    title: 'Actions',
+    key: 'actions',
+    width: '15%',
+    align: 'center',
+    customRender: ({ record }) => {
+        return h(Space, { size: 'small' }, [
+
+            // 👁 VIEW
+            h(Tooltip, { title: 'View Details' }, {
+                default: () =>
+                    h(Button, {
+                        type: 'link',
+                        size: 'small',
+                        icon: h(EyeOutlined),
+                        onClick: () => {
+                            selectedAnnouncement.value = record;
+                            showViewModal.value = true;
+                        }
+                    })
+            }),
+
+            // ✏️ EDIT
+            h(Tooltip, { title: 'Edit Announcement' }, {
+                default: () =>
+                    h(Button, {
+                        type: 'link',
+                        size: 'small',
+                        icon: h(EditOutlined),
+                        onClick: () => {
+                            selectedAnnouncement.value = record;
+                            showEditModal.value = true;
+                        }
+                    })
+            }),
+
+            // 🗑 DELETE
+            h(Popconfirm, {
+                title: 'Are you sure you want to delete this announcement?',
+                onConfirm: () => deleteAnnouncement(record.id),
+                okText: 'Yes',
+                cancelText: 'No',
+                okType: 'danger'
+            }, {
+                default: () =>
+                    h(Tooltip, { title: 'Delete Announcement', color: 'red' }, {
+                        default: () =>
+                            h(Button, {
+                                type: 'link',
+                                danger: true,
+                                size: 'small',
+                                icon: h(DeleteOutlined)
+                            })
+                    })
+            })
+
+        ]);
     }
+}
+
 ];
 
 // On mount, fetch announcements

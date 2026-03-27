@@ -7,7 +7,7 @@ import CreateNews from './CreateNews.vue';
 import EditNews from './EditNews.vue';
 import ViewNews from './ViewNews.vue';
 
-import { Tabs, Button, Input, message, Popconfirm, Tag, Space } from 'ant-design-vue';
+import { Tabs, Button, Input, message, Popconfirm, Tag, Space, Tooltip, } from 'ant-design-vue';
 import { 
   SearchOutlined, 
   PlusOutlined, 
@@ -171,50 +171,65 @@ const columns = [
         }
     },
     {
-        title: 'Actions',
-        key: 'actions',
-        width: '15%',
-        align: 'center',
-        customRender: ({ record }) => {
-            return h(Space, { size: 'small' }, [
-                h(Button, {
-                    type: 'link',
-                    size: 'small',
-                    icon: h(EyeOutlined),
-                    onClick: () => {
-                        selectedNews.value = record;
-                        showViewModal.value = true;
-                    },
-                    title: 'View Details'
-                },),
-                h(Button, {
-                    type: 'link',
-                    size: 'small',
-                    icon: h(EditOutlined),
-                    onClick: () => {
-                        selectedNews.value = record;
-                        showEditModal.value = true;
-                    },
-                    title: 'Edit News'
-                },),
-                h(Popconfirm, {
-                    title: 'Are you sure you want to delete this news?',
-                    onConfirm: () => deleteNews(record.id),
-                    okText: 'Yes',
-                    cancelText: 'No',
-                    okType: 'danger'
-                }, {
-                    default: () => h(Button, { 
-                        type: 'link', 
-                        danger: true, 
-                        size: 'small', 
-                        icon: h(DeleteOutlined),
-                        title: 'Delete News'
-                    },)
-                })
-            ]);
-        }
+    title: 'Actions',
+    key: 'actions',
+    width: '15%',
+    align: 'center',
+    customRender: ({ record }) => {
+        return h(Space, { size: 'small' }, [
+
+            // 👁 VIEW
+            h(Tooltip, { title: 'View Details' }, {
+                default: () =>
+                    h(Button, {
+                        type: 'link',
+                        size: 'small',
+                        icon: h(EyeOutlined),
+                        onClick: () => {
+                            selectedNews.value = record;
+                            showViewModal.value = true;
+                        }
+                    })
+            }),
+
+            // ✏️ EDIT
+            h(Tooltip, { title: 'Edit News' }, {
+                default: () =>
+                    h(Button, {
+                        type: 'link',
+                        size: 'small',
+                        icon: h(EditOutlined),
+                        onClick: () => {
+                            selectedNews.value = record;
+                            showEditModal.value = true;
+                        }
+                    })
+            }),
+
+            // 🗑 DELETE
+            h(Popconfirm, {
+                title: 'Are you sure you want to delete this news?',
+                onConfirm: () => deleteNews(record.id),
+                okText: 'Yes',
+                cancelText: 'No',
+                okType: 'danger'
+            }, {
+                default: () =>
+                    h(Tooltip, { title: 'Delete News', color: 'red' }, {
+                        default: () =>
+                            h(Button, {
+                                type: 'link',
+                                danger: true,
+                                size: 'small',
+                                icon: h(DeleteOutlined)
+                            })
+                    })
+            })
+
+        ]);
     }
+}
+   
 ];
 
 onMounted(fetchNews);

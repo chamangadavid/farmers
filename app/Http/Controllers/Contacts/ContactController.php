@@ -44,32 +44,24 @@ class ContactController extends Controller
         ]);
     }
 
-    // Fetch all contacts
-    // public function index()
-    // {
-    //     $contacts = Contact::orderBy('created_at', 'desc')->get();
-    //     return response()->json(['contacts' => $contacts]);
-    // }
-
-
     public function index(Request $request)
-{
-    $query = Contact::query();
+    {
+        $query = Contact::query();
 
-    if ($search = $request->get('search')) {
-        $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%")
-              ->orWhere('subject', 'like', "%{$search}%")
-              ->orWhere('message', 'like', "%{$search}%");
-        });
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('subject', 'like', "%{$search}%")
+                ->orWhere('message', 'like', "%{$search}%");
+            });
+        }
+
+        $contacts = $query->orderBy('created_at', 'desc')->get();
+
+        return response()->json(['contacts' => $contacts]);
     }
-
-    $contacts = $query->orderBy('created_at', 'desc')->get();
-
-    return response()->json(['contacts' => $contacts]);
-}
-    // Delete a contact
+  
     public function destroy($id)
     {
         $contact = Contact::findOrFail($id);

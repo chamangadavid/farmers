@@ -3,7 +3,7 @@
 import { ref, onMounted, h } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Table, Button, Popconfirm, message, Input, Tag, Space, Card } from 'ant-design-vue';
+import { Table, Button, Popconfirm, message, Input, Tag, Space, Card, Tooltip, } from 'ant-design-vue';
 import { SearchOutlined, DeleteOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons-vue';
 import ViewContactModal from '@/Components/Contact/ViewContactModal.vue';
 import axios from 'axios';
@@ -118,32 +118,36 @@ const columns = [
         customRender: ({ text }) => formatDate(text)
     },
     {
-        title: 'Actions',
-        key: 'actions',
-        width: '15%',
-        align: 'center',
-        customRender: ({ record }) =>
-            h(Space, { size: 'small' }, [
-                h(
-                    Button,
-                    {
-                        type: 'link',
-                        size: 'small',
-                        onClick: () => viewContact(record),
-                        title: 'View Details'
-                    },
-                    'View'
-                ),
-                h(
-                    Popconfirm,
-                    {
-                        title: 'Are you sure to delete this contact?',
-                        onConfirm: () => deleteContact(record.id),
-                        okText: 'Yes',
-                        cancelText: 'No',
-                        okType: 'danger'
-                    },
-                    {
+    title: 'Actions',
+    key: 'actions',
+    width: '15%',
+    align: 'center',
+    customRender: ({ record }) =>
+        h(Space, { size: 'small' }, [
+
+            // 👁 VIEW
+            h(Tooltip, { title: 'View Details' }, {
+                default: () =>
+                    h(
+                        Button,
+                        {
+                            type: 'link',
+                            size: 'small',
+                            icon: h(EyeOutlined),
+                            onClick: () => viewContact(record)
+                        }, )
+            }),
+
+            // 🗑 DELETE
+            h(Popconfirm, {
+                title: 'Are you sure to delete this contact?',
+                onConfirm: () => deleteContact(record.id),
+                okText: 'Yes',
+                cancelText: 'No',
+                okType: 'danger'
+            }, {
+                default: () =>
+                    h(Tooltip, { title: 'Delete Contact', color: 'red' }, {
                         default: () =>
                             h(
                                 Button,
@@ -151,14 +155,55 @@ const columns = [
                                     type: 'link',
                                     danger: true,
                                     size: 'small',
+                                    icon: h(DeleteOutlined)
+                                }, )
+                    })
+            })
 
-                                },
-                                'Delete'
-                            )
-                    }
-                )
-            ])
-    }
+        ])
+}
+    // {
+    //     title: 'Actions',
+    //     key: 'actions',
+    //     width: '15%',
+    //     align: 'center',
+    //     customRender: ({ record }) =>
+    //         h(Space, { size: 'small' }, [
+    //             h(
+    //                 Button,
+    //                 {
+    //                     type: 'link',
+    //                     size: 'small',
+    //                     onClick: () => viewContact(record),
+    //                     title: 'View Details'
+    //                 },
+    //                 'View'
+    //             ),
+    //             h(
+    //                 Popconfirm,
+    //                 {
+    //                     title: 'Are you sure to delete this contact?',
+    //                     onConfirm: () => deleteContact(record.id),
+    //                     okText: 'Yes',
+    //                     cancelText: 'No',
+    //                     okType: 'danger'
+    //                 },
+    //                 {
+    //                     default: () =>
+    //                         h(
+    //                             Button,
+    //                             {
+    //                                 type: 'link',
+    //                                 danger: true,
+    //                                 size: 'small',
+
+    //                             },
+    //                             'Delete'
+    //                         )
+    //                 }
+    //             )
+    //         ])
+    // }
 ];
 </script>
 

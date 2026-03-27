@@ -7,7 +7,7 @@ import CreateRegulations from './CreateRegulations.vue';
 import EditRegulations from './EditRegulations.vue';
 import ViewRegulations from './ViewRegulations.vue';
 
-import { Tabs, Button, Input, message, Popconfirm, Tag, Space } from 'ant-design-vue';
+import { Tabs, Button, Input, message, Popconfirm, Tag, Space, Tooltip, } from 'ant-design-vue';
 import { 
   SearchOutlined, 
   PlusOutlined, 
@@ -140,53 +140,112 @@ const columns = [
                 class: 'inline-flex items-center gap-1 text-teal-600 hover:text-teal-700'
             }, [
                 h(FilePdfOutlined, { class: 'text-red-500' }),
-                'View PDF'
+                'PDF'
             ])
     },
     {
-        title: 'Actions',
-        key: 'actions',
-        width: '20%',
-        align: 'center',
-        customRender: ({ record }) =>
-            h(Space, { size: 'small' }, [
-                h(Button, {
-                    type: 'link',
-                    size: 'small',
-                    icon: h(EyeOutlined),
-                    onClick: () => {
-                        selectedRegulation.value = record;
-                        showViewModal.value = true;
-                    },
-                    title: 'View Details'
-                },),
-                h(Button, {
-                    type: 'link',
-                    size: 'small',
-                    icon: h(EditOutlined),
-                    onClick: () => {
-                        selectedRegulation.value = record;
-                        showEditModal.value = true;
-                    },
-                    title: 'Edit Regulation'
-                },),
-                h(Popconfirm, {
-                    title: 'Are you sure you want to delete this document?',
-                    onConfirm: () => deleteRegulation(record.id),
-                    okText: 'Yes',
-                    cancelText: 'No',
-                    okType: 'danger'
-                }, {
-                    default: () => h(Button, { 
-                        type: 'link', 
-                        danger: true, 
-                        size: 'small', 
-                        icon: h(DeleteOutlined),
-                        title: 'Delete Regulation'
-                    }, )
-                })
-            ])
-    }
+    title: 'Actions',
+    key: 'actions',
+    width: '20%',
+    align: 'center',
+    customRender: ({ record }) =>
+        h(Space, { size: 'small' }, [
+
+            // 👁 VIEW
+            h(Tooltip, { title: 'View Details' }, {
+                default: () =>
+                    h(Button, {
+                        type: 'link',
+                        size: 'small',
+                        icon: h(EyeOutlined),
+                        onClick: () => {
+                            selectedRegulation.value = record;
+                            showViewModal.value = true;
+                        }
+                    })
+            }),
+
+            // ✏️ EDIT
+            h(Tooltip, { title: 'Edit Regulation' }, {
+                default: () =>
+                    h(Button, {
+                        type: 'link',
+                        size: 'small',
+                        icon: h(EditOutlined),
+                        onClick: () => {
+                            selectedRegulation.value = record;
+                            showEditModal.value = true;
+                        }
+                    })
+            }),
+
+            // 🗑 DELETE
+            h(Popconfirm, {
+                title: 'Are you sure you want to delete this document?',
+                onConfirm: () => deleteRegulation(record.id),
+                okText: 'Yes',
+                cancelText: 'No',
+                okType: 'danger'
+            }, {
+                default: () =>
+                    h(Tooltip, { title: 'Delete Regulation', color: 'red' }, {
+                        default: () =>
+                            h(Button, {
+                                type: 'link',
+                                danger: true,
+                                size: 'small',
+                                icon: h(DeleteOutlined)
+                            })
+                    })
+            })
+
+        ])
+}
+
+    // {
+    //     title: 'Actions',
+    //     key: 'actions',
+    //     width: '20%',
+    //     align: 'center',
+    //     customRender: ({ record }) =>
+    //         h(Space, { size: 'small' }, [
+    //             h(Button, {
+    //                 type: 'link',
+    //                 size: 'small',
+    //                 icon: h(EyeOutlined),
+    //                 onClick: () => {
+    //                     selectedRegulation.value = record;
+    //                     showViewModal.value = true;
+    //                 },
+    //                 title: 'View Details'
+    //             },),
+    //             h(Button, {
+    //                 type: 'link',
+    //                 size: 'small',
+    //                 icon: h(EditOutlined),
+    //                 onClick: () => {
+    //                     selectedRegulation.value = record;
+    //                     showEditModal.value = true;
+    //                 },
+    //                 title: 'Edit Regulation'
+    //             },),
+    //             h(Popconfirm, {
+    //                 title: 'Are you sure you want to delete this document?',
+    //                 onConfirm: () => deleteRegulation(record.id),
+    //                 okText: 'Yes',
+    //                 cancelText: 'No',
+    //                 okType: 'danger'
+    //             }, {
+    //                 default: () => h(Button, { 
+    //                     type: 'link', 
+    //                     danger: true, 
+    //                     size: 'small', 
+    //                     icon: h(DeleteOutlined),
+    //                     title: 'Delete Regulation'
+    //                 }, )
+    //             })
+    //         ])
+    // }
 ];
 
 onMounted(fetchRegulations);

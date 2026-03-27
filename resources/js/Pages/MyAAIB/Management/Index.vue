@@ -3,7 +3,7 @@
 import { ref, onMounted, h, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Table, Button, Tag, message, Popconfirm, Avatar, Space, Card } from 'ant-design-vue';
+import { Table, Button, Tag, message, Popconfirm, Avatar, Space, Card, Tooltip, } from 'ant-design-vue';
 import { EyeOutlined, EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
 import CreateMemberModal from '@/Components/Management/CreateMemberModal.vue';
@@ -156,31 +156,39 @@ const columns = computed(() => {
             fixed: isMobile.value ? false : 'right',
             customRender: ({ record }) => {
                 return h(Space, {
-                    size: isMobile.value ? 'small' : 'small',
+                    size: 'small',
                     direction: isMobile.value ? 'vertical' : 'horizontal',
                     style: { width: '100%', justifyContent: 'center' }
                 }, [
-                    h(Button, {
-                        type: 'link',
-                        size: 'small',
-                        icon: h(EyeOutlined),
-                        onClick: () => openViewModal(record),
-                        title: 'View Details',
-                        style: isMobile.value ? { padding: '4px 0' } : {}
-                    }),
-                    h(Button, {
-                        type: 'link',
-                        size: 'small',
-                        icon: h(EditOutlined),
-                        onClick: () => {
 
-                            selectedMember.value = record; // <-- must be the full member object
-                            showEditModal.value = true;
-                        },
-                        // onClick: () => openEditModal(record),
-                        title: 'Edit Member',
-                        style: isMobile.value ? { padding: '4px 0' } : {}
+                    // 👁 VIEW
+                    h(Tooltip, { title: 'View Details' }, {
+                        default: () =>
+                            h(Button, {
+                                type: 'link',
+                                size: 'small',
+                                icon: h(EyeOutlined),
+                                onClick: () => openViewModal(record),
+                                style: isMobile.value ? { padding: '4px 0' } : {}
+                            })
                     }),
+
+                    // ✏️ EDIT
+                    h(Tooltip, { title: 'Edit Member' }, {
+                        default: () =>
+                            h(Button, {
+                                type: 'link',
+                                size: 'small',
+                                icon: h(EditOutlined),
+                                onClick: () => {
+                                    selectedMember.value = record;
+                                    showEditModal.value = true;
+                                },
+                                style: isMobile.value ? { padding: '4px 0' } : {}
+                            })
+                    }),
+
+                    // 🗑 DELETE
                     h(Popconfirm, {
                         title: 'Are you sure you want to delete this member?',
                         onConfirm: () => deleteMember(record.id),
@@ -188,18 +196,23 @@ const columns = computed(() => {
                         cancelText: 'No',
                         okType: 'danger'
                     }, {
-                        default: () => h(Button, {
-                            type: 'link',
-                            danger: true,
-                            size: 'small',
-                            icon: h(DeleteOutlined),
-                            title: 'Delete Member',
-                            style: isMobile.value ? { padding: '4px 0' } : {}
-                        })
+                        default: () =>
+                            h(Tooltip, { title: 'Delete Member', color: 'red' }, {
+                                default: () =>
+                                    h(Button, {
+                                        type: 'link',
+                                        danger: true,
+                                        size: 'small',
+                                        icon: h(DeleteOutlined),
+                                        style: isMobile.value ? { padding: '4px 0' } : {}
+                                    })
+                            })
                     })
+
                 ]);
             }
         }
+
     ];
 
     return baseColumns;

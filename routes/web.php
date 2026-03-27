@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Accident\AccidentReportController;
 use App\Http\Controllers\Accident\AccidentsController;
 use App\Http\Controllers\Api\QrCodeController;
 use App\Http\Controllers\Api\QrTypeController;
@@ -112,7 +113,7 @@ Route::get('/investigation-process', function () {
     return Inertia::render('Site/InvestigationProcess');
 })->name('investigationPage');
 
-Route::get('/accident-reports', function () {
+Route::get('/report-accidents', function () {
     return Inertia::render('Site/AccidentReports');
 })->name('accidentPage');
 
@@ -146,6 +147,9 @@ Route::get('/public/news', [NewsController::class, 'publicNewsIndex']);
 Route::get('/public/regulations', [NationalRegulationsController::class, 'publicIndex']);
 Route::get('/all-news/{id}', [NewsController::class, 'show']);
 Route::get('/public-documents/folders', [DocumentController::class, 'Publicindex']);
+Route::post('/report-accident', [AccidentReportController::class, 'store']);
+Route::get('/public-accident-reports', [AccidentReportController::class, 'publicReports']);
+Route::get('/search-investigations', [AccidentReportController::class, 'search'])->name('searchInvestigations');
 
 
 
@@ -215,9 +219,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/regulations/{id}', [NationalRegulationsController::class, 'update']);
     Route::delete('/regulations/{id}', [NationalRegulationsController::class, 'destroy']);
 
-
-
-     //document repository routes
+    //document repository routes
     Route::get('/all-documents', [DocumentController::class, 'GetIDocuments'])->name('document.index');
     Route::get('/documents/folders', [DocumentController::class, 'index']);
     Route::post('/documents/folder', [DocumentController::class, 'storeFolder']);
@@ -225,8 +227,18 @@ Route::middleware('auth')->group(function () {
     Route::put('/documents/{id}/rename', [DocumentController::class, 'rename']);
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy']);
 
-// Route::post('/documents/upload', [DocumentController::class, 'upload']);
-    
+    //accidents routes
+    Route::get('/all-accidents', [AccidentsController::class, 'GetAccidents'])->name('accidents.index');
+    Route::get('/accident-reports', [AccidentReportController::class, 'index']);
+    Route::delete('/accident-reports/{id}', [AccidentReportController::class, 'destroy']);
+
+    Route::post('/accident-reports/{id}/resolve', [AccidentReportController::class, 'resolve']);
+
+
+
+
+
+
 
 
 
@@ -244,10 +256,7 @@ Route::middleware('auth')->group(function () {
 
 
     
-    //accidents routes
-    Route::get('/all-accidents', [AccidentsController::class, 'GetAccidents'])->name('accidents.index');
-    
-
+ 
 
      //incident routes
     Route::get('/all-incidents', [IncidentsController::class, 'GetIncidents'])->name('incidents.index');
