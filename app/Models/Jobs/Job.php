@@ -17,7 +17,7 @@ class Job extends Model
         'description',
         'requirements',
         'pdf_file',
-        'status', // include status in fillable
+        'status', 
     ];
 
     protected $casts = [
@@ -37,7 +37,7 @@ class Job extends Model
             return $value ?? 'Published';
         }
 
-        $deadline = $this->deadline->endOfDay(); // make sure it's a Carbon instance
+        $deadline = $this->deadline->endOfDay(); 
 
         // If deadline is before today OR today after 18:00
         if ($deadline->isPast() && (now()->hour >= 18 || $deadline->isBefore(now()->startOfDay()))) {

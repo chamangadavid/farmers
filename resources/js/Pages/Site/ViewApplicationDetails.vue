@@ -103,7 +103,7 @@ const generateCoverPageHtml = () => {
         month: 'long',
         day: 'numeric'
     });
-    
+
     return `
         <!DOCTYPE html>
         <html>
@@ -284,28 +284,28 @@ const mergeAllPDFs = async () => {
     }
 
     merging.value = true;
-    
+
     try {
         // Dynamically import pdf-lib
         const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
-        
+
         // Create a new PDF document for the merged result
         const mergedPdf = await PDFDocument.create();
-        
+
         // Generate cover page as PDF
         const coverPageHtml = generateCoverPageHtml();
-        
+
         // Convert HTML to PDF using html2pdf.js or similar
         // For this example, we'll create a text-based cover page using pdf-lib
         const coverPage = await PDFDocument.create();
         const page = coverPage.addPage([600, 800]);
         const font = await coverPage.embedFont(StandardFonts.Helvetica);
         const boldFont = await coverPage.embedFont(StandardFonts.HelveticaBold);
-        
+
         // Add cover page content
         let y = 750;
         const lineHeight = 25;
-        
+
         // Title
         page.drawText('JOB APPLICATION PACKAGE', {
             x: 50,
@@ -315,7 +315,7 @@ const mergeAllPDFs = async () => {
             color: rgb(0.2, 0.5, 0.4)
         });
         y -= lineHeight * 2;
-        
+
         // Date
         const currentDate = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
@@ -330,7 +330,7 @@ const mergeAllPDFs = async () => {
             color: rgb(0.4, 0.4, 0.4)
         });
         y -= lineHeight * 2;
-        
+
         // Application ID
         page.drawText(`Application #: ${safeApplication.value.id || 'N/A'}`, {
             x: 50,
@@ -340,7 +340,7 @@ const mergeAllPDFs = async () => {
             color: rgb(0, 0, 0)
         });
         y -= lineHeight;
-        
+
         page.drawText(`Applicant: ${safeApplication.value.name || 'N/A'}`, {
             x: 50,
             y: y,
@@ -349,7 +349,7 @@ const mergeAllPDFs = async () => {
             color: rgb(0, 0, 0)
         });
         y -= lineHeight * 2;
-        
+
         // Section: Personal Information
         page.drawText('PERSONAL INFORMATION', {
             x: 50,
@@ -359,7 +359,7 @@ const mergeAllPDFs = async () => {
             color: rgb(0.2, 0.5, 0.4)
         });
         y -= lineHeight;
-        
+
         const fields = [
             { label: 'Full Name:', value: safeApplication.value.name || 'Not provided' },
             { label: 'Email:', value: safeApplication.value.email || 'Not provided' },
@@ -368,7 +368,7 @@ const mergeAllPDFs = async () => {
             { label: 'Current Position:', value: safeApplication.value.current_position || 'Not provided' },
             { label: 'Current Employer:', value: safeApplication.value.current_employer || 'Not provided' }
         ];
-        
+
         fields.forEach(field => {
             page.drawText(`${field.label}`, {
                 x: 50,
@@ -386,9 +386,9 @@ const mergeAllPDFs = async () => {
             });
             y -= lineHeight;
         });
-        
+
         y -= lineHeight;
-        
+
         // Section: Documents
         page.drawText('SUBMITTED DOCUMENTS', {
             x: 50,
@@ -398,7 +398,7 @@ const mergeAllPDFs = async () => {
             color: rgb(0.2, 0.5, 0.4)
         });
         y -= lineHeight;
-        
+
         filteredDocuments.value.forEach((doc, index) => {
             page.drawText(`${index + 1}. ${doc.label}`, {
                 x: 50,
@@ -409,11 +409,11 @@ const mergeAllPDFs = async () => {
             });
             y -= lineHeight;
         });
-        
+
         // Copy cover page to merged PDF
         const [copiedCoverPage] = await mergedPdf.copyPages(coverPage, coverPage.getPageIndices());
         mergedPdf.addPage(copiedCoverPage);
-        
+
         // Fetch and add each document PDF
         for (const doc of filteredDocuments.value) {
             if (doc.file) {
@@ -429,10 +429,10 @@ const mergeAllPDFs = async () => {
                 }
             }
         }
-        
+
         // Save the merged PDF
         const mergedPdfBytes = await mergedPdf.save();
-        
+
         // Create download link
         const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -443,7 +443,7 @@ const mergeAllPDFs = async () => {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        
+
         message.success('All documents merged successfully!');
     } catch (error) {
         console.error('Error merging PDFs:', error);
@@ -633,13 +633,8 @@ const getFileName = (filePath) => {
                         <FilePdfOutlined class="text-red-500" />
                         Supporting Documents
                     </h3>
-                    <Button 
-                        v-if="hasDocuments" 
-                        type="primary"
-                        @click="mergeAllPDFs" 
-                        :loading="merging"
-                        class="bg-teal-600 hover:bg-teal-700 border-teal-600"
-                    >
+                    <Button v-if="hasDocuments" type="primary" @click="mergeAllPDFs" :loading="merging"
+                        class="bg-teal-600 hover:bg-teal-700 border-teal-600">
                         <MergeCellsOutlined class="mr-1" />
                         Download All as One PDF
                     </Button>
