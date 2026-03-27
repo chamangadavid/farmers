@@ -234,19 +234,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/accident-reports/{id}', [AccidentReportController::class, 'destroy']);
     Route::post('/accident-reports/{id}/resolve', [AccidentReportController::class, 'resolve']);
 
-
-
-
-
     //Job Vacancies routes
     Route::get('/all-jobs', [jobController::class, 'JobVacancies'])->name('job.index');
+    Route::get('/all-jobs-details/{job}', [JobController::class, 'details']);
+    Route::get('/jobs', [JobController::class, 'index']);
+    Route::post('/jobs', [JobController::class, 'store']);
+    Route::post('/job-apply', [JobController::class, 'apply']);
+    Route::get('/jobs/{job}', [JobController::class, 'show']);
+    Route::put('/jobs/{job}', [JobController::class, 'update']);
+    Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
 
-Route::get('/jobs', [JobController::class, 'index']);
-Route::post('/jobs', [JobController::class, 'store']);
-Route::get('/jobs/{job}', [JobController::class, 'show']);
-Route::put('/jobs/{job}', [JobController::class, 'update']);
-Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
-    
+
+     Route::get('/job-applications', [JobController::class, 'fetchApplications']);
+    Route::get('/job-applications/{id}', [JobController::class, 'showApplication']);
+    Route::delete('/job-applications/{id}', [JobController::class, 'destroyApplication']);
+    Route::get('/job-applications/{id}/download/{fileType}', [JobController::class, 'downloadFile']);
+        
 
 
 

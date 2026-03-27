@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Jobs;
 
 use App\Http\Controllers\Controller;
 use App\Models\Jobs\Job;
+use App\Models\Jobs\JobApplication;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
@@ -113,53 +114,249 @@ class JobController extends Controller
     }
 
     // Get all jobs that are not expired (deadline today after 18:00 or in the future)
-// public function getActiveJobs(Request $request)
+    // public function getActiveJobs(Request $request)
+    // {
+    //     $now = now()->setTime(18, 0, 0); // today at 18:00
+
+    //     $jobs = Job::where(function($query) use ($now) {
+    //                 $query->where('deadline', '>', $now) // future deadlines
+    //                       ->orWhere(function($q) use ($now) {
+    //                           // today but after 18:00 still valid
+    //                           $q->whereDate('deadline', now()->toDateString())
+    //                             ->whereTime('deadline', '>=', $now->format('H:i:s'));
+    //                       });
+    //             })
+    //             ->orderBy('deadline', 'asc')
+    //             ->get();
+
+    //     return response()->json(['jobs' => $jobs]);
+    // }
+
+
+    public function getActiveJobs(Request $request)
+    {
+        $now = now()->setTime(18, 0, 0);
+
+        $jobs = Job::where(function($query) use ($now) {
+                    $query->where('deadline', '>', $now)
+                        ->orWhereDate('deadline', now()->toDateString());
+                })
+                ->orderBy('deadline', 'asc')
+                ->get()
+                ->map(function ($job) {
+                    return [
+                        'id' => $job->id,
+                        'title' => $job->title,
+                        'type' => $job->type,
+                        'location' => $job->location,
+                        'deadline' => $job->deadline,
+                        'description' => $job->description,
+                        'requirements' => $job->requirements,
+                        'pdf_file' => $job->pdf_file
+                            ? asset('storage/' . $job->pdf_file)
+                            : null,
+                    ];
+                });
+
+        return response()->json(['jobs' => $jobs]);
+    }
+
+    public function details(Job $job)
+    {
+        return Inertia::render('Site/JobVacanciesDetails', [
+            'job' => $job
+        ]);
+    }
+
+
+//     public function apply(Request $request)
 // {
-//     $now = now()->setTime(18, 0, 0); // today at 18:00
 
-//     $jobs = Job::where(function($query) use ($now) {
-//                 $query->where('deadline', '>', $now) // future deadlines
-//                       ->orWhere(function($q) use ($now) {
-//                           // today but after 18:00 still valid
-//                           $q->whereDate('deadline', now()->toDateString())
-//                             ->whereTime('deadline', '>=', $now->format('H:i:s'));
-//                       });
-//             })
-//             ->orderBy('deadline', 'asc')
-//             ->get();
 
-//     return response()->json(['jobs' => $jobs]);
+//     $data = $request->validate([
+//         'job_id' => 'required|exists:jobs,id',
+//         'name' => 'required|string',
+//         'email' => 'required|email',
+//         'phone' => 'required|string',
+//         'address' => 'nullable|string',
+//         'current_position' => 'nullable|string',
+//         'current_employer' => 'nullable|string',
+
+//         'cv' => 'required|file|mimes:pdf|max:2048',
+//         'nrc' => 'required|file|mimes:pdf|max:2048',
+//         'grade12' => 'required|file|mimes:pdf|max:2048',
+//         'degree' => 'nullable|file|mimes:pdf|max:2048',
+//         'masters' => 'nullable|file|mimes:pdf|max:2048',
+//         'other_documents' => 'nullable|file|mimes:pdf|max:2048',
+//     ]);
+
+//     // Store files
+//     foreach (['cv','nrc','grade12','degree','masters','other_documents'] as $file) {
+//         if ($request->hasFile($file)) {
+//             $data[$file] = $request->file($file)->store('applications', 'public');
+//         }
+//     }
+
+//     JobApplication::create($data);
+
+//     return response()->json(['message' => 'Application submitted successfully']);
 // }
 
 
-
-public function getActiveJobs(Request $request)
+public function apply(Request $request)
 {
-    $now = now()->setTime(18, 0, 0);
 
-    $jobs = Job::where(function($query) use ($now) {
-                $query->where('deadline', '>', $now)
-                      ->orWhereDate('deadline', now()->toDateString());
-            })
-            ->orderBy('deadline', 'asc')
+    try {
+        $data = $request->validate([
+            'job_id' => 'required|exists:jobs,id',
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|string',
+            'address' => 'nullable|string',
+            'current_position' => 'nullable|string',
+            'current_employer' => 'nullable|string',
+            'cv' => 'required|file|mimes:pdf|max:2048',
+            'nrc' => 'required|file|mimes:pdf|max:2048',
+            'grade12' => 'required|file|mimes:pdf|max:2048',
+            'degree' => 'nullable|file|mimes:pdf|max:2048',
+            'masters' => 'nullable|file|mimes:pdf|max:2048',
+            'other_documents' => 'nullable|file|mimes:pdf|max:2048',
+        ]);
+
+        // Store files
+        foreach (['cv','nrc','grade12','degree','masters','other_documents'] as $file) {
+            if ($request->hasFile($file)) {
+                $data[$file] = $request->file($file)->store('applications', 'public');
+            }
+        }
+
+        JobApplication::create($data);
+
+        return response()->json(['message' => 'Application submitted successfully']);
+        
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json(['errors' => $e->errors()], 422);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function fetchApplications()
+    {
+        $applications = JobApplication::with('job')
+            ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($job) {
+            ->map(function ($application) {
                 return [
-                    'id' => $job->id,
-                    'title' => $job->title,
-                    'type' => $job->type,
-                    'location' => $job->location,
-                    'deadline' => $job->deadline,
-                    'description' => $job->description,
-                    'requirements' => $job->requirements,
-                    'pdf_file' => $job->pdf_file
-                        ? asset('storage/' . $job->pdf_file)
-                        : null,
+                    'id' => $application->id,
+                    'job_id' => $application->job_id,
+                    'name' => $application->name,
+                    'email' => $application->email,
+                    'phone' => $application->phone,
+                    'address' => $application->address,
+                    'current_position' => $application->current_position,
+                    'current_employer' => $application->current_employer,
+                    'cv' => $application->cv,
+                    'nrc' => $application->nrc,
+                    'grade12' => $application->grade12,
+                    'degree' => $application->degree,
+                    'masters' => $application->masters,
+                    'other_documents' => $application->other_documents,
+                    'created_at' => $application->created_at,
+                    'job' => $application->job ? [
+                        'id' => $application->job->id,
+                        'title' => $application->job->title,
+                        'type' => $application->job->type,
+                        'location' => $application->job->location,
+                    ] : null,
                 ];
             });
 
-    return response()->json(['jobs' => $jobs]);
-}
+        return response()->json([
+            'applications' => $applications
+        ]);
+    }
+
+    public function showApplication($id)
+    {
+        $application = JobApplication::with('job')->findOrFail($id);
+        
+        return response()->json([
+            'application' => [
+                'id' => $application->id,
+                'job_id' => $application->job_id,
+                'name' => $application->name,
+                'email' => $application->email,
+                'phone' => $application->phone,
+                'address' => $application->address,
+                'current_position' => $application->current_position,
+                'current_employer' => $application->current_employer,
+                'cv' => $application->cv,
+                'nrc' => $application->nrc,
+                'grade12' => $application->grade12,
+                'degree' => $application->degree,
+                'masters' => $application->masters,
+                'other_documents' => $application->other_documents,
+                'created_at' => $application->created_at,
+                'job' => $application->job ? [
+                    'id' => $application->job->id,
+                    'title' => $application->job->title,
+                    'type' => $application->job->type,
+                    'location' => $application->job->location,
+                ] : null,
+            ]
+        ]);
+    }
+
+    public function destroyApplication($id)
+    {
+        $application = JobApplication::findOrFail($id);
+        
+        // Delete associated files
+        $files = ['cv', 'nrc', 'grade12', 'degree', 'masters', 'other_documents'];
+        foreach ($files as $file) {
+            if ($application->$file && Storage::disk('public')->exists($application->$file)) {
+                Storage::disk('public')->delete($application->$file);
+            }
+        }
+        
+        $application->delete();
+        
+        return response()->json(['message' => 'Application deleted successfully']);
+    }
+    
+    public function downloadFile($id, $fileType)
+    {
+        $application = JobApplication::findOrFail($id);
+        $allowedTypes = ['cv', 'nrc', 'grade12', 'degree', 'masters', 'other_documents'];
+        
+        if (!in_array($fileType, $allowedTypes)) {
+            return response()->json(['error' => 'Invalid file type'], 400);
+        }
+        
+        $filePath = $application->$fileType;
+        
+        if (!$filePath || !Storage::disk('public')->exists($filePath)) {
+            return response()->json(['error' => 'File not found'], 404);
+        }
+        
+        return Storage::disk('public')->download($filePath, $application->name . '_' . $fileType . '.pdf');
+    }
+
+
 
 
 }

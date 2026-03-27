@@ -25,6 +25,11 @@ class Job extends Model
         'deadline' => 'datetime',
     ];
 
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class);
+    }
+
     // In Job model
     public function getStatusAttribute($value)
     {
