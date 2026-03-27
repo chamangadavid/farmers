@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Jobs;
 
 use App\Http\Controllers\Controller;
+use App\Mail\JobSubmissionMail;
 use App\Models\Jobs\Job;
 use App\Models\Jobs\JobApplication;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 class JobController extends Controller
 {
@@ -148,6 +150,49 @@ class JobController extends Controller
         ]);
     }
 
+    // public function apply(Request $request)
+    // {
+
+    //     try {
+    //         $data = $request->validate([
+    //             'job_id' => 'required|exists:jobs,id',
+    //             'name' => 'required|string',
+    //             'email' => 'required|email',
+    //             'phone' => 'required|string',
+    //             'address' => 'nullable|string',
+    //             'current_position' => 'nullable|string',
+    //             'current_employer' => 'nullable|string',
+    //             'cv' => 'required|file|mimes:pdf|max:2048',
+    //             'nrc' => 'required|file|mimes:pdf|max:2048',
+    //             'grade12' => 'required|file|mimes:pdf|max:2048',
+    //             'degree' => 'nullable|file|mimes:pdf|max:2048',
+    //             'masters' => 'nullable|file|mimes:pdf|max:2048',
+    //             'other_documents' => 'nullable|file|mimes:pdf|max:2048',
+    //         ]);
+
+    //         // Store files
+    //         foreach (['cv','nrc','grade12','degree','masters','other_documents'] as $file) {
+    //             if ($request->hasFile($file)) {
+    //                 $data[$file] = $request->file($file)->store('applications', 'public');
+    //             }
+    //         }
+
+    //         JobApplication::create($data);
+
+    //         // Send email to admin
+    //         $adminEmails = config('mail.admin_addresses.aaib'); // 'umoyoprintex@gmail.com'
+
+
+    //         return response()->json(['message' => 'Application submitted successfully']);
+            
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         return response()->json(['errors' => $e->errors()], 422);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+    //     }
+    // }
+
+      
     public function apply(Request $request)
     {
 
@@ -177,6 +222,14 @@ class JobController extends Controller
 
             JobApplication::create($data);
 
+            // Send email to admin
+            $adminEmails = config('mail.admin_addresses.aaib'); // 'umoyoprintex@gmail.com'
+
+            if ($adminEmails) {
+                Mail::to($adminEmails)->send(new JobSubmissionMail($data));
+                //Mail::to($adminEmails)->send(new JobSubmissionMail($data->toArray()));
+            }
+
             return response()->json(['message' => 'Application submitted successfully']);
             
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -185,6 +238,7 @@ class JobController extends Controller
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function fetchApplications(Request $request)
     {
