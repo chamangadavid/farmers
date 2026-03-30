@@ -7,6 +7,7 @@ use App\Models\Accident\AccidentReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AccidentReportedMail;
+use App\Models\Audit\AuditLog;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -70,6 +71,9 @@ class AccidentReportController extends Controller
             //'status' => 'Reported', // 
         ]);
 
+        // Audit log
+        // $report->audit('created', null, $report->toArray());
+
         // Send Email
         $adminEmails = config('mail.admin_addresses.aaib');
 
@@ -88,7 +92,23 @@ class AccidentReportController extends Controller
     public function destroy($id)
     {
         $report = AccidentReport::findOrFail($id);
+
+        // capture before delete
+        // $oldValues = $report->toArray();
+
         $report->delete();
+
+        // manual audit (since model is gone)
+        // AuditLog::create([
+        //     'user_id' => auth()->id(),
+        //     'action' => 'deleted',
+        //     'auditable_type' => AccidentReport::class,
+        //     'auditable_id' => $id,
+        //     'old_values' => $oldValues,
+        //     'new_values' => null,
+        //     'ip_address' => request()->ip(),
+        //     'user_agent' => request()->userAgent(),
+        // ]);
 
         return response()->json(['message' => 'Deleted']);
     }
@@ -103,6 +123,8 @@ class AccidentReportController extends Controller
 
         $report = AccidentReport::findOrFail($id);
 
+        // $oldValues = $report->getOriginal();
+
         if ($request->hasFile('file')) {
 
             $file = $request->file('file');
@@ -115,7 +137,7 @@ class AccidentReportController extends Controller
             $path = $file->store('accident_followups', 'public');
 
             // DEBUG
-            Log::info('File stored at', ['path' => $path]);
+           // Log::info('File stored at', ['path' => $path]);
 
             $report->follow_up_file = $path;
         }
@@ -125,6 +147,9 @@ class AccidentReportController extends Controller
         $report->summary = $request->summary;
 
         $report->save();
+
+        // Audit log
+        // $report->audit('updated', $oldValues, $report->fresh()->toArray());
 
         return response()->json([
             'message' => 'Report updated successfully',

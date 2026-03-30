@@ -4,6 +4,7 @@ use App\Http\Controllers\Accident\AccidentReportController;
 use App\Http\Controllers\Accident\AccidentsController;
 use App\Http\Controllers\Api\QrCodeController;
 use App\Http\Controllers\Api\QrTypeController;
+use App\Http\Controllers\Audit\AuditLogController;
 use App\Http\Controllers\Contacts\ContactController;
 use App\Http\Controllers\Documents\DocumentController;
 use App\Http\Controllers\Faqs\FaqController;
@@ -271,13 +272,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobs/{job}', [JobController::class, 'show']);
     Route::put('/jobs/{job}', [JobController::class, 'update']);
     Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
-
-
-     Route::get('/job-applications', [JobController::class, 'fetchApplications']);
+    Route::get('/job-applications', [JobController::class, 'fetchApplications']);
     Route::get('/job-applications/{id}', [JobController::class, 'showApplication']);
     Route::delete('/job-applications/{id}', [JobController::class, 'destroyApplication']);
     Route::get('/job-applications/{id}/download/{fileType}', [JobController::class, 'downloadFile']);
-        
+
+    //Trail Audit
+    Route::get('/trail-audit', [AuditLogController::class, 'getAudits'])->name('trail-audit.index');
+    Route::get('/audit-logs', [AuditLogController::class, 'index']);
+    Route::get('/audits/{id}', [AuditLogController::class, 'showPage']);
+    
 
 
 

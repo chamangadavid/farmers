@@ -4,10 +4,11 @@ namespace App\Models\Jobs;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Auditable;
 
 class Job extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = [
         'title',
@@ -47,6 +48,22 @@ class Job extends Model
         // Otherwise, still published
         return $value ?? 'Published';
     }
+
+    //Trail Audit
+   protected static function booted()
+   {
+      static::created(function ($model) {
+         $model->audit('created', null, $model->toArray());
+      });
+
+      static::updated(function ($model) {
+         $model->audit('updated', $model->getOriginal(), $model->getChanges());
+      });
+
+      static::deleted(function ($model) {
+         $model->audit('deleted', $model->toArray(), null);
+      });
+   }
 
 
 

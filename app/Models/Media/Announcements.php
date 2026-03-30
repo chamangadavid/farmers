@@ -4,10 +4,11 @@ namespace App\Models\Media;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Auditable;
 
 class Announcements extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
     
     protected $table = 'announcements';
 
@@ -19,4 +20,21 @@ class Announcements extends Model
         'summary',
         'details'
     ];
+
+    //Trail Audit
+   protected static function booted()
+   {
+      static::created(function ($model) {
+         $model->audit('created', null, $model->toArray());
+      });
+
+      static::updated(function ($model) {
+         $model->audit('updated', $model->getOriginal(), $model->getChanges());
+      });
+
+      static::deleted(function ($model) {
+         $model->audit('deleted', $model->toArray(), null);
+      });
+   }
+   
 }

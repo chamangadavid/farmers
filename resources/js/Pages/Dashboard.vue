@@ -47,7 +47,8 @@ import {
   InboxOutlined,
   LineChartOutlined,
   RiseOutlined,
-  FallOutlined
+  FallOutlined,
+  UserAddOutlined
 } from '@ant-design/icons-vue'
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
@@ -55,6 +56,7 @@ import Card from "@/Components/Auth/Card.vue";
 import StartsCards from '@/Components/StartsCards.vue';
 import PieChart from '@/Components/PieChart.vue';
 import BarChart from '@/Components/BarChart.vue';
+import History from './Site/History.vue';
 
 // Props from Inertia
 const props = defineProps({
@@ -247,12 +249,22 @@ const chartInsights = computed(() => {
                         </template>
                       </Card>
 
+                       <Card 
+                        title="Trail Audit" 
+                        v-if="can('manage trail audit')"
+                        subTitle="Create, edit & delete Trail Audit" 
+                        routeName="trail-audit.index">
+                        <template #icon>
+                          <HistoryOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
                       <Card 
                         title="My Account" 
                         subTitle="Manage your profile and account settings" 
                         routeName="profile.edit">
                         <template #icon>
-                          <IdcardOutlined style="font-size: 24px; color: #10b981;" />
+                          <UserAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
                     </div>
