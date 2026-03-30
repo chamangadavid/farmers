@@ -78,7 +78,8 @@ const dynamicRoute = computed(() => {
 
 <style scoped>
 .certificate-card {
-  background-image: url("/assets/bg-grey.png");
+  /* background-image: url("/assets/bg-grey.png"); */
+  background-image: url("/assets/bg-grey.jpg");
   background-repeat: no-repeat;
   background-color: #fff;
   background-size: cover;
@@ -124,22 +125,40 @@ const dynamicRoute = computed(() => {
   text-align: left;
 }
 
-.certificate-number,
+/* .certificate-number,
 .certificate-id,
 .issue-date {
   margin: 5px 0;
   font-size: 14px;
   color: #666 !important;
   text-align: left;
+} */
+
+.certificate-number,
+.certificate-id,
+.issue-date {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #fff !important;
+  text-align: left;
 }
 
-.certificate-title {
+/* .certificate-title {
   color: #333 !important;
   font-size: 18px !important;
   font-weight: 700;
   margin-top: 5px;
   margin-bottom: 5px !important;
+} */
+
+.certificate-title {
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 700;
+  margin-top: 5px;
+  margin-bottom: 5px !important;
 }
+
 
 .certificate-title sup {
   font-size: 12px;

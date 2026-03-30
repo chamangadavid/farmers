@@ -1,181 +1,460 @@
+<!-- Resources/js/Pages/Dashboard.vue -->
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { FileTextOutlined, SwapOutlined, FileDoneOutlined, IdcardOutlined, GiftOutlined, PhoneOutlined, UserOutlined, ReadOutlined, AppstoreOutlined, PictureOutlined, CalendarOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import { 
+  FileTextOutlined, 
+  SwapOutlined, 
+  FileDoneOutlined, 
+  IdcardOutlined, 
+  GiftOutlined, 
+  PhoneOutlined, 
+  UserOutlined, 
+  ReadOutlined, 
+  AppstoreOutlined, 
+  PictureOutlined, 
+  CalendarOutlined, 
+  SettingOutlined,
+  DashboardOutlined,
+  SafetyOutlined,
+  TeamOutlined,
+  MailOutlined,
+  QuestionCircleOutlined,
+  HistoryOutlined,
+  BookOutlined,
+  GlobalOutlined,
+  BarChartOutlined,
+  PlusCircleOutlined,
+  NotificationOutlined,
+  AuditOutlined,
+  BuildOutlined,
+  HomeOutlined,
+  StarOutlined,
+  RocketOutlined,
+  TrophyOutlined,
+  UsergroupAddOutlined,
+  PieChartFilled,
+  PieChartOutlined,
+  CarOutlined,
+  PlayCircleOutlined,
+  QuestionOutlined,
+  QuestionCircleFilled,
+  QuestionCircleTwoTone,
+  PhoneFilled,
+  PhoneTwoTone,
+  FolderAddFilled,
+  FolderOpenFilled,
+  InfoCircleFilled,
+  InboxOutlined
+} from '@ant-design/icons-vue'
 import { Head } from '@inertiajs/vue3';
-
+import { ref, computed } from 'vue';
+import Card from "@/Components/Auth/Card.vue";
+import StartsCards from '@/Components/StartsCards.vue';
+import PieChart from '@/Components/PieChart.vue';
+import BarChart from '@/Components/BarChart.vue';
 
 // Props from Inertia
-defineProps({
-  auth: Object
+const props = defineProps({
+  auth: Object,
+  stats: Object,
+  charts: Object
 });
-
 
 const activeKey = ref('1');
 
 // Function to check if user has a permission
-const can = (permission, auth) => {
-  return auth?.permissions?.includes(permission);
+const can = (permission) => {
+  if (props.auth?.user?.roles?.some(role => role.name === 'Super Admin')) {
+    return true;
+  }
+  return props.auth?.permissions?.includes(permission);
 };
+
+// Recent Activity Data
+const recentActivities = [
+  { id: 1, title: 'New user registered', time: '5 minutes ago', icon: UserOutlined, color: 'teal' },
+  { id: 2, title: 'Role permissions updated', time: '1 hour ago', icon: SettingOutlined, color: 'emerald' },
+  { id: 3, title: 'New report generated', time: '3 hours ago', icon: FileTextOutlined, color: 'teal' },
+  { id: 4, title: 'QR code created', time: 'Yesterday', icon: AppstoreOutlined, color: 'emerald' }
+];
 
 </script>
 
 <template>
-    <Head title="Dashboard" />
-
-    <AuthenticatedLayout>
-        <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800"
-            >
-                Dashboard
-            </h2>
-        </template>
-
-        <div class="py-4">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-4">
-                <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
-                >
-                    <div class="p-6 text-gray-900">
-
-                        <div>
-                            <a-tabs v-model:activeKey="activeKey">
-                              <a-tab-pane key="1" tab="Quick Links">
-
-                                <div class="flex flex-wrap gap-4">
-
-                                  <Card 
-                                  title="Access Control" v-if="can('manage access control', auth)"
-                                  subTitle="Create, edit, update and delete of Access Control" 
-                                  routeName="admin.rolesAndPermission">
-                                  <template #icon>
-                                  <SettingOutlined style="font-size: 24px;" />
-                                  </template>
-                                  </Card>
-
-                                  
-                                  <Card title="My Account" 
-                                  subTitle="Create, edit, update and delete of Accounts" 
-                                  routeName="profile.edit">
-                                  <template #icon>
-                                  <IdcardOutlined style="font-size: 24px;" />
-                                  </template>
-                                  </Card>
-
-                                </div> 
-                              </a-tab-pane>
-                            </a-tabs>
-                          </div>
-                    </div>
-                </div>
-            </div>
+  <Head title="Dashboard" />
+  <AuthenticatedLayout>
+    <template #header>
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+            Dashboard
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Welcome back, {{ auth?.user?.name }}! Here's what's happening today.
+          </p>
         </div>
-    </AuthenticatedLayout>
+        <div class="flex gap-3">
+          <div class="text-right">
+            <div class="text-sm text-gray-500 dark:text-gray-400">{{ new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}</div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="py-4">
+      <div class="mx-auto max-w-7xl sm:px-6 lg:px-4">
+        <!-- Quick Stats Cards -->
+         <StartsCards :stats="stats" />
+
+        <!-- Main Card with Tabs -->
+        <div class="overflow-hidden bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700">
+          <div class="p-6">
+
+            <!-- Professional Tabs -->
+            <div class="dashboard-tabs">
+              <a-tabs v-model:activeKey="activeKey" class="custom-tabs">
+                
+                <a-tab-pane key="1">
+                  <template #tab>
+                    <div class="flex items-center gap-2">
+                      <StarOutlined class="text-teal-500" />
+                      <span>Quick Links</span>
+                    </div>
+                  </template>
+                  
+                  <div class="mt-6">
+                    <div class="flex flex-wrap gap-4">
+
+                      <Card 
+                        title="Access Control Management" 
+                        v-if="can('manage access control')"
+                        subTitle="Create, edit and delete of Access Control" 
+                        routeName="admin.rolesAndPermission">
+                        <template #icon>
+                          <SettingOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
+                        title="Accidents Management" 
+                        v-if="can('manage all accidents')"
+                        subTitle="Create, edit & delete all accidents" 
+                        routeName="accidents.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Announcement Management" 
+                        v-if="can('manage all announcements')"
+                        subTitle="Create, edit & delete announcements" 
+                        routeName="announcement.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                        <Card 
+                        title="Team Member Management" 
+                        v-if="can('manage management team')"
+                        subTitle="Create, edit & delete management team" 
+                        routeName="management.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Job Vacancies Management" 
+                        v-if="can('manage job vacancies')"
+                        subTitle="Create, edit & delete job vacancies" 
+                        routeName="job.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
+                        title="FAQs Management" 
+                        v-if="can('manage faqs')"
+                        subTitle="Create, edit & delete FAQs" 
+                        routeName="faq.index">
+                        <template #icon>
+                          <QuestionCircleTwoTone style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Contacts Management" 
+                        v-if="can('manage contact us')"
+                        subTitle="Create, edit & delete Contact messages" 
+                        routeName="contact.index">
+                        <template #icon>
+                          <PhoneTwoTone style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <!-- <Card 
+                        title="Investigation Management" 
+                        v-if="can('manage all investigagtions')"
+                        subTitle="Create, edit & delete all investigations" 
+                        routeName="investigations.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card> -->
+
+                       <Card 
+                        title="News Management" 
+                        v-if="can('manage all latest news')"
+                        subTitle="Create, edit & delete latest news" 
+                        routeName="news.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Press Releases Management" 
+                        v-if="can('manage all press releases')"
+                        subTitle="Create, edit & delete press releases" 
+                        routeName="press.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Regulations Management" 
+                        v-if="can('manage all national regulations')"
+                        subTitle="Create, edit & delete national regulations" 
+                        routeName="regulations.index">
+                        <template #icon>
+                          <InboxOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Document Repository" 
+                        v-if="can('manage document repository')"
+                        subTitle="Create, edit & delete Document Repository" 
+                        routeName="document.index">
+                        <template #icon>
+                          <FolderOpenFilled style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
+                        title="My Account" 
+                        subTitle="Manage your profile and account settings" 
+                        routeName="profile.edit">
+                        <template #icon>
+                          <IdcardOutlined style="font-size: 24px; color: #10b981;" />
+                        </template>
+                      </Card>
+
+                    </div>
+                  </div>
+                </a-tab-pane>
+
+                <a-tab-pane key="2">
+                  <template #tab>
+                    <div class="flex items-center gap-2">
+                      <RocketOutlined class="text-teal-500" />
+                      <span>Recent Activity</span>
+                    </div>
+                  </template>
+                  
+                  <div class="mt-6">
+                    <div class="space-y-4">
+                      <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.color === 'teal' ? 'bg-teal-100 dark:bg-teal-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30']">
+                          <component :is="activity.icon" :class="['text-lg', activity.color === 'teal' ? 'text-teal-600 dark:text-teal-400' : 'text-emerald-600 dark:text-emerald-400']" />
+                        </div>
+                        <div class="flex-1">
+                          <p class="font-medium text-gray-900 dark:text-white">{{ activity.title }}</p>
+                          <p class="text-sm text-gray-500 dark:text-gray-400">{{ activity.time }}</p>
+                        </div>
+                        <button class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 text-sm font-medium">View</button>
+                      </div>
+                    </div>
+                  </div>
+                </a-tab-pane>
+
+                <a-tab-pane key="3">
+                  <template #tab>
+                    <div class="flex items-center gap-2">
+                      <PieChartOutlined class="text-teal-500" />
+                      <span>Charts & Reports</span>
+                    </div>
+                  </template>
+                  
+                  <div class="mt-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Pie Chart -->
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
+                      <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                        Accident Status Distribution
+                      </h3>
+                      <PieChart 
+                        :labels="charts.statusLabels" 
+                        :data="charts.statusData" 
+                      />
+                    </div>
+
+                    <!-- Bar Chart -->
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow">
+                      <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                        Accident Status Histogram
+                      </h3>
+                      <BarChart 
+                        :labels="charts.statusLabels" 
+                        :data="charts.statusData" 
+                      />
+                    </div>
+
+                    </div>
+                  </div>
+                </a-tab-pane>
+
+              </a-tabs>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Info Section -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl p-6 text-white">
+            <h3 class="text-lg font-semibold mb-2">System Status</h3>
+            <p class="text-teal-100 text-sm mb-4">All systems operational</p>
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span class="text-sm">System running smoothly</span>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Quick Tip</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Need help? Check out our documentation or contact support.</p>
+            <a href="#" class="text-teal-600 dark:text-teal-400 text-sm font-medium hover:text-teal-700 dark:hover:text-teal-300">Learn more →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </AuthenticatedLayout>
 </template>
-<script>
-import Card from "@/Components/Auth/Card.vue";
-import { ref } from "vue";
 
-export default {
-  components: {
-    Card,
-  },
-  data() {
-    return {
-      value: "",
-      activeKey: ref("1"),
-      loading: false,
-    };
-  },
-  mounted() {
-  },
-
-  methods: {
-
-  },
-};
-
-</script>
-<style>
-.ant-breadcrumb-link {
-  font-weight: bold;
-  font-size: 20px !important;
-  color: black;
+<style scoped>
+/* Professional Tabs Styling */
+.dashboard-tabs :deep(.ant-tabs-nav) {
+  margin-bottom: 0;
+  border-bottom: 2px solid #e5e7eb;
 }
 
-.complete-your-profile-banner {
-  border: 0 solid #fff;
-  background: #fff;
-  box-shadow: 0 11px 30px 0 rgba(0, 0, 0, 0.07);
-  padding: 0px;
-  margin-top: 30px;
-  margin-bottom: 30px;
+.dark .dashboard-tabs :deep(.ant-tabs-nav) {
+  border-bottom-color: #374151;
 }
 
-.complete-your-profile-banner h4 {
-  padding-right: 10px;
-  padding-bottom: 10px;
-  color: #000;
-  font-size: 28px !important;
-  font-style: normal;
-  font-weight: 700;
+.dashboard-tabs :deep(.ant-tabs-tab) {
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s;
+  margin: 0 4px;
+  border-radius: 8px 8px 0 0;
+  color: #6b7280;
 }
 
-.complete-your-profile-banner .ant-btn span {
-  font-size: 18px !important;
-  font-weight: bold !important;
+.dark .dashboard-tabs :deep(.ant-tabs-tab) {
+  color: #9ca3af;
 }
 
-.external-system-status {
-  height: auto;
-  color: #fff;
-  background-color: #15396c;
-  padding: 20px;
-  border-radius: 10px;
+.dashboard-tabs :deep(.ant-tabs-tab:hover) {
+  color: #14b8a6;
 }
 
-.external-system-status h1 {
-  color: #fff;
-  font-size: 22px !important;
+.dashboard-tabs :deep(.ant-tabs-tab-active) {
+  color: #14b8a6;
 }
 
-.external-system-status p {
-  color: #fff !important;
-}
-
-.status-card {
-  background: #ffffff;
-  border-radius: 10px;
-  background-image: url("/assets/bg-grey.png");
-  box-shadow: 0 11px 30px 0 rgba(0, 0, 0, 0.07);
-  background-repeat: no-repeat;
-  background-size: cover;
-  padding: 20px;
-  margin: 20px auto;
-}
-
-.status-header {
-  margin-bottom: 15px;
-}
-
-.status-header h2 {
-  color: #333 !important;
-  font-size: 18px !important;
-  font-weight: 700;
-  margin-top: 5px;
-  margin-bottom: 5px !important;
-}
-
-.status-body {
-  font-size: 1.2em;
-}
-
-.status-label {
+.dashboard-tabs :deep(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: #14b8a6;
   font-weight: 600;
-  color: #333333;
 }
 
-.status-value {
-  color: #4caf50;
+.dashboard-tabs :deep(.ant-tabs-ink-bar) {
+  background: linear-gradient(90deg, #14b8a6, #10b981);
+  height: 3px;
+  border-radius: 3px;
+}
+
+.dashboard-tabs :deep(.ant-tabs-tab-btn) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.2);
+}
+
+/* Custom animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-tabs :deep(.ant-tabs-tab) {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .dashboard-tabs :deep(.ant-tabs-tab-btn) {
+    gap: 4px;
+  }
+}
+</style>
+
+<style>
+/* Global styles for Ant Design tabs to match theme */
+.ant-tabs-tab-btn {
+  transition: color 0.3s;
+}
+
+.ant-tabs-tab .anticon {
+  font-size: 1rem;
+}
+
+/* Dark mode support for tabs */
+.dark .ant-tabs-nav::before {
+  border-bottom-color: #374151;
+}
+
+.dark .ant-tabs-tab {
+  color: #9ca3af;
+}
+
+.dark .ant-tabs-tab:hover {
+  color: #14b8a6;
+}
+
+.dark .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #14b8a6 !important;
 }
 </style>

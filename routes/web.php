@@ -20,10 +20,15 @@ use App\Http\Controllers\Regulation\NationalRegulationsController;
 use App\Http\Controllers\Report\ReportsController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserSearchController;
+use App\Models\Accident\AccidentReport;
+use App\Models\Contacts\Contact;
+use App\Models\Jobs\Job;
 use App\Models\Management\Team;
 use App\Models\Regulation\NationalRegulations;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 /*
@@ -41,12 +46,32 @@ Route::get('/', function () {
     ]);
 });
 
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })
+// ->middleware(['auth', 'verified'])
+// ->name('dashboard');
+
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+      $statusCounts = AccidentReport::select('status', DB::raw('count(*) as total'))
+        ->groupBy('status')
+        ->pluck('total', 'status');
+
+    return Inertia::render('Dashboard', [
+        'stats' => [
+            'users' => User::count(),
+            'accidents' => AccidentReport::count(),
+            'jobs' => Job::count(),
+            'contacts' => Contact::count(),
+        ],
+         'charts' => [
+            'statusLabels' => $statusCounts->keys(),
+            'statusData' => $statusCounts->values(),
+        ]
+    ]);
 })
 ->middleware(['auth', 'verified'])
 ->name('dashboard');
-
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes

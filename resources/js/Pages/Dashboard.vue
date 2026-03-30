@@ -44,15 +44,23 @@ import {
   FolderAddFilled,
   FolderOpenFilled,
   InfoCircleFilled,
-  InboxOutlined
+  InboxOutlined,
+  LineChartOutlined,
+  RiseOutlined,
+  FallOutlined
 } from '@ant-design/icons-vue'
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import Card from "@/Components/Auth/Card.vue";
+import StartsCards from '@/Components/StartsCards.vue';
+import PieChart from '@/Components/PieChart.vue';
+import BarChart from '@/Components/BarChart.vue';
 
 // Props from Inertia
 const props = defineProps({
-  auth: Object
+  auth: Object,
+  stats: Object,
+  charts: Object
 });
 
 const activeKey = ref('1');
@@ -65,21 +73,21 @@ const can = (permission) => {
   return props.auth?.permissions?.includes(permission);
 };
 
-// Recent Activity Data
-const recentActivities = [
-  { id: 1, title: 'New user registered', time: '5 minutes ago', icon: UserOutlined, color: 'teal' },
-  { id: 2, title: 'Role permissions updated', time: '1 hour ago', icon: SettingOutlined, color: 'emerald' },
-  { id: 3, title: 'New report generated', time: '3 hours ago', icon: FileTextOutlined, color: 'teal' },
-  { id: 4, title: 'QR code created', time: 'Yesterday', icon: AppstoreOutlined, color: 'emerald' }
-];
-
-// Quick Stats
-const quickStats = [
-  { label: 'Total Users', value: '1,234', change: '+12%', icon: UserOutlined },
-  { label: 'Reported Accidents', value: '456', change: '+5%', icon: DashboardOutlined },
-  { label: 'Reports Generated', value: '789', change: '+23%', icon: FileTextOutlined },
-  { label: 'QR Codes', value: '567', change: '+8%', icon: AppstoreOutlined }
-];
+// Chart insights
+const chartInsights = computed(() => {
+  if (!props.charts?.statusData?.length) return null;
+  
+  const total = props.charts.statusData.reduce((a, b) => a + b, 0);
+  const maxValue = Math.max(...props.charts.statusData);
+  const maxIndex = props.charts.statusData.indexOf(maxValue);
+  const maxLabel = props.charts.statusLabels[maxIndex];
+  const percentage = ((maxValue / total) * 100).toFixed(1);
+  
+  return {
+    total,
+    highest: { label: maxLabel, value: maxValue, percentage }
+  };
+});
 </script>
 
 <template>
@@ -97,7 +105,9 @@ const quickStats = [
         </div>
         <div class="flex gap-3">
           <div class="text-right">
-            <div class="text-sm text-gray-500 dark:text-gray-400">{{ new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              {{ new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }}
+            </div>
           </div>
         </div>
       </div>
@@ -106,19 +116,7 @@ const quickStats = [
     <div class="py-4">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-4">
         <!-- Quick Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div v-for="stat in quickStats" :key="stat.label" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">{{ stat.label }}</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ stat.value }}</p>
-              </div>
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                <component :is="stat.icon" class="text-white text-xl" />
-              </div>
-            </div>
-          </div>
-        </div>
+         <StartsCards :stats="stats" />
 
         <!-- Main Card with Tabs -->
         <div class="overflow-hidden bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700">
@@ -138,7 +136,7 @@ const quickStats = [
                   
                   <div class="mt-6">
                     <div class="flex flex-wrap gap-4">
-
+                      <!-- Your existing cards remain the same -->
                       <Card 
                         title="Access Control Management" 
                         v-if="can('manage access control')"
@@ -159,7 +157,7 @@ const quickStats = [
                         </template>
                       </Card>
 
-                       <Card 
+                      <Card 
                         title="Announcement Management" 
                         v-if="can('manage all announcements')"
                         subTitle="Create, edit & delete announcements" 
@@ -169,7 +167,7 @@ const quickStats = [
                         </template>
                       </Card>
 
-                        <Card 
+                      <Card 
                         title="Team Member Management" 
                         v-if="can('manage management team')"
                         subTitle="Create, edit & delete management team" 
@@ -179,7 +177,7 @@ const quickStats = [
                         </template>
                       </Card>
 
-                       <Card 
+                      <Card 
                         title="Job Vacancies Management" 
                         v-if="can('manage job vacancies')"
                         subTitle="Create, edit & delete job vacancies" 
@@ -195,31 +193,21 @@ const quickStats = [
                         subTitle="Create, edit & delete FAQs" 
                         routeName="faq.index">
                         <template #icon>
-                          <QuestionCircleTwoTone style="font-size: 24px; color: #14b8a6;" />
+                          <QuestionCircleOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
-                       <Card 
+                      <Card 
                         title="Contacts Management" 
                         v-if="can('manage contact us')"
                         subTitle="Create, edit & delete Contact messages" 
                         routeName="contact.index">
                         <template #icon>
-                          <PhoneTwoTone style="font-size: 24px; color: #14b8a6;" />
+                          <PhoneFilled style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
-                       <!-- <Card 
-                        title="Investigation Management" 
-                        v-if="can('manage all investigagtions')"
-                        subTitle="Create, edit & delete all investigations" 
-                        routeName="investigations.index">
-                        <template #icon>
-                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card> -->
-
-                       <Card 
+                      <Card 
                         title="News Management" 
                         v-if="can('manage all latest news')"
                         subTitle="Create, edit & delete latest news" 
@@ -229,7 +217,7 @@ const quickStats = [
                         </template>
                       </Card>
 
-                       <Card 
+                      <Card 
                         title="Press Releases Management" 
                         v-if="can('manage all press releases')"
                         subTitle="Create, edit & delete press releases" 
@@ -239,7 +227,7 @@ const quickStats = [
                         </template>
                       </Card>
 
-                       <Card 
+                      <Card 
                         title="Regulations Management" 
                         v-if="can('manage all national regulations')"
                         subTitle="Create, edit & delete national regulations" 
@@ -249,7 +237,7 @@ const quickStats = [
                         </template>
                       </Card>
 
-                       <Card 
+                      <Card 
                         title="Document Repository" 
                         v-if="can('manage document repository')"
                         subTitle="Create, edit & delete Document Repository" 
@@ -267,7 +255,6 @@ const quickStats = [
                           <IdcardOutlined style="font-size: 24px; color: #10b981;" />
                         </template>
                       </Card>
-
                     </div>
                   </div>
                 </a-tab-pane>
@@ -275,57 +262,117 @@ const quickStats = [
                 <a-tab-pane key="2">
                   <template #tab>
                     <div class="flex items-center gap-2">
-                      <RocketOutlined class="text-teal-500" />
-                      <span>Recent Activity</span>
+                      <LineChartOutlined class="text-teal-500" />
+                      <span>Analytics & Reports</span>
                     </div>
                   </template>
                   
                   <div class="mt-6">
-                    <div class="space-y-4">
-                      <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.color === 'teal' ? 'bg-teal-100 dark:bg-teal-900/30' : 'bg-emerald-100 dark:bg-emerald-900/30']">
-                          <component :is="activity.icon" :class="['text-lg', activity.color === 'teal' ? 'text-teal-600 dark:text-teal-400' : 'text-emerald-600 dark:text-emerald-400']" />
+                    <!-- Chart Insights Header -->
+                    <div v-if="chartInsights" class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div class="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30 rounded-xl p-4 border border-teal-100 dark:border-teal-800">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">Total Reports</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ chartInsights.total }}</p>
+                          </div>
+                          <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center">
+                            <FileTextOutlined class="text-teal-600 dark:text-teal-400 text-xl" />
+                          </div>
                         </div>
-                        <div class="flex-1">
-                          <p class="font-medium text-gray-900 dark:text-white">{{ activity.title }}</p>
-                          <p class="text-sm text-gray-500 dark:text-gray-400">{{ activity.time }}</p>
+                      </div>
+                      
+                      <div class="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30 rounded-xl p-4 border border-teal-100 dark:border-teal-800">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">Highest Category</p>
+                            <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">{{ chartInsights.highest.label }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ chartInsights.highest.value }} reports ({{ chartInsights.highest.percentage }}%)</p>
+                          </div>
+                          <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center">
+                            <RiseOutlined class="text-teal-600 dark:text-teal-400 text-xl" />
+                          </div>
                         </div>
-                        <button class="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 text-sm font-medium">View</button>
+                      </div>
+                      
+                      <div class="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30 rounded-xl p-4 border border-teal-100 dark:border-teal-800">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">Reporting Period</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white mt-1">Year-to-Date</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Last updated: {{ new Date().toLocaleDateString() }}</p>
+                          </div>
+                          <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center">
+                            <CalendarOutlined class="text-teal-600 dark:text-teal-400 text-xl" />
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </a-tab-pane>
+                    
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <!-- Pie Chart Card -->
+                      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-300">
+                        <div class="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-800 px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+                          <div class="flex items-center justify-between">
+                            <div>
+                              <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                <PieChartFilled class="text-teal-500" />
+                                Status Distribution
+                              </h3>
+                              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Percentage breakdown by accident status</p>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs text-gray-400">
+                              <div class="w-2 h-2 bg-teal-500 rounded-full"></div>
+                              <span>Pie Chart</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="p-5">
+                          <PieChart 
+                            :labels="charts.statusLabels" 
+                            :data="charts.statusData" 
+                          />
+                        </div>
+                      </div>
 
-                <a-tab-pane key="3">
-                  <template #tab>
-                    <div class="flex items-center gap-2">
-                      <PieChartOutlined class="text-teal-500" />
-                      <span>Charts & Reports</span>
-                    </div>
-                  </template>
-                  
-                  <div class="mt-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div class="p-4 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 rounded-lg border border-teal-200 dark:border-teal-800">
-                        <div class="flex items-center gap-3">
-                          <div class="w-12 h-12 rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center">
-                            <TrophyOutlined class="text-white text-xl" />
-                          </div>
-                          <div>
-                            <p class="font-semibold text-gray-900 dark:text-white">First Login</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Completed 30 days ago</p>
+                      <!-- Bar Chart Card -->
+                      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-300">
+                        <div class="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-800 px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+                          <div class="flex items-center justify-between">
+                            <div>
+                              <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                <BarChartOutlined class="text-teal-500" />
+                                Status Histogram
+                              </h3>
+                              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comparative analysis by accident status</p>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs text-gray-400">
+                              <div class="w-2 h-2 bg-teal-500 rounded-full"></div>
+                              <span>Bar Chart</span>
+                            </div>
                           </div>
                         </div>
+                        <div class="p-5">
+                          <BarChart 
+                            :labels="charts.statusLabels" 
+                            :data="charts.statusData" 
+                          />
+                        </div>
                       </div>
-                      <div class="p-4 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 rounded-lg border border-teal-200 dark:border-teal-800">
-                        <div class="flex items-center gap-3">
-                          <div class="w-12 h-12 rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 flex items-center justify-center">
-                            <StarOutlined class="text-white text-xl" />
-                          </div>
-                          <div>
-                            <p class="font-semibold text-gray-900 dark:text-white">Role Assigned</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Completed 15 days ago</p>
-                          </div>
+                    </div>
+                    
+                    <!-- Additional Insights -->
+                    <div class="mt-6 p-4 bg-teal-50 dark:bg-teal-950/30 rounded-xl border border-teal-100 dark:border-teal-800">
+                      <div class="flex items-start gap-3">
+                        <InfoCircleFilled class="text-teal-600 dark:text-teal-400 text-lg mt-0.5" />
+                        <div>
+                          <p class="text-sm font-medium text-teal-800 dark:text-teal-300">Key Insight</p>
+                          <p class="text-xs text-teal-700 dark:text-teal-400 mt-1">
+                            The data shows that <strong>{{ chartInsights?.highest.label || 'accidents' }}</strong> is the most common accident status, 
+                            accounting for <strong>{{ chartInsights?.highest.percentage || '0' }}%</strong> of all reported incidents.
+                            This suggests a need for targeted safety measures in this category.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -339,18 +386,41 @@ const quickStats = [
 
         <!-- Additional Info Section -->
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl p-6 text-white">
-            <h3 class="text-lg font-semibold mb-2">System Status</h3>
-            <p class="text-teal-100 text-sm mb-4">All systems operational</p>
+          <div class="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-semibold">System Status</h3>
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span class="text-xs text-teal-100">Operational</span>
+              </div>
+            </div>
+            <p class="text-teal-100 text-sm mb-4">All systems are running smoothly with no reported issues.</p>
             <div class="flex items-center gap-2">
-              <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span class="text-sm">System running smoothly</span>
+              <div class="flex-1 h-1.5 bg-teal-600 rounded-full overflow-hidden">
+                <div class="h-full w-[95%] bg-green-400 rounded-full"></div>
+              </div>
+              <span class="text-xs font-medium">95% uptime</span>
             </div>
           </div>
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Quick Tip</h3>
-            <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">Need help? Check out our documentation or contact support.</p>
-            <a href="#" class="text-teal-600 dark:text-teal-400 text-sm font-medium hover:text-teal-700 dark:hover:text-teal-300">Learn more →</a>
+          
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center">
+                <QuestionCircleOutlined class="text-teal-600 dark:text-teal-400 text-lg" />
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Quick Tip</h3>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              Need help with the system? Check out our comprehensive documentation or contact our support team.
+            </p>
+            <div class="flex gap-3">
+              <a href="#" class="text-teal-600 dark:text-teal-400 text-sm font-medium hover:text-teal-700 dark:hover:text-teal-300 transition-colors flex items-center gap-1">
+                View Documentation →
+              </a>
+              <a href="#" class="text-gray-500 dark:text-gray-500 text-sm font-medium hover:text-gray-700 dark:hover:text-gray-400 transition-colors">
+                Contact Support
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -408,16 +478,6 @@ const quickStats = [
   gap: 8px;
 }
 
-/* Card hover effects */
-.card-hover {
-  transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.2);
-}
-
 /* Custom animations */
 @keyframes pulse {
   0%, 100% {
@@ -432,6 +492,15 @@ const quickStats = [
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Chart container enhancements */
+:deep(.pie-chart-container),
+:deep(.bar-chart-container) {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .dashboard-tabs :deep(.ant-tabs-tab) {
@@ -442,6 +511,20 @@ const quickStats = [
   .dashboard-tabs :deep(.ant-tabs-tab-btn) {
     gap: 4px;
   }
+  
+  .grid {
+    gap: 1rem;
+  }
+}
+
+/* Hover effects for cards */
+.bg-white, .bg-gradient-to-r {
+  transition: all 0.3s ease;
+}
+
+/* Chart card hover effect */
+.chart-card:hover {
+  transform: translateY(-2px);
 }
 </style>
 
@@ -470,5 +553,11 @@ const quickStats = [
 
 .dark .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #14b8a6 !important;
+}
+
+/* Chart.js canvas styling */
+canvas {
+  max-height: 300px;
+  width: 100% !important;
 }
 </style>
