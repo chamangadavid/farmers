@@ -138,12 +138,22 @@ const chartInsights = computed(() => {
                   
                   <div class="mt-6">
                     <div class="flex flex-wrap gap-4">
-                      <!-- Your existing cards remain the same -->
+
                       <Card 
                         title="Access Control Management" 
                         v-if="can('manage access control')"
-                        subTitle="Create, edit and delete of Access Control" 
+                        subTitle="Create, edit and delete of Admin Access Control" 
                         routeName="admin.rolesAndPermission">
+                        <template #icon>
+                          <SettingOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Staff Control Management" 
+                        v-if="can('manage staff access control')"
+                        subTitle="Create, edit and delete of Staff Access Control" 
+                        routeName="staff.index">
                         <template #icon>
                           <SettingOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>

@@ -33,6 +33,17 @@ class RolePermissionController extends Controller
         ]);
     }
 
+    public function staffRoles()
+    {
+        return response()->json([
+            'roles' => Role::with('permissions')
+                ->where('name', '!=', 'Super Admin') // 👈 exclude
+                ->get(),
+
+            'permissions' => Permission::all()->pluck('name')
+        ]);
+    }
+
     public function storeRole(Request $request)
     {
         $request->validate([

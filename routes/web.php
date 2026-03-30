@@ -20,6 +20,7 @@ use App\Http\Controllers\Regulation\IcaoAnnexController;
 use App\Http\Controllers\Regulation\NationalRegulationsController;
 use App\Http\Controllers\Report\ReportsController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\Staff\StaffsController;
 use App\Http\Controllers\UserSearchController;
 use App\Models\Accident\AccidentReport;
 use App\Models\Contacts\Contact;
@@ -199,6 +200,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/permissions', [RolePermissionController::class, 'storePermission']);
     Route::get('/rolesAndPermission', [RolePermissionController::class, 'rolesAndPermission'])->name('admin.rolesAndPermission');
 
+
+    
+    Route::get('/staff-roles', [StaffsController::class, 'staffRoles'])->name('staff.index');
+    Route::post('/add-users', [StaffsController::class, 'store']);
+    Route::get('/get-staff-roles', [RolePermissionController::class, 'staffRoles']);
+
+
+
     //Management routes
     Route::get('/managment-team', [TeamController::class, 'managementTeam'])->name('management.index');
     Route::get('/members', [TeamController::class, 'index']);
@@ -350,22 +359,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/eBusinessCards', [RolePermissionController::class, 'eBusinessCards'])->name('admin.eBusinessCards');
     Route::get('/users', [RolePermissionController::class, 'users']);
     Route::post('/users/assign-role', [RolePermissionController::class, 'assignRole']);
-
-
-     // QR Types
-    Route::get('/qr-types', [QrTypeController::class, 'index']);
-    Route::get('/qr-types/{slug}', [QrTypeController::class, 'show']);
-    
-    // QR Code Generation
-    Route::post('/qr/generate', [QrCodeController::class, 'generate']);
-    Route::get('/qr/history', [QrCodeController::class, 'history']);
-    Route::delete('/qr/{id}', [QrCodeController::class, 'destroy']);
-    Route::get('/qr/{id}', [QrCodeController::class, 'show']);
-    Route::get('/qr/{id}/download', [QrCodeController::class, 'download']);
-    Route::delete('/qr/{id}', [QrCodeController::class, 'destroy']);
-    Route::get('/search-users', [UserSearchController::class, 'search'])->name('users.search');
-    Route::get('/users/{user}', [UserSearchController::class, 'show'])->name('users.show');
-
 
 });
 
