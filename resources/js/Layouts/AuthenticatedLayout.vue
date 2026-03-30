@@ -134,7 +134,7 @@ onUnmounted(() => {
                   <div class="ms-4 flex items-center search-container relative">
                     <a-input
                       v-model:value="searchValue"
-                      placeholder="Search user..."
+                      placeholder="Search user by name, email..."
                       allowClear
                       style="width: 350px; border-radius: 12px"
                       @focus="showSuggestions = searchResults.length > 0"
@@ -317,11 +317,16 @@ onUnmounted(() => {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  color: #085039 !important;
+  /* color: white; */
 }
 
-.search-input :deep(.ant-input::placeholder) {
-  color: rgba(255, 255, 255, 0.7);
+.search-input :deep(input::placeholder) {
+  color: rgba(4, 95, 34, 0.7) !important;
+}
+
+.search-input :deep(.ant-input-affix-wrapper input::placeholder) {
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .search-input :deep(.ant-input-affix-wrapper) {
@@ -332,11 +337,13 @@ onUnmounted(() => {
 
 .search-input :deep(.ant-input-affix-wrapper input) {
   background: transparent;
-  color: white;
+  /* color: white; */
+      color: #085039 !important;
 }
 
 .search-input :deep(.ant-input-clear-icon) {
-  color: white;
+  /* color: white; */
+      color: #085039 !important;
 }
 
 .search-input :deep(.ant-input-prefix) {

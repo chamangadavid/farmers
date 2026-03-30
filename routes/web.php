@@ -205,6 +205,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/staff-roles', [StaffsController::class, 'staffRoles'])->name('staff.index');
     Route::post('/add-users', [StaffsController::class, 'store']);
     Route::get('/get-staff-roles', [RolePermissionController::class, 'staffRoles']);
+     Route::get('/search-users', [UserSearchController::class, 'search'])->name('users.search');
+     Route::get('/users/{user}', [UserSearchController::class, 'show'])->name('users.show');
 
 
 
