@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\AccidentReportedMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class AccidentReportController extends Controller
 {
@@ -229,6 +230,13 @@ class AccidentReportController extends Controller
         });
 
         return response()->json($reports);
+    }
+
+    public function investigationDetails(AccidentReport $result)
+    {
+        return Inertia::render('Site/InvestigationDetails', [
+            'result' => $result
+        ]);
     }
 
 

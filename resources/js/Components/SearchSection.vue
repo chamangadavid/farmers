@@ -2,6 +2,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import axios from 'axios';
+import { result } from 'lodash';
+import { router } from '@inertiajs/vue3';
 
 const searchQuery = ref('');
 const searchResults = ref([]);
@@ -34,59 +36,15 @@ const searchInvestigations = async () => {
     }
 };
 
-// const searchInvestigations = () => {
-//     if (!searchQuery.value.trim()) {
-//         searchResults.value = [];
-//         return;
-//     }
-    
-//     isSearching.value = true;
-    
-//     // Simulate API search
-//     setTimeout(() => {
-//         const mockResults = [
-//             {
-//                 id: 1,
-//                 title: 'Runway Excursion Investigation - 2023',
-//                 type: 'Accident',
-//                 date: 'December 2023',
-//                 location: 'Lusaka International Airport',
-//                 summary: 'Investigation into aircraft veering off runway during landing.',
-//                 status: 'Completed'
-//             },
-//             {
-//                 id: 2,
-//                 title: 'Engine Failure Incident - 2024',
-//                 type: 'Incident',
-//                 date: 'January 2024',
-//                 location: 'Kenneth Kaunda International',
-//                 summary: 'Technical investigation into engine malfunction during takeoff.',
-//                 status: 'Ongoing'
-//             },
-//             {
-//                 id: 3,
-//                 title: 'Bird Strike Investigation - 2023',
-//                 type: 'Incident',
-//                 date: 'November 2023',
-//                 location: 'Ndola Airport',
-//                 summary: 'Analysis of bird strike incident and preventive measures.',
-//                 status: 'Completed'
-//             }
-//         ];
-        
-//         searchResults.value = mockResults.filter(result => 
-//             result.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-//             result.location.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-//             result.summary.toLowerCase().includes(searchQuery.value.toLowerCase())
-//         );
-        
-//         isSearching.value = false;
-//     }, 500);
-// };
-
 const getStatusColor = (status) => {
     return status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
 };
+
+const goToDetails = (result) => {
+    router.visit(`/all-search-investigations-details/${result.id}`);
+};
+
+
 </script>
 
 <template>
@@ -161,7 +119,7 @@ const getStatusColor = (status) => {
                         <span>🔍 {{ result.type }}</span>
                     </div>
                     <p class="text-gray-600 text-sm mb-3">{{ result.summary }}</p>
-                    <a href="#" class="text-teal-600 hover:text-teal-700 text-sm font-medium inline-flex items-center gap-1">
+                    <a href="#" @click="goToDetails(result)" class="text-teal-600 hover:text-teal-700 text-sm font-medium inline-flex items-center gap-1">
                         View investigation details
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -192,9 +150,9 @@ const getStatusColor = (status) => {
             <div class="mt-6 pt-4 border-t border-gray-200">
                 <p class="text-sm text-gray-600 mb-2">Quick links:</p>
                 <div class="flex flex-wrap gap-2">
-                    <a href="/accident-reports" class="text-sm text-teal-600 hover:text-teal-700">All Reports</a>
+                    <a href="/report-accidents" class="text-sm text-teal-600 hover:text-teal-700">All Reports</a>
                     <span class="text-gray-300">|</span>
-                    <a href="/investigation-process" class="text-sm text-teal-600 hover:text-teal-700">Investigation Process</a>
+                    <a href="/investigation-process" class="text-sm text-teal-600 hover:text-teal-700">Investigations</a>
                     <span class="text-gray-300">|</span>
                     <a href="/statistics" class="text-sm text-teal-600 hover:text-teal-700">Statistics</a>
                 </div>

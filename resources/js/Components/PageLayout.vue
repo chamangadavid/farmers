@@ -106,7 +106,7 @@ onUnmounted(() => {
             </div>
 
             <!-- Page Content - Make this scrollable -->
-            <main class="flex-1 overflow-y-auto">
+            <main class="flex-1 overflow-y-auto mt-10">
                 <div class="py-12 px-4 sm:px-6 lg:px-8">
                     <div class="max-w-7xl mx-auto">
                         <!-- Breadcrumbs (only show if not on hero section or if breadcrumbs exist) -->

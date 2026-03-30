@@ -152,6 +152,10 @@ Route::get('/public-accident-reports', [AccidentReportController::class, 'public
 Route::get('/search-investigations', [AccidentReportController::class, 'search'])->name('searchInvestigations');
 Route::get('/jobs/active', [JobController::class, 'getActiveJobs']);
 Route::get('/public-members', [TeamController::class, 'publicMember']);
+Route::get('/all-jobs-details/{job}', [JobController::class, 'details']);
+Route::get('/all-search-investigations-details/{result}', [AccidentReportController::class, 'investigationDetails']);
+
+
 
 
 Route::middleware('auth')->group(function () {
@@ -236,7 +240,6 @@ Route::middleware('auth')->group(function () {
 
     //Job Vacancies routes
     Route::get('/all-jobs', [jobController::class, 'JobVacancies'])->name('job.index');
-    Route::get('/all-jobs-details/{job}', [JobController::class, 'details']);
     Route::get('/jobs', [JobController::class, 'index']);
     Route::post('/jobs', [JobController::class, 'store']);
     Route::post('/job-apply', [JobController::class, 'apply']);

@@ -263,7 +263,7 @@ const goToDetails = (job) => {
                                         Apply Now
                                     </a> -->
 
-                                     <a href="#"@click="goToDetails(job)"
+                                     <a href="#" @click="goToDetails(job)"
                                         class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-lg hover:from-teal-700 hover:to-emerald-700 transition-all duration-300 text-sm font-semibold text-center shadow-sm hover:shadow-md">
                                         Apply Now
                                     </a>

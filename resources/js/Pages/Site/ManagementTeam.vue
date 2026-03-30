@@ -89,10 +89,10 @@ const goToDetails = (member) => {
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-2">{{ member.name }}</h3>
                     <p class="text-teal-600 font-semibold mb-2">{{ member.title }}</p>
-                    <p class="text-gray-600 text-sm">
+                    <!-- <p class="text-gray-600 text-sm">
                         {{ stripHtml(member.bio).length > 25 ? stripHtml(member.bio).substring(0, 25) + '...' :
                             stripHtml(member.bio) }}
-                    </p>
+                    </p> -->
 
                 </div>
             </div>
