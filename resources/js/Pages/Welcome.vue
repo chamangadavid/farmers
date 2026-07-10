@@ -8,7 +8,7 @@ import AnimatedHero from '@/Components/AnimatedHero.vue';
 import NewsSection from '@/Components/NewsSection.vue';
 import AnnouncementsSection from '@/Components/AnnouncementsSection.vue';
 import SearchSection from '@/Components/SearchSection.vue';
-import PartnersSlider from '@/Components/PartnersSlider.vue'; 
+import ProductGallery from '@/Components/ProductGallery.vue';
 
 defineProps({
     canLogin: Boolean,
@@ -45,32 +45,10 @@ defineProps({
                         <AnnouncementsSection />
                     </div>
 
-                    <!-- Partners Slider Section -->
-                    <div class="mb-12">
-                        <PartnersSlider />
-                    </div>
-
-                    <!-- Additional Quick Links Section -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/20 transition-all">
-                            <div class="text-4xl mb-3">📊</div>
-                            <h3 class="text-lg font-semibold text-white mb-2">Safety Statistics</h3>
-                            <p class="text-white/70 text-sm">View annual safety reports and statistical data</p>
-                            <a href="/statistics" class="inline-block mt-3 text-teal-400 text-sm hover:text-teal-300">Learn more →</a>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/20 transition-all">
-                            <div class="text-4xl mb-3">📚</div>
-                            <h3 class="text-lg font-semibold text-white mb-2">Resources</h3>
-                            <p class="text-white/70 text-sm">Access investigation manuals and guidance materials</p>
-                            <a href="/resources" class="inline-block mt-3 text-teal-400 text-sm hover:text-teal-300">Browse resources →</a>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/20 transition-all">
-                            <div class="text-4xl mb-3">🚨</div>
-                            <h3 class="text-lg font-semibold text-white mb-2">Report an Accident</h3>
-                            <p class="text-white/70 text-sm">Immediate reporting hotline and online form</p>
-                            <a href="/report-accident" class="inline-block mt-3 text-teal-400 text-sm hover:text-teal-300">Report now →</a>
-                        </div>
-                    </div>
+                    <!-- Product Gallery Section -->
+                    <div class="mb-16">
+                        <ProductGallery />
+                    </div> 
 
                 </div>
             </div>
