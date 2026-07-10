@@ -7,8 +7,10 @@ import SlidingBackground from '@/Components/SlidingBackground.vue';
 import AnimatedHero from '@/Components/AnimatedHero.vue';
 import NewsSection from '@/Components/NewsSection.vue';
 import AnnouncementsSection from '@/Components/AnnouncementsSection.vue';
-import SearchSection from '@/Components/SearchSection.vue';
+// import SearchSection from '@/Components/SearchSection.vue';
 import ProductGallery from '@/Components/ProductGallery.vue';
+import ProfessionalBanner from '@/Components/ProfessionalBanner.vue'
+import FeaturesSection from '@/Components/FeaturesSection.vue';
 
 defineProps({
     canLogin: Boolean,
@@ -35,8 +37,13 @@ defineProps({
             <div class="bg-gradient-to-b from-transparent to-teal-900/20 pb-16">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                     <!-- Search Section -->
-                    <div class="mb-12">
+                    <!-- <div class="mb-12">
                         <SearchSection />
+                    </div> -->
+
+                    <!-- Features Section -->
+                    <div class="mb-16">
+                        <FeaturesSection />
                     </div>
 
                     <!-- News and Announcements Grid -->
@@ -49,6 +56,10 @@ defineProps({
                     <div class="mb-16">
                         <ProductGallery />
                     </div> 
+
+                    <div>
+                        <ProfessionalBanner />
+                    </div>
 
                 </div>
             </div>
