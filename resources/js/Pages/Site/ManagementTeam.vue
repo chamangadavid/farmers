@@ -56,19 +56,20 @@ const goToDetails = (member) => {
 </script>
 
 <template>
-    <PageLayout title="Management Team" :canLogin="canLogin" :canRegister="canRegister" :showHero="true">
-        <!-- Custom Hero Section for Management Team -->
+    <PageLayout title="Our Farmers" 
+      :canLogin="canLogin" 
+      :canRegister="canRegister" 
+      :showHero="true">
         <template #hero>
             <div class="text-center mt-12">
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
                     <span
                         class="bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-300 bg-clip-text text-transparent">
-                        Leadership & Management Team
+                        Our Farming Team
                     </span>
                 </h1>
                 <p class="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
-                    Meet our distinguished team of professionals committed to upholding the highest standards of
-                    aviation safety, governance, and operational excellence.
+                    Meet the dedicated team behind Alinaswe Farm, working every day to grow fresh vegetables and raise healthy, quality chickens.
                 </p>
             </div>
         </template>
@@ -89,10 +90,6 @@ const goToDetails = (member) => {
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-2">{{ member.name }}</h3>
                     <p class="text-teal-600 font-semibold mb-2">{{ member.title }}</p>
-                    <!-- <p class="text-gray-600 text-sm">
-                        {{ stripHtml(member.bio).length > 25 ? stripHtml(member.bio).substring(0, 25) + '...' :
-                            stripHtml(member.bio) }}
-                    </p> -->
 
                 </div>
             </div>

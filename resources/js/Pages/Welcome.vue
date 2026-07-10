@@ -11,6 +11,7 @@ import ProductGallery from '@/Components/ProductGallery.vue';
 import ProfessionalBanner from '@/Components/ProfessionalBanner.vue'
 import FeaturesSection from '@/Components/FeaturesSection.vue';
 import AboutOrganic from '@/Components/AboutOrganic.vue'
+import OurFarmingTeam from '@/Components/OurFarmingTeam.vue'
 
 defineProps({
     canLogin: Boolean,
@@ -62,6 +63,11 @@ defineProps({
                         <ProductGallery />
                     </div> 
 
+                    <!-- Our Farming Team Section -->
+                    <div class="mb-16">
+                        <OurFarmingTeam />
+                    </div>
+                    
                     <!-- Professiona Banner section -->
                     <div>
                         <ProfessionalBanner />

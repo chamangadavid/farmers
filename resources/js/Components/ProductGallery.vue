@@ -25,7 +25,7 @@ const gallery = [
                 >
 
                 <h2 class="text-5xl font-bold text-slate-800 mb-4">
-                    Organze Food Gallery
+                    Our Product Gallery
                 </h2>
                 
                 <p class="text-gray-500 text-sm max-w-xl mx-auto">
