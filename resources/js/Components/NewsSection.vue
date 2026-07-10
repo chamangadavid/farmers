@@ -77,7 +77,7 @@ const trimText = (text, length) => {
     <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Latest News</h2>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Speciallized News</h2>
             </div>
             <button @click="viewAllDetails()"
                 class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium mt-3 group-hover:gap-2 transition-all">
@@ -90,7 +90,7 @@ const trimText = (text, length) => {
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div v-for="item in limitedNews" :key="item.id" class="group cursor-pointer">
-                <div class="relative h-48 overflow-hidden rounded-xl bg-gray-100">
+                <div class="relative h-48 overflow-hidden bg-gray-100">
                     <img :src="item.image" :alt="item.title"
                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         @error="(e) => e.target.src = '/assets/placeholder-news.jpg'" />
@@ -108,13 +108,13 @@ const trimText = (text, length) => {
                         <span>{{ item.read_time }}</span>
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 group-hover:text-teal-600 transition-colors mb-2">
-                        {{ trimText(item.title, 14) }}
+                        {{ trimText(item.title, 35) }}
                     </h3>
                     <p class="text-gray-600 text-sm line-clamp-2">
-                        {{ trimText(item.summary, 15) }}
+                        {{ trimText(item.summary, 75) }}
                     </p>
                     <button @click="goToDetails(item.id)"
-                        class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium mt-3 group-hover:gap-2 transition-all">
+                        class="inline-flex items-center gap-1 text-teal-600 text-sm font-medium  group-hover:gap-2 transition-all">
                         Read more
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">

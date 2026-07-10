@@ -209,7 +209,7 @@ const handleDropdownClick = () => {
                         <Link :href="route('managementTeam')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick">
-                            Management Team
+                            Our Farmers
                         </Link>
                         <!-- <Link 
                             :href="route('aboutUs')"
@@ -355,7 +355,7 @@ const handleDropdownClick = () => {
                             <Link :href="route('managementTeam')"
                                 class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition"
                                 @click="toggleMobileMenu">
-                                Management Team
+                                Our Farmers
                             </Link>
                             <!-- <Link :href="route('aboutUs')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Who We Are
