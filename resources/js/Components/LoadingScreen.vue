@@ -21,8 +21,8 @@
 
       <!-- Company Name with Gradient -->
       <div class="company-info">
-        <h1 class="company-name">Aircraft Accident Investigation Board</h1>
-        <p class="company-tagline">Safety Through Excellence</p>
+        <h1 class="company-name">Alinaswe Farm</h1>
+        <p class="company-tagline">Cultivating Freshness, Raising Excellence</p>
       </div>
 
       <!-- Progress Bar -->

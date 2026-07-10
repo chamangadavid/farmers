@@ -9,15 +9,15 @@
                 <div class="hidden md:block md:w-1/2 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-br from-teal-600/40 to-emerald-600/40 mix-blend-multiply"></div>
                     <img
-                        src="/assets/login.png"
+                        src="/assets/back-4.png"
                         alt="Login Visual"
                         class="h-full w-full object-cover transform hover:scale-105 transition-transform duration-700"
                     />
                     <!-- Decorative overlay -->
                     <div class="absolute bottom-8 left-8 right-8">
                         <div class="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
-                            <p class="text-white text-sm font-medium">Aircraft Accident Investigation Board</p>
-                            <p class="text-teal-200 text-xs mt-1">Safety Through Excellence</p>
+                            <p class="text-white text-sm font-medium">ALINASWE FARM</p>
+                            <p class="text-teal-200 text-xs mt-1">Fresh from Our Farm to Your Table</p>
                         </div>
                     </div>
                 </div>
@@ -136,18 +136,7 @@
                             </Link>
                         </p>
                     </div>
-
-                    <!-- Additional Info -->
-                    <div class="mt-6 text-center">
-                        <p class="text-xs text-gray-500">
-                            By signing in, you agree to our 
-                            <a href="#" class="text-teal-600 hover:text-teal-700">Terms</a> 
-                            and 
-                            <a href="#" class="text-teal-600 hover:text-teal-700">Privacy Policy</a>
-                        </p>
-                    </div>
                 </div>
-
             </div>
         </div>
     </GuestLayout>

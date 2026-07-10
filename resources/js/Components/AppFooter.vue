@@ -10,7 +10,7 @@ import { Link } from '@inertiajs/vue3';
             <div class="max-w-3xl mx-auto text-center mb-16">
                 <h3
                     class="text-2xl font-bold mb-2 bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
-                    Keep up to date with AAIB news
+                    Keep up to date with ALINASWE FARM Speciallized News
                 </h3>
 
                 <form class="mt-6 space-y-4">
@@ -30,8 +30,7 @@ import { Link } from '@inertiajs/vue3';
                         <input type="checkbox" id="newsletter"
                             class="mt-1 w-4 h-4 text-teal-600 bg-white/10 border-teal-500/30 rounded focus:ring-teal-500 focus:ring-2" />
                         <label for="newsletter" class="text-sm text-white/70 text-left">
-                            Subscribe me to the AAIB newsletter for articles, events, and offers. I can unsubscribe at
-                            any time.
+                            Subscribe me to the ALINASWE FARM newsletter for articles, events, and offers.
                         </label>
                     </div>
 
@@ -48,50 +47,33 @@ import { Link } from '@inertiajs/vue3';
                 <div>
                     <h4 class="text-lg font-semibold mb-4 text-teal-400">Quick Links</h4>
                     <ul class="space-y-2">
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                Civil Aviation Authority</Link>
+                           <li>
+                            <Link :href="route('aboutUs')"
+                                class="text-white/60 hover:text-teal-400 transition-colors text-sm block">About Us
+                            </Link>
                         </li>
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                Ministry of Transport & Logistics</Link>
+
+                           <li>
+                            <Link :href="route('aboutUs')"
+                                class="text-white/60 hover:text-teal-400 transition-colors text-sm block">Our Services
+                            </Link>
                         </li>
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                National Transport Safety Board</Link>
-                        </li>
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                International Civil Aviation Organization</Link>
-                        </li>
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                European Union Aviation Safety Agency</Link>
-                        </li>
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                German Federal Bureau of Aircraft Accident Investigation</Link>
+
+                           <li>
+                            <Link :href="route('aboutUs')"
+                                class="text-white/60 hover:text-teal-400 transition-colors text-sm block">Vegetables
+                            </Link>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Company Column -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4 text-teal-400">About AAIB</h4>
+                    <h4 class="text-lg font-semibold mb-4 text-teal-400">Our Farm</h4>
                     <ul class="space-y-2">
                         <li>
-                            <Link :href="route('aboutUs')"
-                                class="text-white/60 hover:text-teal-400 transition-colors text-sm block">About Us
-                            </Link>
-                        </li>
-                        <li>
-                            <Link :href="route('jobVacancies')"
-                                class="text-white/60 hover:text-teal-400 transition-colors text-sm block">Job Vacancies
-                            </Link>
-                        </li>
-                        <li>
                             <Link :href="route('newsPage')"
-                                class="text-white/60 hover:text-teal-400 transition-colors text-sm block">Latest News
+                                class="text-white/60 hover:text-teal-400 transition-colors text-sm block">Specialized News
                             </Link>
                         </li>
                         <li>
@@ -101,13 +83,8 @@ import { Link } from '@inertiajs/vue3';
                         </li>
                          <li>
                             <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                Investigations</Link>
+                                Chickens</Link>
                         </li>
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                Terminology</Link>
-                        </li>
-                       
                     </ul>
                 </div>
 
@@ -117,19 +94,15 @@ import { Link } from '@inertiajs/vue3';
                     <ul class="space-y-2">
                         <li>
                             <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                (+260) 211-225-625</Link>
+                                (+260) 976-535-424 </Link>
                         </li>
                         <li>
                             <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                info@aaib.org.zm</Link>
-                        </li>
-                        <li>
-                            <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">
-                                www.aaib.org.zm</Link>
+                                info@alinaswe.com || www.alinaswefarm.com</Link>
                         </li>
                         <li>
                             <Link href="#" class="text-white/60 hover:text-teal-400 transition-colors text-sm block">KK
-                                International Airport-Lusaka, Zambia</Link>
+                                Plot A1855 Kwamwena Meanwood Lusaka, 10101 Zambia</Link>
                         </li>
                     </ul>
                 </div>
@@ -144,11 +117,11 @@ import { Link } from '@inertiajs/vue3';
                             <img src="/assets/marz-logo.png" alt="AAIB" class="h-8 w-auto" />
                             <span
                                 class="text-lg font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
-                                AAIB
+                                ALINASWE FARM
                             </span>
                         </div>
                         <p class="text-white/50 text-sm">
-                            © 2026 Aircraft Accident Investigation Board. All rights reserved.
+                            © 2026 Alinaswe Farm. All rights reserved.
                         </p>
                     </div>
 

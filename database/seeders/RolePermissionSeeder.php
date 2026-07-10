@@ -19,6 +19,7 @@ class RolePermissionSeeder extends Seeder
         // Define permissions
         $permissions = [
             'manage access control',
+            'manage staff access control',
         ];
 
         // Create and store all permissions

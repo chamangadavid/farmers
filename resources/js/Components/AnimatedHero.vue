@@ -10,14 +10,15 @@
         </span>
         <br />
         <span class="white-text animate-fade-in">
-          Investigation Board
+          Nature's Freshness,
         </span>
       </h1>
       
       <!-- Animated Description -->
       <p class="hero-description animate-fade-up">
-        Committed to improving aviation safety through independent, 
-        thorough, and timely investigations of aircraft accidents and incidents.
+          Providing farm-fresh vegetables and quality chickens, 
+          cultivated with care to bring healthy, delicious food 
+          from our farm to your table.
       </p>
       
       <!-- Animated Buttons -->
@@ -26,7 +27,7 @@
           href="/report-accident"
           class="btn-primary"
         >
-          Report an Accident
+          Order Now
           <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
           </svg>
@@ -46,7 +47,8 @@
 import { ref, onMounted } from 'vue';
 
 // Typing animation configuration
-const fullText = "Aircraft Accident";
+// const fullText = "Aircraft Accident";
+const fullText = "Alinaswe Farm";
 const displayedText = ref('');
 const isTyping = ref(true);
 let currentIndex = 0;

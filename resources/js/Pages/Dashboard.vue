@@ -1,6 +1,14 @@
 <!-- Resources/js/Pages/Dashboard.vue -->
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import Card from "@/Components/Auth/Card.vue";
+import StartsCards from '@/Components/StartsCards.vue';
+import PieChart from '@/Components/PieChart.vue';
+import BarChart from '@/Components/BarChart.vue';
+import History from './Site/History.vue';
+
 import { 
   FileTextOutlined, 
   SwapOutlined, 
@@ -50,13 +58,6 @@ import {
   FallOutlined,
   UserAddOutlined
 } from '@ant-design/icons-vue'
-import { Head } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
-import Card from "@/Components/Auth/Card.vue";
-import StartsCards from '@/Components/StartsCards.vue';
-import PieChart from '@/Components/PieChart.vue';
-import BarChart from '@/Components/BarChart.vue';
-import History from './Site/History.vue';
 
 // Props from Inertia
 const props = defineProps({
@@ -160,6 +161,46 @@ const chartInsights = computed(() => {
                       </Card>
 
                       <Card 
+                        title="Vagetable Records" 
+                        v-if="can('staff can manage vegetable records')"
+                        subTitle="Create, edit & delete vegetable records" 
+                        routeName="accidents.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                        <Card 
+                        title="Chicken Records" 
+                        v-if="can('staff can manage chicken records')"
+                        subTitle="Create, edit & delete chicken records" 
+                        routeName="accidents.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Sales Records" 
+                        v-if="can('staff can manage sales records')"
+                        subTitle="Create, edit & delete sales records" 
+                        routeName="accidents.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
+                        title="Monthly Income Statment" 
+                        v-if="can('staff can manage monthly income statements')"
+                        subTitle="Create, edit & delete monthly income statements" 
+                        routeName="accidents.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <Card 
                         title="Accidents Management" 
                         v-if="can('manage all accidents')"
                         subTitle="Create, edit & delete all accidents" 

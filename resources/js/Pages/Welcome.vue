@@ -17,7 +17,7 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Aircraft Accident Investigation Board" />
+    <Head title="Alinaswe farm" />
 
     <div class="min-h-screen relative overflow-x-hidden">
         <!-- Sliding Background with Particles -->

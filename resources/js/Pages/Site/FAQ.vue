@@ -140,7 +140,7 @@ onMounted(() => {
                     </span>
                 </h1>
                 <p class="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto mb-8">
-                    Find answers to common questions about our work, investigations, and services
+                    Find answers to common questions about our farm and other services.
                 </p>
                 
                 <!-- Search Bar -->
