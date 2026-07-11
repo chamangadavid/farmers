@@ -39,22 +39,26 @@ const formatDate = (date) => {
 // Get category color
 const getCategoryColor = (category) => {
   const categoryLower = category?.toLowerCase() || '';
-  if (categoryLower.includes('general')) return 'blue';
-  if (categoryLower.includes('accident')) return 'red';
-  if (categoryLower.includes('incident')) return 'orange';
-  if (categoryLower.includes('investigation')) return 'purple';
-  if (categoryLower.includes('report')) return 'green';
+  if (categoryLower.includes('General')) return 'blue';
+  if (categoryLower.includes('Vegetables')) return 'red';
+  if (categoryLower.includes('Fresh Fruits')) return 'orange';
+  if (categoryLower.includes('Poultry')) return 'purple';
+  if (categoryLower.includes('Farm Services')) return 'green';
+  if (categoryLower.includes('Orders & Delivery')) return 'yellow';
+  if (categoryLower.includes('Payments')) return 'blue';
   return 'teal';
 };
 
 // Get category icon
 const getCategoryIcon = (category) => {
   const categoryLower = category?.toLowerCase() || '';
-  if (categoryLower.includes('general')) return '📚';
-  if (categoryLower.includes('accident')) return '🚨';
-  if (categoryLower.includes('incident')) return '⚠️';
-  if (categoryLower.includes('investigation')) return '🔍';
-  if (categoryLower.includes('report')) return '📊';
+  if (categoryLower.includes('General')) return '📚';
+  if (categoryLower.includes('Vegetables')) return '🥕';
+  if (categoryLower.includes('Fresh Fruits')) return '🍓';
+  if (categoryLower.includes('Poultry')) return '🐔';
+  if (categoryLower.includes('Farm Services')) return '🚜';
+  if (categoryLower.includes('Orders & Delivery')) return '📦';
+  if (categoryLower.includes('Payments')) return '💳';
   return '📄';
 };
 </script>
