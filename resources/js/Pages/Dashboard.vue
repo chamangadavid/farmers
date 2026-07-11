@@ -221,6 +221,16 @@ const chartInsights = computed(() => {
                       </Card> -->
 
                       <Card 
+                        title="Product Gallery" 
+                        v-if="can('manage product gallery')"
+                        subTitle="Create, edit & delete product images" 
+                        routeName="gallery.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
                         title="Team Member Management" 
                         v-if="can('manage management team')"
                         subTitle="Create, edit & delete management team" 

@@ -20,6 +20,7 @@ use App\Http\Controllers\Regulation\IcaoAnnexController;
 use App\Http\Controllers\Regulation\NationalRegulationsController;
 use App\Http\Controllers\Report\ReportsController;
 use App\Http\Controllers\Testimonials\TestimonyController;
+use App\Http\Controllers\Gallaries\GalleryController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Staff\StaffsController;
 use App\Http\Controllers\UserSearchController;
@@ -103,6 +104,11 @@ Route::get('/job-vacancies', function () {
 Route::get('/report-accident', function () {
     return Inertia::render('Site/ReportAccident');
 })->name('reportAccident');
+
+Route::get('/product-gallery', function () {
+    return Inertia::render('Site/Gallery');
+})->name('productGalleries');
+
 
 Route::get('/faq', function () {
     return Inertia::render('Site/FAQ');
@@ -293,27 +299,52 @@ Route::middleware('auth')->group(function () {
 
 
     //testmonies
-    //Route::get('/all-testimonies', [TestimonyController::class, 'GetTestimonies'])->name('testimonials.index');
-
-Route::get('/all-testimonies', [TestimonyController::class, 'indexPage'])->name('testimonials.index');
-
-Route::get('/testimonials', [TestimonyController::class, 'index']);
-
-Route::post('/testimonials', [TestimonyController::class, 'store']);
-
-Route::put('/testimonials/{testimonial}', [TestimonyController::class, 'update']);
-
-Route::delete('/testimonials/{testimonial}', [TestimonyController::class, 'destroy']);
-
-Route::get('/testimonials/{testimonial}', [TestimonyController::class, 'show']);
-
-Route::get('/frontend/testimonials', [TestimonyController::class, 'frontendTestimonials']);
+    Route::get('/all-testimonies', [TestimonyController::class, 'indexPage'])->name('testimonials.index');
+    Route::get('/testimonials', [TestimonyController::class, 'index']);
+    Route::post('/testimonials', [TestimonyController::class, 'store']);
+    Route::put('/testimonials/{testimonial}', [TestimonyController::class, 'update']);
+    Route::delete('/testimonials/{testimonial}', [TestimonyController::class, 'destroy']);
+    Route::get('/testimonials/{testimonial}', [TestimonyController::class, 'show']);
+    Route::get('/frontend/testimonials', [TestimonyController::class, 'frontendTestimonials']);
 
 
 
 
+    //gallery products
+    // Route::get('/all-gallery-products', [ProductController::class, 'indexPage'])->name('products.index');
+    
 
 
+    Route::get(
+    '/myfarmer/gallery',
+    [GalleryController::class,'index']
+)->name('gallery.index');
+
+
+// Fetch gallery list for axios
+// Route::get(
+//     '/gallery',
+//     [GalleryController::class,'index']
+// );
+
+
+Route::get('/gallery', [GalleryController::class,'getGallery']);
+
+// Store
+Route::post('/gallery', [GalleryController::class,'store']);
+
+
+// Update
+Route::post('/gallery/{gallery}', [GalleryController::class,'update']);
+Route::delete('/gallery/image/{image}', [GalleryController::class, 'destroyImage']);
+// Delete
+Route::delete('/gallery/{gallery}', [GalleryController::class,'destroy']);
+// View single
+Route::get('/gallery/{gallery}', [GalleryController::class,'show']);
+
+
+// Homepage API
+Route::get('/frontend/gallery', [GalleryController::class,'frontendGallery']);
 
 
 
