@@ -230,7 +230,7 @@ const chartInsights = computed(() => {
                         </template>
                       </Card>
 
-                      <Card 
+                      <!-- <Card 
                         title="Job Vacancies Management" 
                         v-if="can('manage job vacancies')"
                         subTitle="Create, edit & delete job vacancies" 
@@ -238,7 +238,18 @@ const chartInsights = computed(() => {
                         <template #icon>
                           <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
+                      </Card> -->
+
+                       <Card 
+                        title="Testimonials Management" 
+                        v-if="can('manage testimoials')"
+                        subTitle="Create, edit & delete testimoials" 
+                        routeName="testimonials.index">
+                        <template #icon>
+                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
                       </Card>
+
 
                       <Card 
                         title="FAQs Management" 

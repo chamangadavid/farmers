@@ -19,6 +19,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Regulation\IcaoAnnexController;
 use App\Http\Controllers\Regulation\NationalRegulationsController;
 use App\Http\Controllers\Report\ReportsController;
+use App\Http\Controllers\Testimonials\TestimonyController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Staff\StaffsController;
 use App\Http\Controllers\UserSearchController;
@@ -288,6 +289,54 @@ Route::middleware('auth')->group(function () {
     Route::get('/job-applications/{id}', [JobController::class, 'showApplication']);
     Route::delete('/job-applications/{id}', [JobController::class, 'destroyApplication']);
     Route::get('/job-applications/{id}/download/{fileType}', [JobController::class, 'downloadFile']);
+
+
+    //testmonies
+    //Route::get('/all-testimonies', [TestimonyController::class, 'GetTestimonies'])->name('testimonials.index');
+
+Route::get('/all-testimonies', [TestimonyController::class, 'indexPage'])->name('testimonials.index');
+
+Route::get('/testimonials', [TestimonyController::class, 'index']);
+
+Route::post('/testimonials', [TestimonyController::class, 'store']);
+
+Route::put('/testimonials/{testimonial}', [TestimonyController::class, 'update']);
+
+Route::delete('/testimonials/{testimonial}', [TestimonyController::class, 'destroy']);
+
+Route::get('/testimonials/{testimonial}', [TestimonyController::class, 'show']);
+
+Route::get('/frontend/testimonials', [TestimonyController::class, 'frontendTestimonials']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //Trail Audit
     Route::get('/trail-audit', [AuditLogController::class, 'getAudits'])->name('trail-audit.index');

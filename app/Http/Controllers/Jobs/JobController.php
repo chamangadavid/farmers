@@ -21,7 +21,7 @@ class JobController extends Controller
 
     public function GetFaqs()
     {
-        return Inertia::render('MyAAIB/Faqs/Index');
+        return Inertia::render('MyFarmer/Faqs/Index');
     }
 
     // List jobs (show only those that are not expired)
