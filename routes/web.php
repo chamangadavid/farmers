@@ -166,6 +166,7 @@ Route::get('/management-team/{id}', function ($id) {
     ]);
 });
 
+
 //public
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/faqs/all', [FaqController::class, 'getfrontIndex']); // For your FAQ page

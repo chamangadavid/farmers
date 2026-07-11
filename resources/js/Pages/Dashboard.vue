@@ -210,7 +210,7 @@ const chartInsights = computed(() => {
                         </template>
                       </Card>
 
-                      <Card 
+                      <!-- <Card 
                         title="Announcement Management" 
                         v-if="can('manage all announcements')"
                         subTitle="Create, edit & delete announcements" 
@@ -218,7 +218,7 @@ const chartInsights = computed(() => {
                         <template #icon>
                           <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
-                      </Card>
+                      </Card> -->
 
                       <Card 
                         title="Team Member Management" 

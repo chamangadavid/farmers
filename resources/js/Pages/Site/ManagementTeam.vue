@@ -77,22 +77,76 @@ const goToDetails = (member) => {
         <!-- Main Content -->
         <div class="space-y-8">
             <div v-if="loading" class="text-center py-8 text-white/80">Loading team members...</div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                   <div v-for="member in team" :key="member.id" @click="goToDetails(member)"
-                    class="bg-gray-50 rounded-xl p-6 border border-gray-200 text-center cursor-pointer hover:shadow-lg transition">
-                    <div
-                        class="w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden border">
-                        <img v-if="member.image" :src="`/storage/${member.image}`" alt="Profile"
-                            class="w-full h-full object-cover" />
-                        <span v-else class="text-4xl text-white font-bold">
-                            {{ member.name.charAt(0) }}
-                        </span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ member.name }}</h3>
-                    <p class="text-teal-600 font-semibold mb-2">{{ member.title }}</p>
 
-                </div>
+            <div class="max-h-[600px] overflow-y-auto pr-3 custom-scroll">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div
+            v-for="member in team"
+            :key="member.id"
+            @click="goToDetails(member)"
+            class="bg-gray-50 rounded-xl p-6 border border-gray-200 text-center cursor-pointer hover:shadow-lg transition">
+
+            <div
+                class="w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden border">
+
+                <img
+                    v-if="member.image"
+                    :src="`/storage/${member.image}`"
+                    alt="Profile"
+                    class="w-full h-full object-cover" />
+
+                <span
+                    v-else
+                    class="text-4xl text-white font-bold">
+
+                    {{ member.name.charAt(0) }}
+
+                </span>
+
             </div>
+
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+                {{ member.name }}
+            </h3>
+
+            <p class="text-teal-600 font-semibold mb-2">
+                {{ member.title }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
         </div>
     </PageLayout>
 </template>
+
+<style scoped>
+
+.custom-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #0f766e #f1f5f9;
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: #0f766e;
+    border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #115e59;
+}
+
+</style>
