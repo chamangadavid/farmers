@@ -14,7 +14,7 @@ class DocumentController extends Controller
     
     public function GetIDocuments()
     {
-        return Inertia::render('MyAAIB/Documents/Index');
+        return Inertia::render('MyFarmer/Documents/Index');
     }
 
     public function index()

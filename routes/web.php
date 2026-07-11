@@ -1,9 +1,6 @@
 <?php
 
-use App\Http\Controllers\Accident\AccidentReportController;
-use App\Http\Controllers\Accident\AccidentsController;
-use App\Http\Controllers\Api\QrCodeController;
-use App\Http\Controllers\Api\QrTypeController;
+
 use App\Http\Controllers\Audit\AuditLogController;
 use App\Http\Controllers\Contacts\ContactController;
 use App\Http\Controllers\Documents\DocumentController;
@@ -57,25 +54,31 @@ Route::get('/', function () {
 // ->name('dashboard');
 
 Route::get('/dashboard', function () {
-      $statusCounts = AccidentReport::select('status', DB::raw('count(*) as total'))
-        ->groupBy('status')
-        ->pluck('total', 'status');
-
-    return Inertia::render('Dashboard', [
-        'stats' => [
-            'users' => User::count(),
-            'accidents' => AccidentReport::count(),
-            'jobs' => Job::count(),
-            'contacts' => Contact::count(),
-        ],
-         'charts' => [
-            'statusLabels' => $statusCounts->keys(),
-            'statusData' => $statusCounts->values(),
-        ]
-    ]);
+    return Inertia::render('Dashboard');
 })
 ->middleware(['auth', 'verified'])
 ->name('dashboard');
+
+// Route::get('/dashboard', function () {
+//       $statusCounts = AccidentReport::select('status', DB::raw('count(*) as total'))
+//         ->groupBy('status')
+//         ->pluck('total', 'status');
+
+//     return Inertia::render('Dashboard', [
+//         'stats' => [
+//             'users' => User::count(),
+//             'accidents' => AccidentReport::count(),
+//             'jobs' => Job::count(),
+//             'contacts' => Contact::count(),
+//         ],
+//          'charts' => [
+//             'statusLabels' => $statusCounts->keys(),
+//             'statusData' => $statusCounts->values(),
+//         ]
+//     ]);
+// })
+// ->middleware(['auth', 'verified'])
+// ->name('dashboard');
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes
@@ -176,20 +179,14 @@ Route::get('/management-team/{id}', function ($id) {
 //public
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/faqs/all', [FaqController::class, 'getfrontIndex']); // For your FAQ page
-Route::get('/public/presses', [PressController::class, 'publicIndex']);
 Route::get('/public/announcements', [AnnouncementsController::class, 'publicAnnouncementsIndex']);
 Route::get('/public/news', [NewsController::class, 'publicNewsIndex']);
-Route::get('/public/regulations', [NationalRegulationsController::class, 'publicIndex']);
 Route::get('/all-news/{id}', [NewsController::class, 'show']);
 Route::get('/public-documents/folders', [DocumentController::class, 'Publicindex']);
-Route::post('/report-accident', [AccidentReportController::class, 'store']);
-Route::get('/public-accident-reports', [AccidentReportController::class, 'publicReports']);
-Route::get('/search-investigations', [AccidentReportController::class, 'search'])->name('searchInvestigations');
+
 Route::get('/jobs/active', [JobController::class, 'getActiveJobs']);
 Route::get('/public-members', [TeamController::class, 'publicMember']);
 Route::get('/all-jobs-details/{job}', [JobController::class, 'details']);
-Route::get('/all-search-investigations-details/{result}', [AccidentReportController::class, 'investigationDetails']);
-
 
 
 
@@ -236,17 +233,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/frontend/faqs', [FaqController::class, 'getfrontIndex']); 
     Route::post('/faqs', [FaqController::class, 'store']);      
     Route::get('/faqs/{faq}', [FaqController::class, 'show']);    
-    Route::put('/faqs/{faq}', [FaqController::class, 'update']);  
+Route::put('/faqs/{faq}', [FaqController::class, 'update']);  
     Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']); 
-
-    //press releases routes
-    Route::get('/all-press-releases', [PressController::class, 'GetPressReleases'])->name('press.index');
-    Route::get('/presses', [PressController::class, 'index']);
-    Route::post('/presses', [PressController::class, 'store']);
-    Route::get('/presses/{id}', [PressController::class, 'show']);
-    Route::post('/presses/{id}', [PressController::class, 'update']); 
-    Route::delete('/presses/{id}', [PressController::class, 'destroy']);
-    Route::get('/presses/download/{id}', [PressController::class, 'download']);
 
     //announcements routes
     Route::get('/all-announcements', [AnnouncementsController::class, 'GetAnnouncements'])->name('announcement.index');
@@ -263,13 +251,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/news/{id}', [NewsController::class, 'destroy']);
 
 
-    //annexes & regulational routes
-    Route::get('/all-regulations', [NationalRegulationsController::class, 'Regulations'])->name('regulations.index');
-    Route::get('/regulations', [NationalRegulationsController::class, 'index']);
-    Route::post('/regulations', [NationalRegulationsController::class, 'store']);
-    Route::put('/regulations/{id}', [NationalRegulationsController::class, 'update']);
-    Route::delete('/regulations/{id}', [NationalRegulationsController::class, 'destroy']);
-
     //document repository routes
     Route::get('/all-documents', [DocumentController::class, 'GetIDocuments'])->name('document.index');
     Route::get('/documents/folders', [DocumentController::class, 'index']);
@@ -277,12 +258,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents/upload', [DocumentController::class, 'upload']);
     Route::put('/documents/{id}/rename', [DocumentController::class, 'rename']);
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy']);
-
-    //accidents & incidents routes
-    Route::get('/all-accidents', [AccidentsController::class, 'GetAccidents'])->name('accidents.index');
-    Route::get('/accident-reports', [AccidentReportController::class, 'index']);
-    Route::delete('/accident-reports/{id}', [AccidentReportController::class, 'destroy']);
-    Route::post('/accident-reports/{id}/resolve', [AccidentReportController::class, 'resolve']);
 
     //Job Vacancies routes
     Route::get('/all-jobs', [jobController::class, 'JobVacancies'])->name('job.index');
@@ -417,9 +392,7 @@ Route::get('/frontend/gallery', [GalleryController::class,'frontendGallery']);
     //Route::get('/all-nation-regulations', [NationalRegulations::class, 'GetNationalRegulations'])->name('regulations.index');
     
 
-    //icao annex routes
-    Route::get('/all-icao-annex', [IcaoAnnexController::class, 'GetIcaoAnnex'])->name('icao.index');
-    
+  
 
 
 

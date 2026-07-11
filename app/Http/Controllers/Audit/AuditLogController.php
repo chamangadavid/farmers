@@ -10,29 +10,24 @@ use Inertia\Inertia;
 class AuditLogController extends Controller
 {
 
- public function getAudits()
+    public function getAudits()
     {
-        return Inertia::render('MyAAIB/Audits/Index');
+        return Inertia::render('MyFarmer/Audits/Index');
     }
 
-    // public function index()
-    // {
-    //     return AuditLog::latest()->get();
-    // }
-
     public function index()
-{
-    return AuditLog::with('user')->latest()->get();
-}
+    {
+        return AuditLog::with('user')->latest()->get();
+    }
 
-public function showPage($id)
-{
-    $audit = AuditLog::with('user')->findOrFail($id);
+    public function showPage($id)
+    {
+        $audit = AuditLog::with('user')->findOrFail($id);
 
-    return Inertia::render('MyAAIB/Audits/ViewTrailAudits', [
-        'audit' => $audit
-    ]);
-}
+        return Inertia::render('MyFarmer/Audits/ViewTrailAudits', [
+            'audit' => $audit
+        ]);
+    }
 
     public function show($id)
     {

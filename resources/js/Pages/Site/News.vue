@@ -10,25 +10,16 @@ defineProps({
     canRegister: Boolean,
 });
 
-// =======================
-// STATE
-// =======================
 const news = ref([]);
 const loading = ref(false);
-
 const selectedCategory = ref('All');
 const searchQuery = ref('');
 
-// =======================
-// FETCH NEWS FROM API
-// =======================
 const fetchNews = async () => {
     try {
         loading.value = true;
 
         const res = await axios.get('/public/news');
-
-        // Image URL with fallback
         news.value = res.data.data.map(item => ({
             ...item,
             image: item.image
@@ -47,17 +38,14 @@ onMounted(() => {
     fetchNews();
 });
 
-// =======================
-// CATEGORIES (FIXED FROM DB)
-// =======================
 const categories = [
     'All',
     'General',
-    'Training',
-    'Event',
-    'Reports',
-    'Accident',
-    'Incidents'
+    'Fresh Fruits',
+    'Poultry',
+    'Farm Services',
+    'Orders & Delivery',
+    'Payments'
 ];
 
 // =======================
@@ -97,14 +85,10 @@ const filteredNews = computed(() => {
 // =======================
 const getCategoryColor = (category) => {
     const colors = {
-        Training: 'bg-blue-100 text-blue-700',
-        Event: 'bg-purple-100 text-purple-700',
-        Report: 'bg-green-100 text-green-700',
-        Guidelines: 'bg-orange-100 text-orange-700',
-        Partnership: 'bg-indigo-100 text-indigo-700',
-        Announcement: 'bg-red-100 text-red-700',
-        Accident: 'bg-yellow-100 text-yellow-700',
-        Incidents: 'bg-gray-200 text-gray-800'
+        General: 'bg-blue-100 text-blue-700',
+        Vegetables: 'bg-purple-100 text-purple-700',
+        Poultry: 'bg-green-100 text-green-700',
+        Payments: 'bg-orange-100 text-orange-700',
     };
 
     return colors[category] || 'bg-gray-100 text-gray-700';
@@ -138,11 +122,11 @@ const goToDetails = (item) => {
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-6">
                     <span
                         class="bg-gradient-to-r from-teal-400 via-emerald-400 to-teal-300 bg-clip-text text-transparent">
-                        Latest News
+                        Speciallized News
                     </span>
                 </h1>
                 <p class="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">
-                    Stay informed about our activities, achievements, and safety initiatives
+                    Stay informed about our activities, and achievements
                 </p>
             </div>
         </template>

@@ -17,7 +17,7 @@ class RolePermissionController extends Controller
 
     public function rolesAndPermission()
     {
-        return Inertia::render('MyAAIB/Admin/rolesAndPermission');
+        return Inertia::render('MyFarmer/Admin/rolesAndPermission');
     }
 
     public function eBusinessCards()

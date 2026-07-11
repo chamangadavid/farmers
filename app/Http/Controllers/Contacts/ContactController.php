@@ -13,7 +13,7 @@ class ContactController extends Controller
 {
     public function ContactUs()
     {
-        return Inertia::render('MyAAIB/Contacts/Index');
+        return Inertia::render('MyFarmer/Contacts/Index');
     }
 
     public function store(Request $request)
@@ -32,8 +32,7 @@ class ContactController extends Controller
             'message' => $request->message,
         ]);
 
-        // Send email to admin
-        $adminEmails = config('mail.admin_addresses.aaib'); // 'umoyoprintex@gmail.com'
+        $adminEmails = config('mail.admin_addresses.aaib'); 
         if ($adminEmails) {
             Mail::to($adminEmails)->send(new ContactFormMail($contact->toArray()));
         }

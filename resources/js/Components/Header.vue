@@ -296,11 +296,11 @@ const handleDropdownClick = () => {
                         >
                             Press Releases
                         </Link> -->
-                        <Link :href="route('announcementsPage')"
+                        <!-- <Link :href="route('announcementsPage')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick">
                             Announcements
-                        </Link>
+                        </Link> -->
                     </div>
                 </div>
 
@@ -422,11 +422,11 @@ const handleDropdownClick = () => {
                             <!-- <Link :href="route('pressReleasesPage')" class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition" @click="toggleMobileMenu">
                                 Press Releases
                             </Link> -->
-                            <Link :href="route('announcementsPage')"
+                            <!-- <Link :href="route('announcementsPage')"
                                 class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition"
                                 @click="toggleMobileMenu">
                                 Announcements
-                            </Link>
+                            </Link> -->
                         </div>
                     </div>
 

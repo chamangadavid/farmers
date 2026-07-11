@@ -11,6 +11,6 @@ class ReportsController extends Controller
     
     public function GetReports()
     {
-        return Inertia::render('MyAAIB/Reports/Index');
+        return Inertia::render('MyFarmer/Reports/Index');
     }
 }

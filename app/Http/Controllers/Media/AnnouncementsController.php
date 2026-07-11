@@ -12,15 +12,15 @@ class AnnouncementsController extends Controller
     
     public function GetAnnouncements()
     {
-        return Inertia::render('MyAAIB/Announcements/Index');
+        return Inertia::render('MyFarmer/Announcements/Index');
     }
 
-    // GET all (with search)
     public function index(Request $request)
     {
         $search = $request->search;
 
-        $announcements = Announcements::when($search, function ($q) use ($search) {
+        $announcements = Announcements::query()
+                  ->when($search, function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%");
             })
             ->orderBy('date', 'desc')
@@ -35,10 +35,11 @@ class AnnouncementsController extends Controller
     {
         $search = $request->search;
 
-        $announcements = Announcements::when($search, function ($q) use ($search) {
+        $announcements = Announcements::query()
+               ->when($search, function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%");
             })
-            ->orderBy('id', 'desc') // DESC order (latest first)
+            ->orderBy('id', 'desc')
             ->get();
 
         return response()->json([
@@ -46,7 +47,6 @@ class AnnouncementsController extends Controller
         ]);
     }
 
-    // STORE
     public function store(Request $request)
     {
         $request->validate([
@@ -66,7 +66,6 @@ class AnnouncementsController extends Controller
         ]);
     }
 
-    // UPDATE
     public function update(Request $request, $id)
     {
         $announcement = Announcements::findOrFail($id);
@@ -78,7 +77,6 @@ class AnnouncementsController extends Controller
         ]);
     }
 
-    // DELETE
     public function destroy($id)
     {
         Announcements::findOrFail($id)->delete();

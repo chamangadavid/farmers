@@ -164,7 +164,7 @@ const chartInsights = computed(() => {
                         title="Vagetable Records" 
                         v-if="can('staff can manage vegetable records')"
                         subTitle="Create, edit & delete vegetable records" 
-                        routeName="accidents.index">
+                        routeName="news.index">
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
@@ -174,7 +174,7 @@ const chartInsights = computed(() => {
                         title="Chicken Records" 
                         v-if="can('staff can manage chicken records')"
                         subTitle="Create, edit & delete chicken records" 
-                        routeName="accidents.index">
+                        routeName="news.index">
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
@@ -184,7 +184,7 @@ const chartInsights = computed(() => {
                         title="Sales Records" 
                         v-if="can('staff can manage sales records')"
                         subTitle="Create, edit & delete sales records" 
-                        routeName="accidents.index">
+                        routeName="news.index">
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
@@ -194,31 +194,13 @@ const chartInsights = computed(() => {
                         title="Monthly Income Statment" 
                         v-if="can('staff can manage monthly income statements')"
                         subTitle="Create, edit & delete monthly income statements" 
-                        routeName="accidents.index">
+                        routeName="news.index">
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
-                       <Card 
-                        title="Accidents Management" 
-                        v-if="can('manage all accidents')"
-                        subTitle="Create, edit & delete all accidents" 
-                        routeName="accidents.index">
-                        <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card>
 
-                      <!-- <Card 
-                        title="Announcement Management" 
-                        v-if="can('manage all announcements')"
-                        subTitle="Create, edit & delete announcements" 
-                        routeName="announcement.index">
-                        <template #icon>
-                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card> -->
 
                       <Card 
                         title="Product Gallery" 
@@ -286,16 +268,6 @@ const chartInsights = computed(() => {
                         v-if="can('manage all latest news')"
                         subTitle="Create, edit & delete latest news" 
                         routeName="news.index">
-                        <template #icon>
-                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card>
-
-                      <Card 
-                        title="Press Releases Management" 
-                        v-if="can('manage all press releases')"
-                        subTitle="Create, edit & delete press releases" 
-                        routeName="press.index">
                         <template #icon>
                           <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>

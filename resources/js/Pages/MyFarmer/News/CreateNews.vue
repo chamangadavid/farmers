@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import {
     Modal,
     Input,
@@ -14,17 +14,12 @@ import {
 import axios from 'axios';
 import dayjs from 'dayjs';
 
-const props = defineProps({
-    open: Boolean,
-    news: Object
-});
-
-const emit = defineEmits(['update:open', 'updated']);
+const props = defineProps({ open: Boolean });
+const emit = defineEmits(['update:open', 'created']);
 
 const form = ref({
-    id: null,
     title: '',
-    date: null,
+    date: '',
     category: '',
     summary: '',
     author: '',
@@ -33,45 +28,36 @@ const form = ref({
     read_time: ''
 });
 
-const imagePreview = ref(null);
-
+// CATEGORY OPTIONS
 const categories = [
     'General',
-    'Training',
-    'Event',
-    'Reports',
-    'Accident',
-    'Incidents'
+    'Vegetables',
+    'Fresh Fruits',
+    'Poultry',
+    'Farm Services',
+    'Orders & Delivery',
+    'Payments'
 ];
 
-// load data properly
-watch(() => props.news, (val) => {
-    if (val) {
-        form.value = {
-            id: val.id, 
-            title: val.title,
-            date: val.date ? dayjs(val.date) : null,
-            category: val.category,
-            summary: val.summary,
-            author: val.author,
-            image: null,
-            featured: val.featured ? true : false,
-            read_time: val.read_time
-        };
-
-        imagePreview.value = val.image ? `/storage/${val.image}` : null;
-    }
-}, { immediate: true });
-
-// file change
+// file upload
 const handleFileChange = (info) => {
-    const file = info.file.originFileObj;
-    form.value.image = file;
-    imagePreview.value = URL.createObjectURL(file);
+    form.value.image = info.file.originFileObj;
 };
 
-// update
-const update = async () => {
+const fileList = ref([]);
+
+const beforeUpload = (file) => {
+    fileList.value = [file];   // keep only 1 file
+    form.value.image = file;   // IMPORTANT: store real file
+    return false; // prevent auto upload
+};
+
+const handleRemove = () => {
+    fileList.value = [];
+    form.value.image = null;
+};
+
+const save = async () => {
     try {
         const formData = new FormData();
 
@@ -83,35 +69,35 @@ const update = async () => {
         formData.append('featured', form.value.featured ? 1 : 0);
         formData.append('read_time', form.value.read_time);
 
+
         if (form.value.image instanceof File) {
             formData.append('image', form.value.image);
         }
 
-        await axios.post(`/news/${form.value.id}?_method=PUT`, formData, {
+        await axios.post('/news', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
 
-        message.success('Updated successfully');
+        message.success('Created successfully');
 
-        emit('updated');
+        emit('created');
         emit('update:open', false);
 
     } catch (e) {
         console.log(e);
-        message.error('Failed to update');
+        message.error('Failed to create');
     }
 };
 </script>
+
 <template>
-    <a-modal :open="open" title="Edit News" @cancel="emit('update:open', false)" :footer="null">
+    <a-modal :open="open" title="Create News" @cancel="emit('update:open', false)" :footer="null">
         <div class="space-y-3">
 
-            <!-- Title -->
             <Input v-model:value="form.title" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Title" />
 
-            <!-- Date -->
             <DatePicker v-model:value="form.date" style="width:100%" />
 
             <!-- CATEGORY DROPDOWN -->
@@ -121,38 +107,24 @@ const update = async () => {
                 </Select.Option>
             </Select>
 
-            <!-- Author -->
             <Input v-model:value="form.author" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Author" />
 
-            <!-- Read Time -->
             <Input v-model:value="form.read_time" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Read Time (e.g. 5 min read)" />
 
-            <!-- Summary -->
-            <Input.TextArea v-model:value="form.summary" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Summary" rows="3" />
+            <Input.TextArea v-model:value="form.summary" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Summary" />
 
-
-            <!-- IMAGE PREVIEW -->
-            <div v-if="imagePreview" class="mb-2">
-                <img :src="imagePreview" class="w-full h-48 object-cover rounded-lg border" />
-            </div> <br/><br/>
-
-            <!-- FILE UPLOAD -->
-            <Upload :before-upload="() => false" @change="handleFileChange" max-count="1">
-                <Button>Select New Image</Button>
+            <br/><br/>
+            <!-- Upload -->
+            <Upload :before-upload="beforeUpload" :file-list="fileList" @remove="handleRemove">
+                <Button>Select Image</Button>
             </Upload>
 
-         
-            <!-- Featured -->
             <div class="flex items-center gap-2">
                 <span>Featured:</span>
                 <Switch v-model:checked="form.featured" />
             </div>
 
-            <!-- Submit -->
-            <Button type="primary" block @click="update">
-                Update
-            </Button>
-
+            <Button type="primary" block @click="save">Save</Button>
         </div>
     </a-modal>
 </template>

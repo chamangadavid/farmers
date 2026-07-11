@@ -14,7 +14,7 @@ class TeamController extends Controller
     
     public function managementTeam()
     {
-        return Inertia::render('MyAAIB/Management/Index');
+        return Inertia::render('MyFarmer/Management/Index');
     }
 
     public function index()
