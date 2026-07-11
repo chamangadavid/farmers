@@ -7,6 +7,7 @@ use App\Models\Faqs\Faq;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class FaqController extends Controller
 {
@@ -36,11 +37,29 @@ class FaqController extends Controller
 
     public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
-            'category' => 'required|string|max:255',
+            'category' => [
+                'required',
+                Rule::in([
+                    'General',
+                    'Vegetables',
+                    'Fresh Fruits',
+                    'Poultry',
+                    'Farm Services',
+                    'Orders & Delivery',
+                    'Payments'
+                ])
+            ],
             'question' => 'required|string',
-            'answer'   => 'required|string',
+            'answer' => 'required|string'
         ]);
+
+        // $validator = Validator::make($request->all(), [
+        //     'category' => 'required|string|max:255',
+        //     'question' => 'required|string',
+        //     'answer'   => 'required|string',
+        // ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -61,19 +80,56 @@ class FaqController extends Controller
     public function update(Request $request, Faq $faq)
     {
         $validator = Validator::make($request->all(), [
-            'category' => 'required|string|max:255',
+            'category' => [
+                'required',
+                Rule::in([
+                    'General',
+                    'Vegetables',
+                    'Fresh Fruits',
+                    'Poultry',
+                    'Farm Services',
+                    'Orders & Delivery',
+                    'Payments'
+                ])
+            ],
             'question' => 'required|string',
-            'answer'   => 'required|string',
+            'answer' => 'required|string',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        $faq->update($request->all());
+        $faq->update([
+            'category' => $request->category,
+            'question' => $request->question,
+            'answer' => $request->answer,
+        ]);
 
-        return response()->json(['faq' => $faq, 'message' => 'FAQ updated successfully']);
+        return response()->json([
+            'faq' => $faq,
+            'message' => 'FAQ updated successfully'
+        ]);
     }
+
+    // public function update(Request $request, Faq $faq)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'category' => 'required|string|max:255',
+    //         'question' => 'required|string',
+    //         'answer'   => 'required|string',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['errors' => $validator->errors()], 422);
+    //     }
+
+    //     $faq->update($request->all());
+
+    //     return response()->json(['faq' => $faq, 'message' => 'FAQ updated successfully']);
+    // }
 
     // Delete FAQ
     public function destroy(Faq $faq)
@@ -84,39 +140,29 @@ class FaqController extends Controller
 
     // Frontend FAQ retrieval with optional category and search filters
     public function getfrontIndex(Request $request)
-    {
-        // Optional category filter
-        $category = $request->query('category', null);
-        $search = $request->query('search', null);
+{
+    $category = $request->category;
+    $search = $request->search;
 
-        $query = Faq::query();
+    $faqs = Faq::query()
 
-        if ($category && $category !== 'all') {
-            $query->where('category', $category);
-        }
+        ->when($category && $category != 'all', function ($q) use ($category) {
+            $q->where('category', $category);
+        })
 
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('question', 'like', "%{$search}%")
-                  ->orWhere('answer', 'like', "%{$search}%");
-            });
-        }
+        ->when($search, function ($q) use ($search) {
+            $q->where('question', 'like', "%{$search}%")
+              ->orWhere('answer', 'like', "%{$search}%");
+        })
 
-        $faqs = $query->orderBy('category')->get();
+        ->orderBy('created_at')
 
-        // Group by category
-        $grouped = $faqs->groupBy('category')->map(function($items, $key) {
-            return [
-                'category' => $key,
-                'questions' => $items->map(fn($faq) => [
-                    'q' => $faq->question,
-                    'a' => $faq->answer
-                ])->toArray()
-            ];
-        })->values();
+        ->get();
 
-        return response()->json($grouped);
-    }
+    return response()->json($faqs);
+}
+
+
 
 
 }

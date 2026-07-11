@@ -224,7 +224,8 @@ Route::middleware('auth')->group(function () {
     
     //FAQs routes
     Route::get('/faqs', [JobController::class, 'GetFaqs'])->name('faq.index');
-    Route::get('/all-faqs', [FaqController::class, 'index']);        
+    Route::get('/all-faqs', [FaqController::class, 'index']);       
+    Route::get('/frontend/faqs', [FaqController::class, 'getfrontIndex']); 
     Route::post('/faqs', [FaqController::class, 'store']);      
     Route::get('/faqs/{faq}', [FaqController::class, 'show']);    
     Route::put('/faqs/{faq}', [FaqController::class, 'update']);  

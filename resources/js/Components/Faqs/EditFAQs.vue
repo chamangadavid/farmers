@@ -1,3 +1,4 @@
+<!-- resources\js\Components\Faqs\EditFAQs.vue -->
 <script setup>
 import { ref, watch } from 'vue';
 import { Modal, Input, Button, message, Select } from 'ant-design-vue';
@@ -15,11 +16,13 @@ const emit = defineEmits(['updated', 'update:open']);
 
 // Predefined categories
 const categories = [
-    'General Information',
-    'Report Accidents',
-    'Incident',
-    'Investigations',
-    'Reports & Publications'
+    'General',
+    'Vegetables',
+    'Fresh Fruits',
+    'Poultry',
+    'Farm Services',
+    'Orders & Delivery',
+    'Payments'
 ];
 
 // Correct prop
@@ -68,7 +71,7 @@ const updateFaq = async () => {
 </script>
 
 <template>
-    <a-modal v-model:open="open" title="Edit FAQ" @cancel="emit('update:open', false)" :footer="null">
+    <a-modal v-model:open="open" title="Edit Farm FAQ" @cancel="emit('update:open', false)" :footer="null">
         <div class="space-y-4">
             <!-- Category Dropdown -->
             <a-select v-model:value="faq.category" placeholder="Select a category" style="width: 100%" allowClear>

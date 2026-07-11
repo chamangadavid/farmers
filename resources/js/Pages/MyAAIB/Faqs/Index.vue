@@ -1,3 +1,4 @@
+<!-- resources\js\Pages\MyAAIB\Faqs\Index.vue -->
 <script setup>
 import { ref, onMounted, h, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
@@ -31,12 +32,56 @@ const selectedFaq = ref(null);
 
 // Category options with icons
 const categories = [
-    { value: '', label: 'All Categories', icon: '📋' },
-    { value: 'General Information', label: 'General Information', icon: '📚', color: 'blue' },
-    { value: 'Report Accidents', label: 'Report Accidents', icon: '🚨', color: 'red' },
-    { value: 'Incident', label: 'Incident', icon: '⚠️', color: 'orange' },
-    { value: 'Investigations', label: 'Investigations', icon: '🔍', color: 'purple' },
-    { value: 'Reports & Publications', label: 'Reports & Publications', icon: '📊', color: 'green' }
+    { value: '', label: 'All Categories', icon: '🌱' },
+
+    {
+        value: 'General',
+        label: 'General',
+        icon: '🏡',
+        color: 'green'
+    },
+
+    {
+        value: 'Vegetables',
+        label: 'Vegetables',
+        icon: '🥬',
+        color: 'success'
+    },
+
+    {
+        value: 'Fresh Fruits',
+        label: 'Fresh Fruits',
+        icon: '🍎',
+        color: 'red'
+    },
+
+    {
+        value: 'Poultry',
+        label: 'Poultry',
+        icon: '🐔',
+        color: 'orange'
+    },
+
+    {
+        value: 'Farm Services',
+        label: 'Farm Services',
+        icon: '🚜',
+        color: 'cyan'
+    },
+
+    {
+        value: 'Orders & Delivery',
+        label: 'Orders & Delivery',
+        icon: '🚚',
+        color: 'blue'
+    },
+
+    {
+        value: 'Payments',
+        label: 'Payments',
+        icon: '💳',
+        color: 'purple'
+    }
 ];
 
 const fetchFaqs = async () => {
@@ -127,7 +172,6 @@ const columns = [
         width: '35%',
         ellipsis: true,
         customRender: ({ record }) => {
-            // Strip HTML tags for display
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = record.answer;
             const textContent = tempDiv.textContent || tempDiv.innerText || '';
@@ -198,58 +242,14 @@ const columns = [
 
         ])
 },
-    // {
-    //     title: 'Actions',
-    //     key: 'actions',
-    //     width: '15%',
-    //     align: 'center',
-    //     customRender: ({ record }) =>
-    //         h(Space, { size: 'small' }, [
-    //             h(Button, {
-    //                 type: 'link',
-    //                 size: 'small',
-    //                 icon: h(EyeOutlined),
-    //                 onClick: () => {
-    //                     selectedFaq.value = record;
-    //                     showViewModal.value = true;
-    //                 },
-    //                 title: 'View Details'
-    //             },),
-
-    //             h(Button, {
-    //                 type: 'link',
-    //                 size: 'small',
-    //                 icon: h(EditOutlined),
-    //                 onClick: () => {
-    //                     selectedFaq.value = record;
-    //                     showEditModal.value = true;
-    //                 },
-    //                 title: 'Edit FAQ'
-    //             },),
-    //             h(Popconfirm, {
-    //                 title: 'Are you sure you want to delete this FAQ?',
-    //                 onConfirm: () => deleteFaq(record.id),
-    //                 okText: 'Yes',
-    //                 cancelText: 'No',
-    //                 okType: 'danger'
-    //             }, {
-    //                 default: () => h(Button, {
-    //                     type: 'link',
-    //                     danger: true,
-    //                     size: 'small',
-    //                     icon: h(DeleteOutlined),
-    //                     title: 'Delete FAQ'
-    //                 },)
-    //             })
-    //         ])
-    // }
+   
 ];
 
 onMounted(() => fetchFaqs());
 </script>
 
 <template>
-    <Head title="FAQs" />
+    <Head title="Alinaswe Farm FAQs" />
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
@@ -263,7 +263,7 @@ onMounted(() => fetchFaqs());
                     <!-- Header Section -->
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900">Manage FAQs</h3>
+                            <h3 class="text-lg font-medium text-gray-900">Manage Farm FAQs</h3>
                             <p class="text-sm text-gray-500 mt-1">
                                 Create, edit, and manage frequently asked questions
                             </p>
@@ -278,7 +278,7 @@ onMounted(() => fetchFaqs());
                                 class="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700"
                             >
                                 <PlusOutlined />
-                                Create FAQ
+                                Create Farm FAQ
                             </Button>
                         </div>
                     </div>
@@ -353,10 +353,10 @@ onMounted(() => fetchFaqs());
                         >
                             <template #emptyText>
                                 <div class="py-12 text-center">
-                                    <div class="text-6xl mb-4">📚</div>
-                                    <p class="text-gray-500 text-lg mb-2">No FAQs found</p>
+                                    <div class="text-6xl mb-4">🌱</div>
+                                    <p class="text-gray-500 text-lg mb-2">No Farm FAQs Available</p>
                                     <p class="text-gray-400 text-sm">
-                                        {{ searchTerm || selectedCategory ? 'Try adjusting your search or filter criteria' : 'Create your first FAQ to get started' }}
+                                        {{ searchTerm || selectedCategory ? 'Try adjusting your search or filter criteria' : 'Create your first farm FAQ.' }}
                                     </p>
                                     <Button 
                                         v-if="searchTerm || selectedCategory" 
@@ -564,147 +564,3 @@ onMounted(() => fetchFaqs());
     }
 }
 </style>
-
-
-
-
-<!-- <script setup>
-import { ref, onMounted, h } from 'vue';
-import { Head } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Table, Button, Popconfirm, message, Input } from 'ant-design-vue';
-import axios from 'axios';
-import { debounce } from 'lodash';
-
-import CreateFAQs from '@/Components/Faqs/CreateFAQs.vue';
-import EditFAQs from '@/Components/Faqs/EditFAQs.vue';
-import ViewFAQs from '@/Components/Faqs/ViewFAQs.vue';
-
-const faqs = ref([]);
-const loading = ref(false);
-const searchTerm = ref('');
-const selectedCategory = ref('');
-const showCreateModal = ref(false);
-const showEditModal = ref(false);
-const showViewModal = ref(false);
-const selectedFaq = ref(null);
-
-const fetchFaqs = async () => {
-    loading.value = true;
-    try {
-        const res = await axios.get('/all-faqs', {
-            params: {
-                search: {
-                    category: selectedCategory.value,
-                    query: searchTerm.value
-                }
-            }
-        });
-        faqs.value = res.data.faqs;
-    } catch (error) {
-        console.error(error);
-        message.error('Failed to fetch FAQs');
-    } finally {
-        loading.value = false;
-    }
-};
-
-const handleSearch = debounce(() => {
-    fetchFaqs();
-}, 500);
-
-const deleteFaq = async (id) => {
-    try {
-        await axios.delete(`/faqs/${id}`);
-        message.success('FAQ deleted successfully');
-        fetchFaqs(searchTerm.value);
-    } catch (error) {
-        console.error(error);
-        message.error('Failed to delete FAQ');
-    }
-};
-
-const columns = [
-    { 
-        title: 'Category', 
-        dataIndex: 'category', 
-        key: 'category' 
-    },
-    { 
-        title: 'Question', 
-        dataIndex: 'question', 
-        key: 'question',
-        customRender: ({ record }) => {
-            return record.question.length > 25
-                ? record.question.substring(0, 25) + '...'
-                : record.question;
-        }
-    },
-    { 
-        title: 'Answer', 
-        dataIndex: 'answer', 
-        key: 'answer',
-        customRender: ({ record }) => {
-            return record.answer.length > 40
-                ? record.answer.substring(0, 40) + '...'
-                : record.answer;
-        }
-    },
-    {
-        title: 'Actions',
-        key: 'actions',
-        customRender: ({ record }) =>
-            h('div', { class: 'flex gap-2' }, [
-                h(Button, { type: 'primary', size: 'small', onClick: () => { selectedFaq.value = record; showViewModal.value = true; } }, 'View'),
-                h(Button, { type: 'default', size: 'small', onClick: () => { selectedFaq.value = record; showEditModal.value = true; } }, 'Edit'),
-                h(Popconfirm, { title: 'Delete FAQ?', onConfirm: () => deleteFaq(record.id), okText: 'Yes', cancelText: 'No' }, { default: () => h(Button, { type: 'primary', danger: true, size: 'small' }, 'Delete') })
-            ])
-    }
-];
-
-onMounted(() => fetchFaqs());
-</script>
-
-<template>
-
-    <Head title="FAQs" />
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">FAQs</h2>
-        </template>
-
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium">Manage FAQs</h3>
-                        <Button type="primary" @click="showCreateModal = true">Create FAQ</Button>
-                    </div>
-
-                    <div class="flex gap-2 mb-4">
-                        <select v-model="selectedCategory" @change="fetchFaqs" class="border rounded px-2 py-1">
-                            <option value="">All Categories</option>
-                            <option value="General Information">General Information</option>
-                            <option value="Report Accidents">Report Accidents</option>
-                            <option value="Incident">Incident</option>
-                            <option value="Investigations">Investigations</option>
-                            <option value="Reports & Publications">Reports & Publications</option>
-                        </select>
-                    </div>
-
-                    <div class="flex justify-between items-center mb-4">
-                        <Input v-model:value="searchTerm" placeholder="Search FAQs..." style="width: 300px" allowClear
-                            @input="handleSearch" />
-                    </div>
-
-                    <a-table :dataSource="faqs" :loading="loading" rowKey="id" :pagination="{ pageSize: 10 }"
-                        :columns="columns" />
-                </div>
-            </div>
-        </div>
-
-        <CreateFAQs v-model:open="showCreateModal" @created="fetchFaqs" />
-        <EditFAQs v-model:open="showEditModal" :faq="selectedFaq" @updated="fetchFaqs" />
-        <ViewFAQs v-model:open="showViewModal" :faq="selectedFaq" />
-    </AuthenticatedLayout>
-</template> -->

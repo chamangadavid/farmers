@@ -1,3 +1,4 @@
+resources\js\Components\Faqs\CreateFAQs.vue
 <script setup>
 import { ref } from 'vue';
 import { Modal, Input, Button, message, Select } from 'ant-design-vue';
@@ -10,13 +11,14 @@ const answer = ref('');
 
 const emit = defineEmits(['created', 'update:open']);
 
-// Predefined categories
 const categories = [
-  'General Information',
-  'Report Accidents',
-  'Incident',
-  'Investigations',
-  'Reports & Publications'
+    'General',
+    'Vegetables',
+    'Fresh Fruits',
+    'Poultry',
+    'Farm Services',
+    'Orders & Delivery',
+    'Payments'
 ];
 
 const resetForm = () => {
