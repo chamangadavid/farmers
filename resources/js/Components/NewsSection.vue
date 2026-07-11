@@ -74,7 +74,7 @@ const trimText = (text, length) => {
 </script>
 
 <template>
-    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+    <div class="bg-white shadow-xl p-6 md:p-8">
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Speciallized News</h2>

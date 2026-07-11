@@ -12,6 +12,8 @@ import ProfessionalBanner from '@/Components/ProfessionalBanner.vue'
 import FeaturesSection from '@/Components/FeaturesSection.vue';
 import AboutOrganic from '@/Components/AboutOrganic.vue'
 import OurFarmingTeam from '@/Components/OurFarmingTeam.vue'
+import Testimonials from '@/Components/Testimonials.vue'
+import FaqSection from '@/Components/FaqSection.vue'
 
 defineProps({
     canLogin: Boolean,
@@ -39,12 +41,12 @@ defineProps({
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
                     <!-- Features Section -->
-                    <div class="mb-16">
+                    <div>
                         <FeaturesSection />
                     </div>
 
                     <!-- About Alinawe Farm Section -->
-                    <div class="mb-16">
+                    <div class="mb-5">
                         <AboutOrganic />
                     </div>
 
@@ -54,23 +56,32 @@ defineProps({
                         <AnnouncementsSection />
                     </div> -->
 
-                    <div class="mb-16">
+                    <div class="mb-5">
                          <NewsSection />
                     </div>
 
                     <!-- Product Gallery Section -->
-                    <div class="mb-16">
+                    <div>
                         <ProductGallery />
                     </div> 
 
                     <!-- Our Farming Team Section -->
-                    <div class="mb-16">
+                    <div>
                         <OurFarmingTeam />
                     </div>
-                    
+
                     <!-- Professiona Banner section -->
                     <div>
                         <ProfessionalBanner />
+                    </div>
+
+                    <!-- Testimonials Section -->
+                    <div>
+                        <Testimonials />
+                    </div>
+
+                    <div>
+                        <FaqSection />
                     </div>
 
                 </div>

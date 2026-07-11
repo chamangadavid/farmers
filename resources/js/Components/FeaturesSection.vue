@@ -35,16 +35,7 @@ const features = [
 <template>
     <section class="relative py-24 overflow-hidden bg-[#f7fff4]">
 
-        <!-- Left Decoration -->
-        <img src="/assets/fruit.png"
-            class="absolute left-0 top-10 w-15 lg:w-20 xl:w-10 h-auto object-contain pointer-events-none" />
-
-        <!-- Right -->
-        <img src="/assets/chick.png"
-            class="absolute right-0 top-10 w-15 lg:w-20 xl:w-10 h-auto object-contain pointer-events-none" />
-
         <div class="max-w-7xl mx-auto px-6 relative z-10">
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-center">
 
                 <div v-for="feature in features" :key="feature.title" :class="[

@@ -8,24 +8,24 @@ defineProps({
 });
 
 const timeline = [
-    {
-        year: '2000',
-        title: 'Establishment of AAIB',
-        description: 'The Aircraft Accident Investigation Board was established as an independent body to investigate aviation accidents and incidents.',
-        icon: '🏛️'
-    },
-    {
-        year: '2005',
-        title: 'First Major Investigation',
-        description: 'Conducted the first comprehensive investigation of a commercial aircraft accident, establishing modern investigation protocols.',
-        icon: '✈️'
-    },
-    {
-        year: '2010',
-        title: 'International Recognition',
-        description: 'AAIB gained recognition from ICAO for excellence in accident investigation and safety recommendations.',
-        icon: '🌍'
-    },
+    // {
+    //     year: '2000',
+    //     title: 'Establishment of AAIB',
+    //     description: 'The Aircraft Accident Investigation Board was established as an independent body to investigate aviation accidents and incidents.',
+    //     icon: '🏛️'
+    // },
+    // {
+    //     year: '2005',
+    //     title: 'First Major Investigation',
+    //     description: 'Conducted the first comprehensive investigation of a commercial aircraft accident, establishing modern investigation protocols.',
+    //     icon: '✈️'
+    // },
+    // {
+    //     year: '2010',
+    //     title: 'International Recognition',
+    //     description: 'AAIB gained recognition from ICAO for excellence in accident investigation and safety recommendations.',
+    //     icon: '🌍'
+    // },
     {
         year: '2015',
         title: 'Technology Modernization',

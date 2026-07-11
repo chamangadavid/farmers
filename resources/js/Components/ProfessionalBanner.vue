@@ -3,11 +3,11 @@
 defineProps({
     title: {
         type: String,
-        default: 'Vegetables & Chickens'
+        default: 'Alinaswe Farm'
     },
     description: {
         type: String,
-        default: 'Alinaswe Farm grows fresh, nutritious vegetables and raises healthy chickens, delivering quality farm produce you can trust every day.'
+        default: 'We grows fresh, nutritious vegetables and raises healthy chickens, delivering quality farm produce you can trust every day.'
     },
     buttonText: {
         type: String,

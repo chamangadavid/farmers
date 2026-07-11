@@ -17,7 +17,7 @@
                     <div class="absolute bottom-8 left-8 right-8">
                         <div class="bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20">
                             <p class="text-white text-sm font-medium">Join Our Community</p>
-                            <p class="text-teal-200 text-xs mt-1">Start your journey with AAIB</p>
+                            <p class="text-teal-200 text-xs mt-1">Start your journey with ALINASWE FARM</p>
                         </div>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                             <span class="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Create Account</span>
                         </h2>
                         <p class="text-gray-600 text-sm">
-                            Join the Aircraft Accident Investigation Board
+                            Join the Alinaswe Farm community and start your journey with us today!
                         </p>
                     </div>
 
