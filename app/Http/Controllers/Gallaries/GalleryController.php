@@ -110,38 +110,7 @@ class GalleryController extends Controller
         ]);
     }
 
-    /**
-     * Delete Gallery
-     */
-    // public function destroy(Gallery $gallery)
-    // {
-    //     foreach ($gallery->images as $image) {
-
-    //         Storage::disk('public')->delete($image->image);
-
-    //     }
-
-    //     $gallery->delete();
-
-    //     return response()->json([
-    //         'message' => 'Gallery deleted successfully.'
-    //     ]);
-    // }
-
-    /**
-     * Delete One Gallery Image
-     */
-    // public function destroyImage(GalleryImage $image)
-    // {
-    //     Storage::disk('public')->delete($image->image);
-
-    //     $image->delete();
-
-    //     return response()->json([
-    //         'message' => 'Image deleted successfully.'
-    //     ]);
-    // }
-
+    
     /**
      * Homepage Gallery API
      */

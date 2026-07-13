@@ -37,7 +37,7 @@ class UserSearchController extends Controller
 
     public function show(User $user)
     {
-        return Inertia::render('MyAAIB/Users/Show', [
+        return Inertia::render('MyFarmer/Users/Show', [
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,

@@ -18,6 +18,12 @@ use App\Http\Controllers\Regulation\NationalRegulationsController;
 use App\Http\Controllers\Report\ReportsController;
 use App\Http\Controllers\Testimonials\TestimonyController;
 use App\Http\Controllers\Gallaries\GalleryController;
+use App\Http\Controllers\Vegetables\VegetableController;
+use App\Http\Controllers\Chickens\ChickenController;
+use App\Http\Controllers\Chickens\ChickenBatchController;
+use App\Http\Controllers\Chickens\ChickenSalesController;
+use App\Http\Controllers\Chickens\ChickenReportsController;
+use App\Http\Controllers\Sales\SalesController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Staff\StaffsController;
 use App\Http\Controllers\UserSearchController;
@@ -59,26 +65,7 @@ Route::get('/dashboard', function () {
 ->middleware(['auth', 'verified'])
 ->name('dashboard');
 
-// Route::get('/dashboard', function () {
-//       $statusCounts = AccidentReport::select('status', DB::raw('count(*) as total'))
-//         ->groupBy('status')
-//         ->pluck('total', 'status');
 
-//     return Inertia::render('Dashboard', [
-//         'stats' => [
-//             'users' => User::count(),
-//             'accidents' => AccidentReport::count(),
-//             'jobs' => Job::count(),
-//             'contacts' => Contact::count(),
-//         ],
-//          'charts' => [
-//             'statusLabels' => $statusCounts->keys(),
-//             'statusData' => $statusCounts->values(),
-//         ]
-//     ]);
-// })
-// ->middleware(['auth', 'verified'])
-// ->name('dashboard');
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes
@@ -100,13 +87,13 @@ Route::get('/about-us', function () {
     return Inertia::render('Site/aboutUs');
 })->name('aboutUs');
 
-Route::get('/job-vacancies', function () {
-    return Inertia::render('Site/JobVacancies');
-})->name('jobVacancies');
+// Route::get('/job-vacancies', function () {
+//     return Inertia::render('Site/JobVacancies');
+// })->name('jobVacancies');
 
-Route::get('/report-accident', function () {
-    return Inertia::render('Site/ReportAccident');
-})->name('reportAccident');
+// Route::get('/report-accident', function () {
+//     return Inertia::render('Site/ReportAccident');
+// })->name('reportAccident');
 
 Route::get('/product-gallery', function () {
     return Inertia::render('Site/Gallery');
@@ -125,9 +112,9 @@ Route::get('/management-team', function () {
     return Inertia::render('Site/ManagementTeam');
 })->name('managementTeam');
 
-Route::get('/mandates', function () {
-    return Inertia::render('Site/Mandate');
-})->name('mandate');
+// Route::get('/mandates', function () {
+//     return Inertia::render('Site/Mandate');
+// })->name('mandate');
 
 Route::get('/history-details', function () {
     return Inertia::render('Site/History');
@@ -142,13 +129,13 @@ Route::get('/document-repository', function () {
 })->name('documentRepository');
 
 
-Route::get('/national-regulation', function () {
-    return Inertia::render('Site/NationalRegulation');
-})->name('nationalRegulation');
+// Route::get('/national-regulation', function () {
+//     return Inertia::render('Site/NationalRegulation');
+// })->name('nationalRegulation');
 
-Route::get('/investigation-process', function () {
-    return Inertia::render('Site/InvestigationProcess');
-})->name('investigationPage');
+// Route::get('/investigation-process', function () {
+//     return Inertia::render('Site/InvestigationProcess');
+// })->name('investigationPage');
 
 Route::get('/report-accidents', function () {
     return Inertia::render('Site/AccidentReports');
@@ -187,6 +174,12 @@ Route::get('/public-documents/folders', [DocumentController::class, 'Publicindex
 Route::get('/jobs/active', [JobController::class, 'getActiveJobs']);
 Route::get('/public-members', [TeamController::class, 'publicMember']);
 Route::get('/all-jobs-details/{job}', [JobController::class, 'details']);
+
+Route::get('/frontend/faqs', [FaqController::class, 'getfrontIndex']); 
+Route::get('/frontend/testimonials', [TestimonyController::class, 'frontendTestimonials']);
+Route::get('/frontend/gallery', [GalleryController::class,'frontendGallery']);
+
+
 
 
 
@@ -230,10 +223,9 @@ Route::middleware('auth')->group(function () {
     //FAQs routes
     Route::get('/faqs', [JobController::class, 'GetFaqs'])->name('faq.index');
     Route::get('/all-faqs', [FaqController::class, 'index']);       
-    Route::get('/frontend/faqs', [FaqController::class, 'getfrontIndex']); 
     Route::post('/faqs', [FaqController::class, 'store']);      
     Route::get('/faqs/{faq}', [FaqController::class, 'show']);    
-Route::put('/faqs/{faq}', [FaqController::class, 'update']);  
+    Route::put('/faqs/{faq}', [FaqController::class, 'update']);  
     Route::delete('/faqs/{faq}', [FaqController::class, 'destroy']); 
 
     //announcements routes
@@ -249,6 +241,104 @@ Route::put('/faqs/{faq}', [FaqController::class, 'update']);
     Route::post('/news', [NewsController::class, 'store']);
     Route::put('/news/{id}', [NewsController::class, 'update']);
     Route::delete('/news/{id}', [NewsController::class, 'destroy']);
+
+
+
+    //vegetable routes
+    Route::get('/all-vegetables', [VegetableController::class, 'GetVegetableIndexPage'])->name('vegetables.index');
+
+
+
+
+
+    //chicken routes
+    Route::get('/all-chickens', [ChickenController::class, 'GetChickensIndexPage'])->name('chicken.index');
+    Route::get('/chickens', [ChickenBatchController::class, 'index']);
+    Route::post('/chickens', [ChickenBatchController::class, 'store']);
+    Route::put('/chickens/{chicken}', [ChickenBatchController::class,'update']);
+    Route::get('/chicken-sales',[ChickenSalesController::class,'index']);
+    Route::get('/chicken-sales/{batch}', [ChickenSalesController::class,'show']);
+    Route::post('/chicken-sales',[ChickenSalesController::class,'store']);
+    Route::put('/chicken-sales/{sale}',[ChickenSalesController::class,'update']);
+    Route::put('/update-chicken-sales/{sale}', [ChickenSalesController::class,'updateSales']);
+    Route::get('/chicken-sales/{sale}/receipt', [ChickenSalesController::class,'receipt']);
+    Route::get('/chicken-sales/{sale}/receipt/download', [ChickenSalesController::class,'downloadReceipt']);
+    Route::delete('/chicken-sales/{sale}', [ChickenSalesController::class,'destroy'])->name('chicken-sales.destroy');
+
+
+    //chicken report
+    Route::get('/chicken-reports/monthly-summary', [ChickenReportsController::class,'monthlySummary']);
+
+
+    Route::get('/chicken-reports/sales', [ChickenReportsController::class,'salesReport']);
+
+
+    Route::get('/chicken-reports/expenses', [ChickenReportsController::class,'expenseReport']);
+
+
+    Route::get('/chicken-reports/revenue', [ChickenReportsController::class,'revenueReport']);
+
+
+
+
+
+ Route::get('/all-sales-reports', [ChickenReportsController::class, 'GetSalesReportIndexPage'])->name('sales-report.index');
+Route::get('/chicken-reports/dashboard', [ChickenReportsController::class,'dashboard']);
+Route::get('/summary-reports/pdf', [ChickenReportsController::class,'downloadPdf']);
+
+Route::get('/chicken-reports/excel', [ChickenReportsController::class,'downloadExcel']);
+
+
+Route::get(
+'/chicken-reports/pdf',
+[ChickenReportsController::class,'pdf']
+);
+
+
+
+
+
+
+
+       //sales routes
+     Route::get('/all-sales', [SalesController::class, 'GetSalesIndexPage'])->name('sales.index');
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     //document repository routes
@@ -280,8 +370,7 @@ Route::put('/faqs/{faq}', [FaqController::class, 'update']);
     Route::put('/testimonials/{testimonial}', [TestimonyController::class, 'update']);
     Route::delete('/testimonials/{testimonial}', [TestimonyController::class, 'destroy']);
     Route::get('/testimonials/{testimonial}', [TestimonyController::class, 'show']);
-    Route::get('/frontend/testimonials', [TestimonyController::class, 'frontendTestimonials']);
-
+   
 
 
 
@@ -319,7 +408,6 @@ Route::get('/gallery/{gallery}', [GalleryController::class,'show']);
 
 
 // Homepage API
-Route::get('/frontend/gallery', [GalleryController::class,'frontendGallery']);
 
 
 
@@ -365,16 +453,6 @@ Route::get('/frontend/gallery', [GalleryController::class,'frontendGallery']);
 
 
     
- 
-
-     //incident routes
-    Route::get('/all-incidents', [IncidentsController::class, 'GetIncidents'])->name('incidents.index');
-    
-    
-   //incident routes
-    Route::get('/all-investigations', [InvestigationsController::class, 'GetInvestigations'])->name('investigations.index');
-    
-
 
 
  

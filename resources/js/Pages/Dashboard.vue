@@ -160,37 +160,37 @@ const chartInsights = computed(() => {
                         </template>
                       </Card>
 
-                      <Card 
-                        title="Vagetable Records" 
-                        v-if="can('staff can manage vegetable records')"
-                        subTitle="Create, edit & delete vegetable records" 
-                        routeName="news.index">
-                        <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card>
-
                         <Card 
-                        title="Chicken Records" 
+                        title="Chicken Management" 
                         v-if="can('staff can manage chicken records')"
                         subTitle="Create, edit & delete chicken records" 
-                        routeName="news.index">
+                        routeName="chicken.index">
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
                        <Card 
-                        title="Sales Records" 
+                        title="Chicken Report Management" 
                         v-if="can('staff can manage sales records')"
                         subTitle="Create, edit & delete sales records" 
-                        routeName="news.index">
+                        routeName="sales-report.index">
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
                        <Card 
+                        title="Vagetable Management" 
+                        v-if="can('staff can manage vegetable records')"
+                        subTitle="Create, edit & delete vegetable records" 
+                        routeName="vegetables.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                       <!-- <Card 
                         title="Monthly Income Statment" 
                         v-if="can('staff can manage monthly income statements')"
                         subTitle="Create, edit & delete monthly income statements" 
@@ -198,12 +198,10 @@ const chartInsights = computed(() => {
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
-                      </Card>
-
-
+                      </Card> -->
 
                       <Card 
-                        title="Product Gallery" 
+                        title="Gallery Management" 
                         v-if="can('manage product gallery')"
                         subTitle="Create, edit & delete product images" 
                         routeName="gallery.index">
@@ -274,16 +272,6 @@ const chartInsights = computed(() => {
                       </Card>
 
                       <Card 
-                        title="Regulations Management" 
-                        v-if="can('manage all national regulations')"
-                        subTitle="Create, edit & delete national regulations" 
-                        routeName="regulations.index">
-                        <template #icon>
-                          <InboxOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card>
-
-                      <Card 
                         title="Document Repository" 
                         v-if="can('manage document repository')"
                         subTitle="Create, edit & delete Document Repository" 
@@ -294,7 +282,7 @@ const chartInsights = computed(() => {
                       </Card>
 
                        <Card 
-                        title="Trail Audit" 
+                        title="Trail Audit Management" 
                         v-if="can('manage trail audit')"
                         subTitle="Create, edit & delete Trail Audit" 
                         routeName="trail-audit.index">
@@ -304,7 +292,7 @@ const chartInsights = computed(() => {
                       </Card>
 
                       <Card 
-                        title="My Account" 
+                        title="My Account Management" 
                         subTitle="Manage your profile and account settings" 
                         routeName="profile.edit">
                         <template #icon>

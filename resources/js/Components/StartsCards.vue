@@ -56,19 +56,11 @@ const props = defineProps({
     stats: Object
 });
 
-// Quick Stats
-// const quickStats = [
-//   { label: 'Total Users', value: '1,234', change: '+12%', icon: UserOutlined },
-//   { label: 'Reported Accidents', value: '456', change: '+5%', icon: DashboardOutlined },
-//   { label: 'Total Vacancies', value: '789', change: '+23%', icon: FileTextOutlined },
-//   { label: 'Total Contacts', value: '567', change: '+8%', icon: AppstoreOutlined }
-// ];
-
 const quickStats = computed(() => [
   { label: 'Total Users', value: props.stats?.users || 0, icon: UserOutlined },
-  { label: 'Reported Accidents', value: props.stats?.accidents || 0, icon: DashboardOutlined },
-  { label: 'Total Vacancies', value: props.stats?.jobs || 0, icon: FileTextOutlined },
-  { label: 'Total Contacts', value: props.stats?.contacts || 0, icon: AppstoreOutlined }
+  { label: 'Chicken Records', value: props.stats?.accidents || 0, icon: DashboardOutlined },
+  { label: 'Vegetable Records', value: props.stats?.jobs || 0, icon: FileTextOutlined },
+  { label: 'Sales Records', value: props.stats?.contacts || 0, icon: AppstoreOutlined }
 ]);
 </script>
 <template>

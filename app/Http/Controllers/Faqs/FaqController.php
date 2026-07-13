@@ -70,13 +70,12 @@ class FaqController extends Controller
         return response()->json(['faq' => $faq, 'message' => 'FAQ created successfully']);
     }
 
-    // Show single FAQ
     public function show(Faq $faq)
     {
         return response()->json(['faq' => $faq]);
     }
 
-    // Update FAQ
+
     public function update(Request $request, Faq $faq)
     {
         $validator = Validator::make($request->all(), [
@@ -114,24 +113,6 @@ class FaqController extends Controller
         ]);
     }
 
-    // public function update(Request $request, Faq $faq)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'category' => 'required|string|max:255',
-    //         'question' => 'required|string',
-    //         'answer'   => 'required|string',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json(['errors' => $validator->errors()], 422);
-    //     }
-
-    //     $faq->update($request->all());
-
-    //     return response()->json(['faq' => $faq, 'message' => 'FAQ updated successfully']);
-    // }
-
-    // Delete FAQ
     public function destroy(Faq $faq)
     {
         $faq->delete();
@@ -140,27 +121,27 @@ class FaqController extends Controller
 
     // Frontend FAQ retrieval with optional category and search filters
     public function getfrontIndex(Request $request)
-{
-    $category = $request->category;
-    $search = $request->search;
+    {
+        $category = $request->category;
+        $search = $request->search;
 
-    $faqs = Faq::query()
+        $faqs = Faq::query()
 
-        ->when($category && $category != 'all', function ($q) use ($category) {
-            $q->where('category', $category);
-        })
+            ->when($category && $category != 'all', function ($q) use ($category) {
+                $q->where('category', $category);
+            })
 
-        ->when($search, function ($q) use ($search) {
-            $q->where('question', 'like', "%{$search}%")
-              ->orWhere('answer', 'like', "%{$search}%");
-        })
+            ->when($search, function ($q) use ($search) {
+                $q->where('question', 'like', "%{$search}%")
+                ->orWhere('answer', 'like', "%{$search}%");
+            })
 
-        ->orderBy('created_at')
+            ->orderBy('created_at')
 
-        ->get();
+            ->get();
 
-    return response()->json($faqs);
-}
+        return response()->json($faqs);
+    }
 
 
 

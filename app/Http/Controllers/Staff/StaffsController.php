@@ -13,7 +13,7 @@ class StaffsController extends Controller
     
     public function staffRoles()
     {
-        return Inertia::render('MyAAIB/Admin/staffRoles');
+        return Inertia::render('MyFarmer/Admin/staffRoles');
     }
 
 //     public function store(Request $request)

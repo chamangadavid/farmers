@@ -6,6 +6,7 @@ import { createApp, h, nextTick } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
+import VueApexCharts from "vue3-apexcharts"
 import LoadingScreen from './Components/LoadingScreen.vue';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -78,6 +79,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(Antd)
+            .use(VueApexCharts)
             .mount(el);
         }, 500); // Match fade-out duration
       }, 500);
