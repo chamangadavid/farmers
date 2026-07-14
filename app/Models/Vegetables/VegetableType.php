@@ -34,4 +34,23 @@ class VegetableType extends Model
     {
         return $this->hasMany(VegetableProduction::class);
     }
+
+    public function sales()
+{
+    return $this->hasManyThrough(
+
+        VegetableSale::class,
+
+        VegetableProduction::class,
+
+        'vegetable_type_id',
+
+        'vegetable_harvest_id',
+
+        'id',
+
+        'id'
+
+    );
+}
 }

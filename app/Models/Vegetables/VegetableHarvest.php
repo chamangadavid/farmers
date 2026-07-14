@@ -26,6 +26,11 @@ protected $fillable=[
         return $this->belongsTo(VegetableProduction::class,'vegetable_production_id');
     }
 
+    public function sales()
+    {
+        return $this->hasMany(VegetableSale::class);
+    }
+
     public function harvests()
     {
         return $this->hasMany(VegetableHarvest::class);

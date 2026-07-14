@@ -17,6 +17,7 @@ use App\Http\Controllers\Vegetables\VegetableController;
 use App\Http\Controllers\Vegetables\VegetableTypeController;
 use App\Http\Controllers\Vegetables\VegetableProductionController;
 use App\Http\Controllers\Vegetables\VegetableHarvestController;
+use App\Http\Controllers\Vegetables\VegetableSaleController;
 use App\Http\Controllers\Chickens\ChickenController;
 use App\Http\Controllers\Chickens\ChickenBatchController;
 use App\Http\Controllers\Chickens\ChickenSalesController;
@@ -242,14 +243,10 @@ Route::get('/vegetable-harvests/statistics', [VegetableHarvestController::class,
 Route::get('/vegetable-harvests/productions', [VegetableHarvestController::class, 'productions']);
 Route::get('/vegetable-harvests/{vegetableHarvest}', [VegetableHarvestController::class, 'show']);
 
-
 Route::get('/vegetable-productions/{production}/remaining-yield', [VegetableHarvestController::class, 'remainingYield']);
-
 Route::post('/vegetable-harvests',[VegetableHarvestController::class,'store']);
 Route::put('/vegetable-harvests/{harvest}',[VegetableHarvestController::class,'update']);
-
 Route::delete('/vegetable-harvests/{harvest}',[VegetableHarvestController::class,'destroy']);
-
 Route::get('/vegetable-harvests/{harvest}/receipt',  [VegetableHarvestController::class, 'receipt'])->name('vegetable-harvest.receipt');
 Route::get('/vegetable-harvests/export/pdf', [VegetableHarvestController::class, 'exportPdf'])->name('vegetable-harvest.export.pdf');
 Route::get('/vegetable-harvests/{harvest}/pdf',  [VegetableHarvestController::class, 'downloadPdf' ])->name('vegetable-harvest.pdf');
@@ -260,6 +257,71 @@ Route::get('/vegetable-harvests/{harvest}/pdf',  [VegetableHarvestController::cl
 
 
 
+Route::get('/all-vegetable-sales', [VegetableController::class, 'GetVegetableSalesPage'])->name('vegetables-sale.index');
+
+Route::get(
+    '/vegetable-sales',
+    [VegetableSaleController::class,'index']
+);
+
+Route::get(
+    '/vegetable-sales/{sale}',
+    [VegetableSaleController::class,'show']
+);
+
+Route::get(
+    '/all-vegetable-sales/harvests',
+    [VegetableSaleController::class, 'harvests']
+);
+
+Route::post(
+    '/vegetable-sales',
+    [VegetableSaleController::class,'store']
+);
+
+Route::put(
+    '/vegetable-sales/{sale}',
+    [VegetableSaleController::class,'update']
+);
+
+Route::delete(
+    '/vegetable-sales/{sale}',
+    [VegetableSaleController::class,'destroy']
+);
+
+Route::get(
+    '/vegetable-sales/export/pdf',
+    [VegetableSaleController::class,'exportPdf']
+);
+
+Route::get(
+    '/vegetable-sales/export/excel',
+    [VegetableSaleController::class,'exportExcel']
+);
+
+Route::get(
+    '/vegetable-sales/{sale}/receipt',
+    [VegetableSaleController::class,'receipt']
+);
+
+
+Route::get(
+    '/download-vegetable-sales/{sale}/pdf',
+    [VegetableSaleController::class,'downloadPdf']
+)->name('vegetable-sales.pdf');
+
+
+
+Route::get(
+
+    '/vegetable-sales/report/pdf',
+
+    [
+        VegetableSaleController::class,
+        'exportPdf'
+    ]
+
+)->name('vegetable-sales.report.pdf');
 
 
 
@@ -346,11 +408,10 @@ Route::get('/vegetable-harvests/{harvest}/pdf',  [VegetableHarvestController::cl
     // Route::get('/all-gallery-products', [ProductController::class, 'indexPage'])->name('products.index');
     
 
+    Route::get('/all-gallery', [GalleryController::class, 'indexPage'])->name('galleries.index');
 
-    Route::get(
-    '/myfarmer/gallery',
-    [GalleryController::class,'index']
-)->name('gallery.index');
+
+   // Route::get('/myfarmer/gallery', [GalleryController::class,'index'])->name('gallery.index');
 
 
 // Fetch gallery list for axios
@@ -431,11 +492,9 @@ Route::get('/gallery/{gallery}', [GalleryController::class,'show']);
     Route::get('/all-reports', [ReportsController::class, 'GetReports'])->name('reports.index');
     
     
- 
-
 
      //national regulational routes
-    //Route::get('/all-nation-regulations', [NationalRegulations::class, 'GetNationalRegulations'])->name('regulations.index');
+    Route::get('/all-nation-regulations', [NationalRegulations::class, 'GetNationalRegulations'])->name('regulations.index');
     
 
   

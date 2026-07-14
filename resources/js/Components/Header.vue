@@ -248,7 +248,7 @@ const handleDropdownClick = () => {
                             @click="handleDropdownClick">
                             Vegetables
                         </Link>
-                        <Link :href="route('nationalRegulation')"
+                        <Link :href="route('managementTeam')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick">
                             Chickens
@@ -386,7 +386,7 @@ const handleDropdownClick = () => {
                                 @click="toggleMobileMenu">
                                 Vegetables
                             </Link>
-                            <Link :href="route('nationalRegulation')"
+                            <Link :href="route('managementTeam')"
                                 class="block px-4 py-2 text-white/90 hover:bg-teal-800/50 rounded-lg transition"
                                 @click="toggleMobileMenu">
                                 Chickens

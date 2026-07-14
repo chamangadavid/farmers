@@ -11,13 +11,19 @@ use Inertia\Inertia;
 
 class GalleryController extends Controller
 {
-    /**
-     * Gallery Page
-     */
-    public function index()
+
+    public function indexPage()
     {
         return Inertia::render('MyFarmer/Gallery/Index');
     }
+
+    /**
+     * Gallery Page
+     */
+    // public function index()
+    // {
+    //     return Inertia::render('MyFarmer/Gallery/Index');
+    // }
 
     /**
      * Fetch Galleries

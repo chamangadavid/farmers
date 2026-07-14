@@ -5,9 +5,6 @@ import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import Card from "@/Components/Auth/Card.vue";
 import StartsCards from '@/Components/StartsCards.vue';
-import PieChart from '@/Components/PieChart.vue';
-import BarChart from '@/Components/BarChart.vue';
-import History from './Site/History.vue';
 
 import { 
   FileTextOutlined, 
@@ -200,7 +197,7 @@ const chartInsights = computed(() => {
                         </template>
                       </Card>
 
-                        <Card 
+                      <Card 
                         title="Vagetable Harvest Management" 
                         v-if="can('staff can manage vegetable harvest records')"
                         subTitle="Create, edit & delete vegetable production records" 
@@ -210,21 +207,22 @@ const chartInsights = computed(() => {
                         </template>
                       </Card>
 
-                       <!-- <Card 
-                        title="Monthly Income Statment" 
-                        v-if="can('staff can manage monthly income statements')"
-                        subTitle="Create, edit & delete monthly income statements" 
-                        routeName="news.index">
+                      <Card 
+                        title="Vagetable Sales Management" 
+                        v-if="can('staff can manage vegetable sales records')"
+                        subTitle="Create, edit & delete vegetable sale records" 
+                        routeName="vegetables-sale.index">
                         <template #icon>
                           <CarOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
-                      </Card> -->
+                      </Card>
+
 
                       <Card 
                         title="Gallery Management" 
                         v-if="can('manage product gallery')"
                         subTitle="Create, edit & delete product images" 
-                        routeName="gallery.index">
+                        routeName="galleries.index">
                         <template #icon>
                           <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
@@ -239,16 +237,6 @@ const chartInsights = computed(() => {
                           <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
-
-                      <!-- <Card 
-                        title="Job Vacancies Management" 
-                        v-if="can('manage job vacancies')"
-                        subTitle="Create, edit & delete job vacancies" 
-                        routeName="job.index">
-                        <template #icon>
-                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card> -->
 
                        <Card 
                         title="Testimonials Management" 
@@ -323,132 +311,10 @@ const chartInsights = computed(() => {
                   </div>
                 </a-tab-pane>
 
-                <a-tab-pane key="2">
-                  <template #tab>
-                    <div class="flex items-center gap-2">
-                      <LineChartOutlined class="text-teal-500" />
-                      <span>Analytics & Reports</span>
-                    </div>
-                  </template>
-                  
-                  <div class="mt-6">
-                    <!-- Chart Insights Header -->
-                    <div v-if="chartInsights" class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div class="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30 rounded-xl p-4 border border-teal-100 dark:border-teal-800">
-                        <div class="flex items-center justify-between">
-                          <div>
-                            <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">Total Reports</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ chartInsights.total }}</p>
-                          </div>
-                          <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center">
-                            <FileTextOutlined class="text-teal-600 dark:text-teal-400 text-xl" />
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30 rounded-xl p-4 border border-teal-100 dark:border-teal-800">
-                        <div class="flex items-center justify-between">
-                          <div>
-                            <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">Highest Category</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">{{ chartInsights.highest.label }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ chartInsights.highest.value }} reports ({{ chartInsights.highest.percentage }}%)</p>
-                          </div>
-                          <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center">
-                            <RiseOutlined class="text-teal-600 dark:text-teal-400 text-xl" />
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/30 rounded-xl p-4 border border-teal-100 dark:border-teal-800">
-                        <div class="flex items-center justify-between">
-                          <div>
-                            <p class="text-sm text-teal-600 dark:text-teal-400 font-medium">Reporting Period</p>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white mt-1">Year-to-Date</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Last updated: {{ new Date().toLocaleDateString() }}</p>
-                          </div>
-                          <div class="w-10 h-10 bg-teal-100 dark:bg-teal-900/50 rounded-full flex items-center justify-center">
-                            <CalendarOutlined class="text-teal-600 dark:text-teal-400 text-xl" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <!-- Charts Grid -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <!-- Pie Chart Card -->
-                      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-300">
-                        <div class="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-800 px-5 py-4 border-b border-gray-200 dark:border-gray-700">
-                          <div class="flex items-center justify-between">
-                            <div>
-                              <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                                <PieChartFilled class="text-teal-500" />
-                                Status Distribution
-                              </h3>
-                              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Percentage breakdown by accident status</p>
-                            </div>
-                            <div class="flex items-center gap-1 text-xs text-gray-400">
-                              <div class="w-2 h-2 bg-teal-500 rounded-full"></div>
-                              <span>Pie Chart</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="p-5">
-                          <PieChart 
-                            :labels="charts.statusLabels" 
-                            :data="charts.statusData" 
-                          />
-                        </div>
-                      </div>
-
-                      <!-- Bar Chart Card -->
-                      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-300">
-                        <div class="bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-800 px-5 py-4 border-b border-gray-200 dark:border-gray-700">
-                          <div class="flex items-center justify-between">
-                            <div>
-                              <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                                <BarChartOutlined class="text-teal-500" />
-                                Status Histogram
-                              </h3>
-                              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Comparative analysis by accident status</p>
-                            </div>
-                            <div class="flex items-center gap-1 text-xs text-gray-400">
-                              <div class="w-2 h-2 bg-teal-500 rounded-full"></div>
-                              <span>Bar Chart</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="p-5">
-                          <BarChart 
-                            :labels="charts.statusLabels" 
-                            :data="charts.statusData" 
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <!-- Additional Insights -->
-                    <div class="mt-6 p-4 bg-teal-50 dark:bg-teal-950/30 rounded-xl border border-teal-100 dark:border-teal-800">
-                      <div class="flex items-start gap-3">
-                        <InfoCircleFilled class="text-teal-600 dark:text-teal-400 text-lg mt-0.5" />
-                        <div>
-                          <p class="text-sm font-medium text-teal-800 dark:text-teal-300">Key Insight</p>
-                          <p class="text-xs text-teal-700 dark:text-teal-400 mt-1">
-                            The data shows that <strong>{{ chartInsights?.highest.label || 'accidents' }}</strong> is the most common accident status, 
-                            accounting for <strong>{{ chartInsights?.highest.percentage || '0' }}%</strong> of all reported incidents.
-                            This suggests a need for targeted safety measures in this category.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </a-tab-pane>
-
               </a-tabs>
             </div>
           </div>
         </div>
-
-        <!-- Additional Info Section -->
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-center justify-between mb-3">

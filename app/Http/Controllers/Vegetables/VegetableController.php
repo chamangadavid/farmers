@@ -14,12 +14,7 @@ class VegetableController extends Controller
         return Inertia::render('MyFarmer/Vegetables/Index');
     }
 
-    // public function GetVegetableProductionPage()
-    // {
-    //     return Inertia::render('MyFarmer/VegetableProduction/Index');
-    // }
-
-     public function GetVegetableProductionPage()
+    public function GetVegetableProductionPage()
     {
         return Inertia::render('MyFarmer/Vegetables/VegetableProduction/Index');
     }
@@ -28,6 +23,12 @@ class VegetableController extends Controller
     {
         return Inertia::render('MyFarmer/Vegetables/Harvests/Index');
     }
+
+    public function GetVegetableSalesPage()
+    {
+        return Inertia::render('MyFarmer/Vegetables/Sales/Index');
+    }
+
 
 
 

@@ -1,6 +1,5 @@
 <!-- resources\js\Pages\MyFarmer\Gallery\CreateGallery.vue -->
 <script setup>
-import PageLayout from '@/Components/PageLayout.vue';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import { ref } from 'vue';
@@ -97,7 +96,6 @@ const resetForm = () => {
 </script>
 
 <template>
-    <PageLayout>
         <a-modal title="Add Gallery" :open="open" @cancel="closeModal" width="700px" :footer="null">
             <form @submit.prevent="submit" class="space-y-5">
                 <div>
@@ -141,5 +139,4 @@ const resetForm = () => {
                 </div>
             </form>
         </a-modal>
-    </PageLayout>
 </template>

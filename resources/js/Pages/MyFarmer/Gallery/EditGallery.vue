@@ -1,6 +1,5 @@
 <!-- Resources/js/Pages/Site/ReportAccident.vue -->
 <script setup>
-import PageLayout from '@/Components/PageLayout.vue';
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 import { ref, computed, onMounted } from 'vue'

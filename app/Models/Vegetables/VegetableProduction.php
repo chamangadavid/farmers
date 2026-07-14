@@ -36,11 +36,6 @@ class VegetableProduction extends Model
 
     ];
 
-    // public function vegetableType()
-    // {
-    //     return $this->belongsTo(VegetableType::class);
-    // }
-
     public function vegetableType()
     {
         return $this->belongsTo(VegetableType::class, 'vegetable_type_id');
@@ -56,6 +51,25 @@ class VegetableProduction extends Model
     //     return $this->hasMany(VegetableSale::class);
     // }
 
+
+    public function sales()
+{
+    return $this->hasManyThrough(
+
+        VegetableSale::class,
+
+        VegetableHarvest::class,
+
+        'vegetable_production_id',
+
+        'vegetable_harvest_id',
+
+        'id',
+
+        'id'
+
+    );
+}
     // public function expenses()
     // {
     //     return $this->hasMany(VegetableExpense::class);

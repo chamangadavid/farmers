@@ -35,11 +35,11 @@ const search = ref('')
 
 const pagination = reactive({
 
-    current:1,
+    current: 1,
 
-    pageSize:10,
+    pageSize: 10,
 
-    total:0
+    total: 0
 
 })
 
@@ -53,218 +53,218 @@ const selectedVegetable = ref({})
 
 const columns = [
 
-{
+    {
 
-title:'Vegetable',
+        title: 'Vegetable',
 
-dataIndex:'name',
+        dataIndex: 'name',
 
-key:'name'
+        key: 'name'
 
-},
+    },
 
-{
+    {
 
-title:'Variety',
+        title: 'Variety',
 
-dataIndex:'variety',
+        dataIndex: 'variety',
 
-key:'variety'
+        key: 'variety'
 
-},
+    },
 
-{
+    {
 
-title:'Unit',
+        title: 'Unit',
 
-dataIndex:'unit',
+        dataIndex: 'unit',
 
-key:'unit'
+        key: 'unit'
 
-},
+    },
 
-{
+    {
 
-title:'Status',
+        title: 'Status',
 
-dataIndex:'status',
+        dataIndex: 'status',
 
-key:'status',
+        key: 'status',
 
-customRender:({record})=>
+        customRender: ({ record }) =>
 
-h(
+            h(
 
-Tag,
+                Tag,
 
-{
+                {
 
-color:record.status ? 'green':'red'
+                    color: record.status ? 'green' : 'red'
 
-},
+                },
 
-()=>record.status ? 'Active':'Inactive'
+                () => record.status ? 'Active' : 'Inactive'
 
-)
+            )
 
-},
+    },
 
-{
+    {
 
-title:'Created',
+        title: 'Created',
 
-dataIndex:'created_at',
+        dataIndex: 'created_at',
 
-key:'created_at'
+        key: 'created_at'
 
-},
+    },
 
-{
+    {
 
-title:'Actions',
+        title: 'Actions',
 
-key:'actions'
+        key: 'actions'
 
-}
+    }
 
 ]
 
-const fetchVegetables = async(page = 1)=>{
+const fetchVegetables = async (page = 1) => {
 
-loading.value = true
+    loading.value = true
 
-try{
+    try {
 
-const {data} = await axios.get('/vegetable-types',{
+        const { data } = await axios.get('/vegetable-types', {
 
-params:{
+            params: {
 
-page,
+                page,
 
-search:search.value
+                search: search.value
 
-}
+            }
 
-})
+        })
 
-vegetables.value = data.data
+        vegetables.value = data.data
 
-pagination.current = data.current_page
+        pagination.current = data.current_page
 
-pagination.pageSize = data.per_page
+        pagination.pageSize = data.per_page
 
-pagination.total = data.total
+        pagination.total = data.total
 
-}
-catch(error){
+    }
+    catch (error) {
 
-console.log(error)
+        console.log(error)
 
-message.error('Unable to load vegetables.')
+        message.error('Unable to load vegetables.')
 
-}
-finally{
+    }
+    finally {
 
-loading.value = false
+        loading.value = false
 
-}
-
-}
-
-const onSearch = debounce(()=>{
-
-fetchVegetables()
-
-},500)
-
-const refresh = ()=>{
-
-search.value=''
-
-fetchVegetables()
+    }
 
 }
 
-const openCreate = ()=>{
+const onSearch = debounce(() => {
 
-createModal.value=true
+    fetchVegetables()
 
-}
+}, 500)
 
-const openView = (record)=>{
+const refresh = () => {
 
-selectedVegetable.value = {...record}
+    search.value = ''
 
-viewModal.value = true
-
-}
-
-const openEdit = (record)=>{
-
-selectedVegetable.value = {...record}
-
-editModal.value = true
+    fetchVegetables()
 
 }
 
-const deleteVegetable = async(record)=>{
+const openCreate = () => {
 
-try{
-
-await axios.delete(
-
-`/vegetable-types/${record.id}`
-
-)
-
-message.success(
-
-'Vegetable deleted successfully.'
-
-)
-
-fetchVegetables(pagination.current)
-
-}
-catch(error){
-
-console.log(error)
-
-message.error(
-
-'Unable to delete vegetable.'
-
-)
+    createModal.value = true
 
 }
 
-}
+const openView = (record) => {
 
-const handleTableChange = (pager)=>{
+    selectedVegetable.value = { ...record }
 
-fetchVegetables(
-
-pager.current
-
-)
+    viewModal.value = true
 
 }
 
-const closeCreate = ()=>{
+const openEdit = (record) => {
 
-createModal.value=false
+    selectedVegetable.value = { ...record }
 
-}
-
-const closeEdit = ()=>{
-
-editModal.value=false
+    editModal.value = true
 
 }
 
-const closeView = ()=>{
+const deleteVegetable = async (record) => {
 
-viewModal.value=false
+    try {
+
+        await axios.delete(
+
+            `/vegetable-types/${record.id}`
+
+        )
+
+        message.success(
+
+            'Vegetable deleted successfully.'
+
+        )
+
+        fetchVegetables(pagination.current)
+
+    }
+    catch (error) {
+
+        console.log(error)
+
+        message.error(
+
+            'Unable to delete vegetable.'
+
+        )
+
+    }
+
+}
+
+const handleTableChange = (pager) => {
+
+    fetchVegetables(
+
+        pager.current
+
+    )
+
+}
+
+const closeCreate = () => {
+
+    createModal.value = false
+
+}
+
+const closeEdit = () => {
+
+    editModal.value = false
+
+}
+
+const closeView = () => {
+
+    viewModal.value = false
 
 }
 
@@ -281,33 +281,33 @@ viewModal.value=false
 
 const statistics = ref({
 
-    total:0,
+    total: 0,
 
-    active:0,
+    active: 0,
 
-    inactive:0,
+    inactive: 0,
 
-    units:0
+    units: 0
 
 })
 
-const fetchStatistics = async()=>{
+const fetchStatistics = async () => {
 
-    const {data} = await axios.get('/vegetable-types/statistics')
+    const { data } = await axios.get('/vegetable-types/statistics')
 
     statistics.value = data
 
 }
 
-onMounted(()=>{
+onMounted(() => {
 
-fetchVegetables()
+    fetchVegetables()
 
- fetchStatistics()
+    fetchStatistics()
 
 })
 
-const reloadTable = ()=>{
+const reloadTable = () => {
 
     fetchVegetables(pagination.current)
 
@@ -320,319 +320,205 @@ const reloadTable = ()=>{
 
 <template>
 
-<Head title="Vegetable Management" />
+    <Head title="Vegetable Management" />
 
-<AuthenticatedLayout>
+    <AuthenticatedLayout>
 
-<template #header>
+        <template #header>
 
-<div class="flex justify-between items-center">
+            <div class="flex justify-between items-center">
 
-<h2 class="text-xl font-semibold">
+                <h2 class="text-xl font-semibold">
 
-Vegetable Management
+                    Vegetable Management
 
-</h2>
+                </h2>
 
-</div>
+            </div>
 
-</template>
+        </template>
 
-<div class="p-6">
+        <div class="p-6">
 
-<!-- ======================= -->
-<!-- SUMMARY -->
-<!-- ======================= -->
+            <!-- ======================= -->
+            <!-- SUMMARY -->
+            <!-- ======================= -->
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
 
-<a-card>
+                <a-card>
 
-<div class="text-center">
+                    <div class="text-center">
 
-<p class="text-gray-500">
+                        <p class="text-gray-500">
 
-Total Vegetable Types
+                            Total Vegetable Types
 
-</p>
+                        </p>
 
-<h2 class="text-3xl font-bold text-green-600">
+                        <h2 class="text-3xl font-bold text-green-600">
 
-<!-- {{ pagination.total }} -->
-{{ statistics.total }}
+                            <!-- {{ pagination.total }} -->
+                            {{ statistics.total }}
 
-</h2>
+                        </h2>
 
-</div>
+                    </div>
 
-</a-card>
+                </a-card>
 
-<a-card>
+                <a-card>
 
-<div class="text-center">
+                    <div class="text-center">
 
-<p class="text-gray-500">
+                        <p class="text-gray-500">
 
-Active Types
+                            Active Types
 
-</p>
+                        </p>
 
-<h2 class="text-3xl font-bold text-blue-600">
+                        <h2 class="text-3xl font-bold text-blue-600">
 
-<!-- {{ vegetables.filter(v=>v.status).length }} -->
-{{ statistics.active }}
+                            <!-- {{ vegetables.filter(v=>v.status).length }} -->
+                            {{ statistics.active }}
 
-</h2>
+                        </h2>
 
-</div>
+                    </div>
 
-</a-card>
+                </a-card>
 
-<a-card>
+                <a-card>
 
-<div class="text-center">
+                    <div class="text-center">
 
-<p class="text-gray-500">
+                        <p class="text-gray-500">
 
-Units
+                            Units
 
-</p>
+                        </p>
 
-<h2 class="text-3xl font-bold text-purple-600">
-{{ statistics.units }}
-Kg
+                        <h2 class="text-3xl font-bold text-purple-600">
+                            {{ statistics.units }}
+                            Kg
 
-</h2>
+                        </h2>
 
-</div>
+                    </div>
 
-</a-card>
+                </a-card>
 
-</div>
+            </div>
 
-<!-- ======================= -->
-<!-- TOOLBAR -->
-<!-- ======================= -->
+            <!-- ======================= -->
+            <!-- TOOLBAR -->
+            <!-- ======================= -->
 
-<a-card class="mb-6">
+            <a-card class="mb-6">
 
-<div
-class="flex flex-col lg:flex-row lg:justify-between gap-4">
+                <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
 
-<div class="flex flex-wrap gap-2">
+                    <div class="flex flex-wrap gap-2">
 
-<a-input
+                        <a-input v-model:value="search" placeholder="Search vegetables..." allow-clear
+                            style="width:300px" @input="onSearch">
 
-v-model:value="search"
+                            <template #prefix>
 
-placeholder="Search vegetables..."
+                                <SearchOutlined />
 
-allow-clear
+                            </template>
 
-style="width:300px"
+                        </a-input>
 
-@input="onSearch"
+                        <a-button @click="refresh">
 
->
+                            <ReloadOutlined />
 
-<template #prefix>
+                            Refresh
 
-<SearchOutlined />
+                        </a-button>
 
-</template>
+                    </div>
 
-</a-input>
+                    <div>
 
-<a-button
+                        <a-button type="primary" @click="openCreate">
 
-@click="refresh">
+                            <PlusOutlined />
 
-<ReloadOutlined />
+                            New Vegetable
 
-Refresh
+                        </a-button>
 
-</a-button>
+                    </div>
 
-</div>
+                </div>
 
-<div>
+            </a-card>
 
-<a-button
+            <!-- ======================= -->
+            <!-- TABLE -->
+            <!-- ======================= -->
 
-type="primary"
+            <a-card>
 
-@click="openCreate">
+                <a-table :loading="loading" :data-source="vegetables" :columns="columns" :pagination="pagination"
+                    :scroll="{
 
-<PlusOutlined />
+                        x: 1200,
 
-New Vegetable
+                        y: 550
 
-</a-button>
+                    }" rowKey="id" @change="handleTableChange">
 
-</div>
+                    <!-- Status -->
 
-</div>
+                    <template #bodyCell="{ column, record }">
 
-</a-card>
+                        <!-- ACTIONS -->
+                        <template v-if="column.key === 'created_at'">
+                            {{ record.created_at.split('T')[0] }}
+                        </template>
 
-<!-- ======================= -->
-<!-- TABLE -->
-<!-- ======================= -->
+                        <template v-else-if="column.key == 'actions'">
 
-<a-card>
+                            <Space>
+                                <a-tooltip title="View">
+                                    <a-button type="primary" size="small" @click="openView(record)">
+                                        <EyeOutlined />
+                                    </a-button>
+                                </a-tooltip>
 
-<a-table
+                                <a-tooltip title="Edit">
+                                    <a-button type="primary" ghost size="small" @click="openEdit(record)">
+                                        <EditOutlined />
+                                    </a-button>
+                                </a-tooltip>
 
-:loading="loading"
+                                <a-popconfirm title="Delete this vegetable?" ok-text="Yes" cancel-text="No"
+                                    @confirm="deleteVegetable(record)">
+                                    <a-tooltip title="Delete">
+                                        <a-button danger size="small">
+                                            <DeleteOutlined />
+                                        </a-button>
+                                    </a-tooltip>
+                                </a-popconfirm>
+                            </Space>
+                        </template>
+                    </template>
+                </a-table>
+            </a-card>
 
-:data-source="vegetables"
 
-:columns="columns"
+            <CreateVegetables :open="createModal" @close="closeCreate" @saved="reloadTable" />
 
-:pagination="pagination"
+            <EditVegetables :open="editModal" :vegetable="selectedVegetable" @close="closeEdit" @updated="reloadTable" />
 
-:scroll="{
+            <ViewVegetables :open="viewModal" :vegetable="selectedVegetable" @close="closeView" />
 
-x:1200,
+        </div>
 
-y:550
-
-}"
-
-rowKey="id"
-
-@change="handleTableChange">
-
-<!-- Status -->
-
-<template
-
-#bodyCell="{column,record}">
-
-<!-- ACTIONS -->
-
-<template
-
-v-if="column.key=='actions'">
-
-<Space>
-
-<a-tooltip title="View">
-
-<a-button
-
-type="primary"
-
-size="small"
-
-@click="openView(record)">
-
-<EyeOutlined />
-
-</a-button>
-
-</a-tooltip>
-
-<a-tooltip title="Edit">
-
-<a-button
-
-type="primary"
-
-ghost
-
-size="small"
-
-@click="openEdit(record)">
-
-<EditOutlined />
-
-</a-button>
-
-</a-tooltip>
-
-<a-popconfirm
-
-title="Delete this vegetable?"
-
-ok-text="Yes"
-
-cancel-text="No"
-
-@confirm="deleteVegetable(record)">
-
-<a-tooltip title="Delete">
-
-<a-button
-
-danger
-
-size="small">
-
-<DeleteOutlined />
-
-</a-button>
-
-</a-tooltip>
-
-</a-popconfirm>
-
-</Space>
-
-</template>
-
-</template>
-
-</a-table>
-
-</a-card>
-
-<!-- ======================= -->
-<!-- CREATE -->
-<!-- ======================= -->
-
-<CreateVegetables
-
-:open="createModal"
-
-@close="closeCreate"
-
-@saved="reloadTable"
-
-/>
-
-<!-- ======================= -->
-<!-- EDIT -->
-<!-- ======================= -->
-
-<EditVegetables
-
-:open="editModal"
-
-:vegetable="selectedVegetable"
-
-@close="closeEdit"
-
-@updated="reloadTable"
-
-/>
-
-<!-- ======================= -->
-<!-- VIEW -->
-<!-- ======================= -->
-
-<ViewVegetables
-
-:open="viewModal"
-
-:vegetable="selectedVegetable"
-
-@close="closeView"
-
-/>
-
-</div>
-
-</AuthenticatedLayout>
+    </AuthenticatedLayout>
 
 </template>

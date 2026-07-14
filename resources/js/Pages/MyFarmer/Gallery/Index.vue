@@ -310,39 +310,39 @@ const columns=[
 
                 ),
 
-                h(
+                // h(
 
-                    Tooltip,
+                //     Tooltip,
 
-                    { title:'Edit' },
+                //     { title:'Edit' },
 
-                    {
+                //     {
 
-                        default:()=>h(
+                //         default:()=>h(
 
-                            Button,
+                //             Button,
 
-                            {
+                //             {
 
-                                type:'link',
+                //                 type:'link',
 
-                                icon:h(EditOutlined),
+                //                 icon:h(EditOutlined),
 
-                                onClick:()=>{
+                //                 onClick:()=>{
 
-                                    selectedGallery.value = record
+                //                     selectedGallery.value = record
 
-                                    showEditModal.value = true
+                //                     showEditModal.value = true
 
-                                }
+                //                 }
 
-                            }
+                //             }
 
-                        )
+                //         )
 
-                    }
+                //     }
 
-                ),
+                // ),
 
                 h(
 

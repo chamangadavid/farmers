@@ -1,0 +1,786 @@
+<script setup>
+
+import { ref, reactive, watch } from 'vue'
+import axios from 'axios'
+import dayjs from 'dayjs'
+import { message } from 'ant-design-vue'
+
+
+const props = defineProps({
+
+    open: {
+
+        type: Boolean,
+
+        default: false
+
+    },
+
+    sale: {
+
+        type: Object,
+
+        default: null
+
+    }
+
+})
+
+
+const emit = defineEmits([
+
+    'update:open',
+
+    'success',
+
+    'close'
+
+])
+
+
+const loading = ref(false)
+
+const formRef = ref()
+
+const harvests = ref([])
+
+const availableQuantity = ref(0)
+
+
+const form = reactive({
+
+    vegetable_harvest_id: null,
+
+    sale_date: dayjs(),
+
+    customer_name: '',
+
+    customer_phone: '',
+
+    customer_email: '',
+
+    quantity: 0,
+
+    unit_price: 0,
+
+    total_amount: 0,
+
+    payment_method: 'Cash',
+
+    payment_status: 'Paid',
+
+    invoice_number: '',
+
+    receipt_number: '',
+
+    notes: ''
+
+})
+
+
+/*
+|--------------------------------------------------------------------------
+| Load Harvests
+|--------------------------------------------------------------------------
+*/
+
+const loadHarvests = async () => {
+
+    try {
+
+        const { data } = await axios.get(
+            '/all-vegetable-sales/harvests'
+        )
+
+        harvests.value = data
+
+    }
+
+    catch (error) {
+
+        message.error(
+            'Unable to load harvests'
+        )
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Fill Form
+|--------------------------------------------------------------------------
+*/
+
+const fillForm = () => {
+
+
+    if (!props.sale)
+        return
+
+
+    form.vegetable_harvest_id =
+        props.sale.vegetable_harvest_id
+
+
+    form.sale_date =
+        dayjs(props.sale.sale_date)
+
+
+    form.customer_name =
+        props.sale.customer_name
+
+
+    form.customer_phone =
+        props.sale.customer_phone
+
+
+    form.customer_email =
+        props.sale.customer_email ?? ''
+
+
+    form.quantity =
+        Number(props.sale.quantity)
+
+
+    form.unit_price =
+        Number(props.sale.unit_price)
+
+
+    form.total_amount =
+        Number(props.sale.total_amount)
+
+
+    form.payment_method =
+        props.sale.payment_method
+
+
+    form.payment_status =
+        props.sale.payment_status
+
+
+    form.invoice_number =
+        props.sale.invoice_number
+
+
+    form.receipt_number =
+        props.sale.receipt_number ?? ''
+
+
+    form.notes =
+        props.sale.notes ?? ''
+
+
+    availableQuantity.value =
+        Number(
+            props.sale.harvest?.quantity ?? 0
+        )
+
+
+}
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Watch Modal Open
+|--------------------------------------------------------------------------
+*/
+
+watch(
+
+    () => props.open,
+
+    value => {
+
+        if (value) {
+
+            loadHarvests()
+
+            fillForm()
+
+        }
+
+    }
+
+)
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Calculate Total
+|--------------------------------------------------------------------------
+*/
+
+
+watch(
+
+    [
+
+        () => form.quantity,
+
+        () => form.unit_price
+
+    ],
+
+    () => {
+
+
+        form.total_amount =
+
+            Number(form.quantity || 0)
+
+            *
+
+            Number(form.unit_price || 0)
+
+
+    }
+
+)
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Update Sale
+|--------------------------------------------------------------------------
+*/
+
+
+const updateSale = async () => {
+
+
+    try {
+
+
+        loading.value = true
+
+
+        await axios.put(
+
+            `/vegetable-sales/${props.sale.id}`,
+
+            {
+
+                ...form,
+
+                sale_date:
+                    dayjs(form.sale_date)
+                        .format('YYYY-MM-DD')
+
+            }
+
+        )
+
+
+        message.success(
+            'Sale updated successfully'
+        )
+
+
+        emit(
+            'success'
+        )
+
+
+        closeModal()
+
+
+    }
+
+    catch (error) {
+
+
+        console.log(error)
+
+
+        message.error(
+
+            error.response?.data?.message
+
+            ??
+
+            'Unable to update sale'
+
+        )
+
+
+    }
+
+    finally {
+
+
+        loading.value = false
+
+
+    }
+
+
+}
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Close
+|--------------------------------------------------------------------------
+*/
+
+const closeModal = () => {
+
+
+    emit(
+
+        'update:open',
+
+        false
+
+    )
+
+
+    emit(
+        'close'
+    )
+
+
+}
+
+
+</script>
+
+
+
+<template>
+
+
+    <a-modal :open="open" title="Edit Vegetable Sale" :width="'70%'" :footer="null" :maskClosable="false"
+        @cancel="closeModal">
+
+
+
+        <a-card class="mb-5">
+
+
+            <a-row :gutter="16">
+
+
+                <a-col :span="8">
+
+                    <a-statistic title="Available Quantity" :value="availableQuantity" suffix="Kg" />
+
+                </a-col>
+
+
+
+                <a-col :span="8">
+
+
+                    <a-statistic title="Unit Price" prefix="K" :value="form.unit_price" />
+
+
+                </a-col>
+
+
+
+                <a-col :span="8">
+
+
+                    <a-statistic title="Sale Total" prefix="K" :value="form.total_amount" :valueStyle="{
+                        color: '#52c41a'
+                    }" />
+
+
+                </a-col>
+
+
+            </a-row>
+
+
+        </a-card>
+
+
+
+
+        <a-form ref="formRef" :model="form" layout="vertical">
+
+
+            <a-row :gutter="16">
+
+
+                <!-- Harvest -->
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Harvest">
+
+
+                        <a-select v-model:value="form.vegetable_harvest_id" show-search>
+
+
+                            <a-select-option v-for="item in harvests" :key="item.id" :value="item.id">
+
+
+                                {{ item.production?.vegetable_type?.name }}
+
+                                -
+
+                                {{ item.production?.batch_number }}
+
+                                -
+
+                                {{ item.quantity }} Kg
+
+
+                            </a-select-option>
+
+
+                        </a-select>
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Sale Date -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Sale Date">
+
+
+                        <a-date-picker v-model:value="form.sale_date" class="w-full" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Customer -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Customer">
+
+
+                        <a-input v-model:value="form.customer_name" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Phone -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Phone">
+
+
+                        <a-input v-model:value="form.customer_phone" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Email -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Email">
+
+
+                        <a-input v-model:value="form.customer_email" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Quantity -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Quantity">
+
+
+                        <a-input-number v-model:value="form.quantity" class="w-full" :min="0" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Unit Price -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Unit Price">
+
+
+                        <a-input-number v-model:value="form.unit_price" class="w-full" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Total -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Total Amount">
+
+
+                        <a-input-number :value="form.total_amount" disabled class="w-full" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Payment Method -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Payment Method">
+
+
+                        <a-select v-model:value="form.payment_method">
+
+
+                            <a-select-option value="Cash">
+
+                                Cash
+
+                            </a-select-option>
+
+
+                            <a-select-option value="Mobile Money">
+
+                                Mobile Money
+
+                            </a-select-option>
+
+
+                            <a-select-option value="Bank Transfer">
+
+                                Bank Transfer
+
+                            </a-select-option>
+
+
+                            <a-select-option value="Cheque">
+
+                                Cheque
+
+                            </a-select-option>
+
+
+                        </a-select>
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Payment Status -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Payment Status">
+
+
+                        <a-select v-model:value="form.payment_status">
+
+
+                            <a-select-option value="Paid">
+
+                                Paid
+
+                            </a-select-option>
+
+
+                            <a-select-option value="Pending">
+
+                                Pending
+
+                            </a-select-option>
+
+
+                            <a-select-option value="Partial">
+
+                                Partial
+
+                            </a-select-option>
+
+
+                        </a-select>
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Invoice -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Invoice No">
+
+
+                        <a-input v-model:value="form.invoice_number" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Receipt -->
+
+
+                <a-col :span="12">
+
+
+                    <a-form-item label="Receipt No">
+
+
+                        <a-input v-model:value="form.receipt_number" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+
+                <!-- Notes -->
+
+
+                <a-col :span="24">
+
+
+                    <a-form-item label="Notes">
+
+
+                        <a-textarea v-model:value="form.notes" :rows="4" />
+
+
+                    </a-form-item>
+
+
+                </a-col>
+
+
+
+            </a-row>
+
+
+
+
+            <a-divider />
+
+
+
+            <div class="flex justify-end gap-3">
+
+
+                <a-button @click="closeModal">
+
+                    Cancel
+
+                </a-button>
+
+
+
+                <a-button type="primary" :loading="loading" @click="updateSale">
+
+                    Update Sale
+
+                </a-button>
+
+
+
+            </div>
+
+
+
+        </a-form>
+
+
+
+    </a-modal>
+
+
+</template>

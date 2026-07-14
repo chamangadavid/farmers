@@ -197,7 +197,7 @@ onMounted(() => {
 
   <AuthenticatedLayout>
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-      <div>
+      <div class="mt-6">
 
         <h1 class="text-3xl font-bold">
           Chicken Management
