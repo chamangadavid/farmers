@@ -1,58 +1,102 @@
-<!-- resources\js\Pages\MyFarmer\Vegetables\CreateVegetables.vue -->
- <script setup>
-import { ref } from 'vue';
-import {
-    Modal,
-    Input,
-    Button,
-    DatePicker,
-    Switch,
-    Upload,
-    Select,
-    message
-} from 'ant-design-vue';
+<script setup>
+import { reactive, ref } from 'vue'
+import axios from 'axios'
+import { message } from 'ant-design-vue'
 
-import axios from 'axios';
-import dayjs from 'dayjs';
+const props = defineProps({
+    open: Boolean
+})
 
-const props = defineProps({ open: Boolean });
-const emit = defineEmits(['update:open', 'created']);
+const emit = defineEmits([
+    'close',
+    'saved'
+])
 
+const loading = ref(false)
+
+const form = reactive({
+    name: '',
+    variety: '',
+    unit: 'Kg',
+    description: '',
+    status: true
+})
+
+const saveVegetable = async () => {
+    loading.value = true
+    try {
+
+        await axios.post('/vegetable-types', form)
+        message.success('Vegetable type created successfully.')
+
+        emit('saved')
+        emit('close')
+
+        Object.assign(form, {
+            name: '',
+            variety: '',
+            unit: 'Kg',
+            description: '',
+            status: true
+        })
+
+    } catch (e) {
+        message.error('Unable to save vegetable.')
+    } finally {
+        loading.value = false
+
+    }
+
+}
 </script>
 
 <template>
-    <a-modal :open="open" title="Add vegetable Details" @cancel="emit('update:open', false)" :footer="null">
-        <div class="space-y-3">
 
-            <Input v-model:value="form.title" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Title" />
+    <a-modal :open="open" title="Add Vegetable Type" width="700px" :confirm-loading="loading" @cancel="$emit('close')"
+        @ok="saveVegetable">
 
-            <DatePicker v-model:value="form.date" style="width:100%" />
+        <a-form layout="vertical">
 
-            <!-- CATEGORY DROPDOWN -->
-            <Select v-model:value="form.category" placeholder="Select Category" style="width:100%">
-                <Select.Option v-for="item in categories" :key="item" :value="item">
-                    {{ item }}
-                </Select.Option>
-            </Select>
+            <a-row :gutter="16">
+                <a-col :span="12">
+                    <a-form-item label="Vegetable Name" required>
+                        <a-input v-model:value="form.name" placeholder="e.g Tomatoes" />
+                    </a-form-item>
+                </a-col>
 
-            <Input v-model:value="form.author" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Author" />
+                <a-col :span="12">
+                    <a-form-item label="Variety">
+                        <a-input v-model:value="form.variety" placeholder="e.g Roma VF" />
+                    </a-form-item>
 
-            <Input v-model:value="form.read_time" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Read Time (e.g. 5 min read)" />
+                </a-col>
 
-            <Input.TextArea v-model:value="form.summary" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Summary" />
+                <a-col :span="12">
+                    <a-form-item label="Unit">
+                        <a-select v-model:value="form.unit">
+                            <a-select-option value="Kg">Kg</a-select-option>
+                            <a-select-option value="Tonnes">Tonnes</a-select-option>
+                            <a-select-option value="Boxes">Boxes</a-select-option>
+                            <a-select-option value="Crates">Crates</a-select-option>
+                            <a-select-option value="Bags">Bags</a-select-option>
+                        </a-select>
+                    </a-form-item>
 
-            <br/><br/>
-            <!-- Upload -->
-            <Upload :before-upload="beforeUpload" :file-list="fileList" @remove="handleRemove">
-                <Button>Select Image</Button>
-            </Upload>
+                </a-col>
 
-            <div class="flex items-center gap-2">
-                <span>Featured:</span>
-                <Switch v-model:checked="form.featured" />
-            </div>
+                <a-col :span="12">
+                    <a-form-item label="Status">
+                        <a-switch v-model:checked="form.status" />
+                    </a-form-item>
+                </a-col>
 
-            <Button type="primary" block @click="save">Save</Button>
-        </div>
+                <a-col :span="24">
+                    <a-form-item label="Description">
+                        <a-textarea v-model:value="form.description" :rows="4" />
+                    </a-form-item>
+                </a-col>
+            </a-row>
+        </a-form>
     </a-modal>
+
 </template>

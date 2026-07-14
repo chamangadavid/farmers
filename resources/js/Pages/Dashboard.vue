@@ -190,6 +190,26 @@ const chartInsights = computed(() => {
                         </template>
                       </Card>
 
+                       <Card 
+                        title="Vagetable Production Management" 
+                        v-if="can('staff can manage vegetable production records')"
+                        subTitle="Create, edit & delete vegetable production records" 
+                        routeName="vegetables-production.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                        <Card 
+                        title="Vagetable Harvest Management" 
+                        v-if="can('staff can manage vegetable harvest records')"
+                        subTitle="Create, edit & delete vegetable production records" 
+                        routeName="vegetables-harvest.index">
+                        <template #icon>
+                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
                        <!-- <Card 
                         title="Monthly Income Statment" 
                         v-if="can('staff can manage monthly income statements')"

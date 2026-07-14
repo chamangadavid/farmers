@@ -1,67 +1,52 @@
-<!-- resources\js\Pages\MyFarmer\Vegetables\ViewVegetables.vue -->
- <script setup>
-import { Modal } from 'ant-design-vue';
-import dayjs from 'dayjs';
+<script setup>
 
 const props = defineProps({
-    open: Boolean,
-    news: Object
-});
 
-const emit = defineEmits(['update:open']);
+    open: Boolean,
+
+    vegetable: Object
+
+})
+
 </script>
 
 <template>
-<a-modal
-    :open="open"
-    title="View Vegetable Details"
-    @cancel="emit('update:open', false)"
-    :footer="null"
-    width="700px"
->
-    <div v-if="news" class="space-y-4">
 
-        <!-- ✅ IMAGE (FIXED) -->
-        <div v-if="news.image">
-            <img 
-                :src="`/storage/${news.image}`"
-                alt="news image"
-                class="w-full h-64 object-cover rounded-lg"
-                @error="(e) => e.target.style.display = 'none'"
-            />
-        </div>
+    <a-modal :open="open" title="Vegetable Details" :footer="null" width="700px">
 
-        <!-- Title -->
-        <h2 class="text-xl font-bold text-gray-900">
-            {{ news.title }}
-        </h2>
+        <a-descriptions bordered :column="2">
 
-        <!-- Meta -->
-        <div class="flex flex-wrap gap-3 text-sm text-gray-500">
-            <span>📅 {{ dayjs(news.date).format('MMM D, YYYY') }}</span>
-            <span>👤 {{ news.author }}</span>
-            <span>📖 {{ news.read_time }}</span>
+            <a-descriptions-item label="Vegetable">
+                {{ vegetable?.name }}
+            </a-descriptions-item>
 
-            <span
-                v-if="news.featured"
-                class="px-2 py-1 bg-green-100 text-green-700 rounded"
-            >
-                Featured
-            </span>
-        </div>
+            <a-descriptions-item label="Variety">
+                {{ vegetable?.variety }}
+            </a-descriptions-item>
 
-        <!-- Category -->
-        <div>
-            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-                {{ news.category }}
-            </span>
-        </div>
+            <a-descriptions-item label="Unit">
+                {{ vegetable?.unit }}
+            </a-descriptions-item>
 
-        <!-- Summary -->
-        <div class="text-gray-700 leading-relaxed">
-            {{ news.summary }}
-        </div>
+            <a-descriptions-item label="Status">
+                <a-tag :color="vegetable?.status ? 'green' : 'red'">
+                    {{ vegetable?.status ? 'Active' : 'Inactive' }}
+                </a-tag>
+            </a-descriptions-item>
 
-    </div>
-</a-modal>
+            <a-descriptions-item label="Description" :span="2">
+                {{ vegetable?.description }}
+            </a-descriptions-item>
+
+            <a-descriptions-item label="Created">
+                {{ vegetable?.created_at }}
+            </a-descriptions-item>
+
+            <a-descriptions-item label="Updated">
+                {{ vegetable?.updated_at }}
+            </a-descriptions-item>
+        </a-descriptions>
+
+    </a-modal>
+
 </template>

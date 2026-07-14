@@ -1,78 +1,126 @@
-<!-- resources\js\Pages\MyFarmer\Vegetables\EditVegetables.vue -->
 <script setup>
-import { ref, watch } from 'vue';
-import {
-    Modal,
-    Input,
-    Button,
-    DatePicker,
-    Switch,
-    Upload,
-    Select,
-    message
-} from 'ant-design-vue';
-
-import axios from 'axios';
-import dayjs from 'dayjs';
+import { reactive, watch, ref } from 'vue'
+import axios from 'axios'
+import { message } from 'ant-design-vue'
 
 const props = defineProps({
+
     open: Boolean,
-    news: Object
-});
 
-const emit = defineEmits(['update:open', 'updated']);
+    vegetable: Object
 
+})
+
+const emit = defineEmits([
+    'close',
+    'updated'
+])
+
+const loading = ref(false)
+
+const form = reactive({
+
+    id: null,
+
+    name: '',
+
+    variety: '',
+
+    unit: 'Kg',
+
+    description: '',
+
+    status: true
+
+})
+
+watch(() => props.vegetable, (v) => {
+
+    if (!v) return
+
+    Object.assign(form, v)
+
+}, { immediate: true })
+
+const updateVegetable = async () => {
+
+    loading.value = true
+
+    try {
+
+        await axios.put(
+
+            `/vegetable-types/${form.id}`,
+
+            form
+
+        )
+
+        message.success(
+
+            'Updated successfully.'
+
+        )
+
+        emit('updated')
+
+        emit('close')
+
+    }
+
+    finally {
+
+        loading.value = false
+
+    }
+
+}
 </script>
 
 <template>
-    <a-modal :open="open" title="Edit Vegetable Details" @cancel="emit('update:open', false)" :footer="null">
-        <div class="space-y-3">
 
-            <!-- Title -->
-            <Input v-model:value="form.title" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Title" />
+    <a-modal :open="open" title="Edit Vegetable" @cancel="$emit('close')" @ok="updateVegetable"
+        :confirm-loading="loading" width="700px">
 
-            <!-- Date -->
-            <DatePicker v-model:value="form.date" style="width:100%" />
+        <a-form layout="vertical">
+            <a-row :gutter="16">
+                <a-col :span="12">
+                    <a-form-item label="Vegetable">
+                        <a-input v-model:value="form.name" />
+                    </a-form-item>
+                </a-col>
 
-            <!-- CATEGORY DROPDOWN -->
-            <Select v-model:value="form.category" placeholder="Select Category" style="width:100%">
-                <Select.Option v-for="item in categories" :key="item" :value="item">
-                    {{ item }}
-                </Select.Option>
-            </Select>
+                <a-col :span="12">
+                    <a-form-item label="Variety">
+                        <a-input v-model:value="form.variety" />
+                    </a-form-item>
+                </a-col>
 
-            <!-- Author -->
-            <Input v-model:value="form.author" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Author" />
+                <a-col :span="12">
+                    <a-form-item label="Unit">
+                        <a-select v-model:value="form.unit">
+                            <a-select-option value="Kg">Kg</a-select-option>
+                            <a-select-option value="Tonnes">Tonnes</a-select-option>
+                            <a-select-option value="Boxes">Boxes</a-select-option>
+                            <a-select-option value="Crates">Crates</a-select-option>
+                            <a-select-option value="Bags">Bags</a-select-option>
+                        </a-select>
+                    </a-form-item>
+                </a-col>
 
-            <!-- Read Time -->
-            <Input v-model:value="form.read_time" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Read Time (e.g. 5 min read)" />
+                <a-col :span="12">
+                    <a-form-item label="Status">
+                        <a-switch v-model:checked="form.status" />
+                    </a-form-item>
+                </a-col>
 
-            <!-- Summary -->
-            <Input.TextArea v-model:value="form.summary" style="border: 1px solid #e9e9e9; border-radius: 8px;" placeholder="Summary" rows="3" />
-
-
-            <!-- IMAGE PREVIEW -->
-            <div v-if="imagePreview" class="mb-2">
-                <img :src="imagePreview" class="w-full h-48 object-cover rounded-lg border" />
-            </div> <br/><br/>
-
-            <!-- FILE UPLOAD -->
-            <Upload :before-upload="() => false" @change="handleFileChange" max-count="1">
-                <Button>Select New Image</Button>
-            </Upload>
-
-         
-            <!-- Featured -->
-            <div class="flex items-center gap-2">
-                <span>Featured:</span>
-                <Switch v-model:checked="form.featured" />
-            </div>
-
-            <!-- Submit -->
-            <Button type="primary" block @click="update">
-                Update
-            </Button>
-
-        </div>
+                <a-col :span="24">
+                    <a-form-item label="Description">
+                        <a-textarea v-model:value="form.description" :rows="4" />
+                    </a-form-item>
+                </a-col>
+            </a-row>
+        </a-form>
     </a-modal>
+
 </template>
