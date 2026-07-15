@@ -131,8 +131,7 @@ const submitReport = async () => {
         </template>
 
         <!-- Main Content -->
-        <div class="space-y-8">
-            <!-- Important Notice -->
+        <!-- <div class="space-y-8">
             <div class="bg-red-50 border border-red-200 rounded-xl p-6">
                 <div class="flex items-start gap-3">
                     <svg class="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor"
@@ -191,6 +190,6 @@ const submitReport = async () => {
                     <p> {{ currentIndex + 1 }} / {{ allImages.length }} </p>
                 </div>
             </div>
-        </div>
+        </div> -->
     </PageLayout>
 </template>

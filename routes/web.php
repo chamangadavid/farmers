@@ -107,6 +107,12 @@ Route::get('/history-details', function () {
     return Inertia::render('Site/History');
 })->name('history');
 
+Route::get('/our-services', function () {
+    return Inertia::render('Site/Services');
+})->name('ourServices');
+
+
+
 Route::get('/icao-annex', function () {
     return Inertia::render('Site/ICAOAnnex');
 })->name('icaoAnnex');
@@ -224,7 +230,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/vegetable-types/{id}',[VegetableTypeController::class,'update']);
     Route::delete('/vegetable-types/{id}',[VegetableTypeController::class,'destroy']);
 
-
     Route::get('/all-vegetables-production', [VegetableController::class, 'GetVegetableProductionPage'])->name('vegetables-production.index');
     Route::get('/vegetable-productions', [VegetableProductionController::class, 'index']);
     Route::post('/vegetable-productions', [VegetableProductionController::class, 'store']);
@@ -233,97 +238,44 @@ Route::middleware('auth')->group(function () {
     Route::get('/vegetable-productions/{id}', [VegetableProductionController::class, 'show']);
     Route::put('/vegetable-productions/{id}', [VegetableProductionController::class, 'update']);
     Route::delete('/vegetable-productions/{id}', [VegetableProductionController::class, 'destroy']);
-
-
-
-
     
-Route::get('/all-harvest', [VegetableController::class, 'GetVegetableHarvestPage'])->name('vegetables-harvest.index');
-Route::get('/vegetable-harvests',[VegetableHarvestController::class,'index']);
-Route::get('/vegetable-harvests/statistics', [VegetableHarvestController::class, 'statistics']);
-Route::get('/vegetable-harvests/productions', [VegetableHarvestController::class, 'productions']);
-Route::get('/vegetable-harvests/{vegetableHarvest}', [VegetableHarvestController::class, 'show']);
+    Route::get('/all-harvest', [VegetableController::class, 'GetVegetableHarvestPage'])->name('vegetables-harvest.index');
+    Route::get('/vegetable-harvests',[VegetableHarvestController::class,'index']);
+    Route::get('/vegetable-harvests/statistics', [VegetableHarvestController::class, 'statistics']);
+    Route::get('/vegetable-harvests/productions', [VegetableHarvestController::class, 'productions']);
+    Route::get('/vegetable-harvests/{vegetableHarvest}', [VegetableHarvestController::class, 'show']);
 
-Route::get('/vegetable-productions/{production}/remaining-yield', [VegetableHarvestController::class, 'remainingYield']);
-Route::post('/vegetable-harvests',[VegetableHarvestController::class,'store']);
-Route::put('/vegetable-harvests/{harvest}',[VegetableHarvestController::class,'update']);
-Route::delete('/vegetable-harvests/{harvest}',[VegetableHarvestController::class,'destroy']);
-Route::get('/vegetable-harvests/{harvest}/receipt',  [VegetableHarvestController::class, 'receipt'])->name('vegetable-harvest.receipt');
-Route::get('/vegetable-harvests/export/pdf', [VegetableHarvestController::class, 'exportPdf'])->name('vegetable-harvest.export.pdf');
-Route::get('/vegetable-harvests/{harvest}/pdf',  [VegetableHarvestController::class, 'downloadPdf' ])->name('vegetable-harvest.pdf');
+    Route::get('/vegetable-productions/{production}/remaining-yield', [VegetableHarvestController::class, 'remainingYield']);
+    Route::post('/vegetable-harvests',[VegetableHarvestController::class,'store']);
+    Route::put('/vegetable-harvests/{harvest}',[VegetableHarvestController::class,'update']);
+    Route::delete('/vegetable-harvests/{harvest}',[VegetableHarvestController::class,'destroy']);
+    Route::get('/vegetable-harvests/{harvest}/receipt',  [VegetableHarvestController::class, 'receipt'])->name('vegetable-harvest.receipt');
+    Route::get('/vegetable-harvests/export/pdf', [VegetableHarvestController::class, 'exportPdf'])->name('vegetable-harvest.export.pdf');
+    Route::get('/vegetable-harvests/{harvest}/pdf',  [VegetableHarvestController::class, 'downloadPdf' ])->name('vegetable-harvest.pdf');
 
+    Route::get('/all-vegetable-sales', [VegetableController::class, 'GetVegetableSalesPage'])->name('vegetables-sale.index');
+    Route::get('/vegetable-sales', [VegetableSaleController::class,'index']);
+    Route::get('/vegetable-sales/{sale}', [VegetableSaleController::class,'show']);
+    Route::get('/all-vegetable-sales/harvests', [VegetableSaleController::class, 'harvests']);
+    Route::post('/vegetable-sales', [VegetableSaleController::class,'store']);
+    Route::put('/vegetable-sales/{sale}', [VegetableSaleController::class,'update']);
+    Route::delete('/vegetable-sales/{sale}', [VegetableSaleController::class,'destroy']);
+    Route::get('/vegetable-sales/export/pdf', [VegetableSaleController::class,'exportPdf']);
+    Route::get('/vegetable-sales/export/excel', [VegetableSaleController::class,'exportExcel']);
+    Route::get('/vegetable-sales/{sale}/receipt', [VegetableSaleController::class,'receipt']);
+    Route::get('/download-vegetable-sales/{sale}/pdf', [VegetableSaleController::class,'downloadPdf'])->name('vegetable-sales.pdf');
+    Route::get('/vegetable-sales/report/pdf', [VegetableSaleController::class, 'exportPdf'])->name('vegetable-sales.report.pdf');
 
-
-
-
-
-
-Route::get('/all-vegetable-sales', [VegetableController::class, 'GetVegetableSalesPage'])->name('vegetables-sale.index');
-Route::get('/vegetable-sales', [VegetableSaleController::class,'index']);
-Route::get('/vegetable-sales/{sale}', [VegetableSaleController::class,'show']);
-Route::get('/all-vegetable-sales/harvests', [VegetableSaleController::class, 'harvests']);
-Route::post('/vegetable-sales', [VegetableSaleController::class,'store']);
-Route::put('/vegetable-sales/{sale}', [VegetableSaleController::class,'update']);
-Route::delete('/vegetable-sales/{sale}', [VegetableSaleController::class,'destroy']);
-Route::get('/vegetable-sales/export/pdf', [VegetableSaleController::class,'exportPdf']);
-Route::get('/vegetable-sales/export/excel', [VegetableSaleController::class,'exportExcel']);
-Route::get('/vegetable-sales/{sale}/receipt', [VegetableSaleController::class,'receipt']);
-Route::get('/download-vegetable-sales/{sale}/pdf', [VegetableSaleController::class,'downloadPdf'])->name('vegetable-sales.pdf');
-Route::get('/vegetable-sales/report/pdf', [VegetableSaleController::class, 'exportPdf'])->name('vegetable-sales.report.pdf');
-
-
-
-
-
-
-
-
-
-
-
-
-
-Route::get('/all-vegetable-expenses', [VegetableController::class, 'GetVegetableExpensesPage'])->name('vegetables-expenses.index');
-
- Route::get('/vegetable-expenses', [ VegetableExpenseController::class, 'index']);
-
+    Route::get('/all-vegetable-expenses', [VegetableController::class, 'GetVegetableExpensesPage'])->name('vegetables-expenses.index');
+    Route::get('/vegetable-expenses', [ VegetableExpenseController::class, 'index']);
     Route::post('/vegetable-expenses', [VegetableExpenseController::class, 'store']);
-
     Route::put('/vegetable-expenses/{expense}', [VegetableExpenseController::class, 'update']);
-
     Route::delete('/vegetable-expenses/{expense}', [VegetableExpenseController::class, 'destroy']);
-
     Route::get('/vegetable-expenses/pdf', [VegetableExpenseController::class, 'exportPdf']);
-
     Route::get('/vegetable-expenses/excel', [VegetableExpenseController::class, 'exportExcel']);
-
     Route::get('/vegetable-expenses/{expense}', [VegetableExpenseController::class, 'show']);
-
     Route::get('/vegetable-productions-all', [VegetableExpenseController::class, 'productions']);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //chicken routes
     Route::get('/all-chickens', [ChickenController::class, 'GetChickensIndexPage'])->name('chicken.index');
     Route::get('/chickens', [ChickenBatchController::class, 'index']);
     Route::post('/chickens', [ChickenBatchController::class, 'store']);
@@ -346,18 +298,9 @@ Route::get('/all-vegetable-expenses', [VegetableController::class, 'GetVegetable
     Route::get('/chicken-reports/excel', [ChickenReportsController::class,'downloadExcel']);
     Route::get('/chicken-reports/pdf', [ChickenReportsController::class,'pdf']);
 
+    Route::get('/all-sales', [SalesController::class, 'GetSalesIndexPage'])->name('sales.index');
+    
 
-
-
-
-
-
-       //sales routes
-     Route::get('/all-sales', [SalesController::class, 'GetSalesIndexPage'])->name('sales.index');
-     
-
-
-    //document repository routes
     Route::get('/all-documents', [DocumentController::class, 'GetIDocuments'])->name('document.index');
     Route::get('/documents/folders', [DocumentController::class, 'index']);
     Route::post('/documents/folder', [DocumentController::class, 'storeFolder']);
@@ -378,8 +321,6 @@ Route::get('/all-vegetable-expenses', [VegetableController::class, 'GetVegetable
     Route::delete('/job-applications/{id}', [JobController::class, 'destroyApplication']);
     Route::get('/job-applications/{id}/download/{fileType}', [JobController::class, 'downloadFile']);
 
-
-    //testmonies
     Route::get('/all-testimonies', [TestimonyController::class, 'indexPage'])->name('testimonials.index');
     Route::get('/testimonials', [TestimonyController::class, 'index']);
     Route::post('/testimonials', [TestimonyController::class, 'store']);
@@ -387,121 +328,20 @@ Route::get('/all-vegetable-expenses', [VegetableController::class, 'GetVegetable
     Route::delete('/testimonials/{testimonial}', [TestimonyController::class, 'destroy']);
     Route::get('/testimonials/{testimonial}', [TestimonyController::class, 'show']);
    
-
-
-
-    //gallery products
-    // Route::get('/all-gallery-products', [ProductController::class, 'indexPage'])->name('products.index');
-    
-
     Route::get('/all-gallery', [GalleryController::class, 'indexPage'])->name('galleries.index');
-
-
-   // Route::get('/myfarmer/gallery', [GalleryController::class,'index'])->name('gallery.index');
-
-
-// Fetch gallery list for axios
-// Route::get(
-//     '/gallery',
-//     [GalleryController::class,'index']
-// );
-
-
-Route::get('/gallery', [GalleryController::class,'getGallery']);
-
-// Store
-Route::post('/gallery', [GalleryController::class,'store']);
-
-
-// Update
-Route::post('/gallery/{gallery}', [GalleryController::class,'update']);
-Route::delete('/gallery/image/{image}', [GalleryController::class, 'destroyImage']);
-// Delete
-Route::delete('/gallery/{gallery}', [GalleryController::class,'destroy']);
-// View single
-Route::get('/gallery/{gallery}', [GalleryController::class,'show']);
-
-
-// Homepage API
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    Route::get('/gallery', [GalleryController::class,'getGallery']);
+    Route::post('/gallery', [GalleryController::class,'store']);
+    Route::post('/gallery/{gallery}', [GalleryController::class,'update']);
+    Route::delete('/gallery/image/{image}', [GalleryController::class, 'destroyImage']);
+    Route::delete('/gallery/{gallery}', [GalleryController::class,'destroy']);
+    Route::get('/gallery/{gallery}', [GalleryController::class,'show']);
 
     //Trail Audit
     Route::get('/trail-audit', [AuditLogController::class, 'getAudits'])->name('trail-audit.index');
     Route::get('/audit-logs', [AuditLogController::class, 'index']);
     Route::get('/audits/{id}', [AuditLogController::class, 'showPage']);
-    
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-    
-
-
- 
-    
-
-
-     //reports routes
     Route::get('/all-reports', [ReportsController::class, 'GetReports'])->name('reports.index');
-    
-    
-
-     //national regulational routes
     Route::get('/all-nation-regulations', [NationalRegulations::class, 'GetNationalRegulations'])->name('regulations.index');
-    
-
-  
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     //Cards & Assign
     Route::get('/eBusinessCards', [RolePermissionController::class, 'eBusinessCards'])->name('admin.eBusinessCards');

@@ -243,16 +243,16 @@ const handleDropdownClick = () => {
                     <div v-if="activeDropdown === 'accidents'"
                         class="absolute top-full left-0 mt-1 w-56 bg-teal-900 backdrop-blur-xl rounded-lg shadow-2xl border border-teal-500/30 z-[100]"
                         @mouseenter="cancelHideDropdown" @mouseleave="hideDropdown">
-                        <Link :href="route('documentRepository')"
+                        <Link :href="route('ourServices')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick">
-                            Vegetables
+                            Our Services
                         </Link>
-                        <Link :href="route('managementTeam')"
+                        <!-- <Link :href="route('managementTeam')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
                             @click="handleDropdownClick">
                             Chickens
-                        </Link>
+                        </Link> -->
                         <!-- <Link 
                             :href="route('investigationPage')"
                             class="block px-4 py-2 text-sm text-white hover:bg-teal-800/50 hover:text-teal-200 transition"
