@@ -18,6 +18,7 @@ use App\Http\Controllers\Vegetables\VegetableTypeController;
 use App\Http\Controllers\Vegetables\VegetableProductionController;
 use App\Http\Controllers\Vegetables\VegetableHarvestController;
 use App\Http\Controllers\Vegetables\VegetableSaleController;
+use App\Http\Controllers\Vegetables\VegetableExpenseController;
 use App\Http\Controllers\Chickens\ChickenController;
 use App\Http\Controllers\Chickens\ChickenBatchController;
 use App\Http\Controllers\Chickens\ChickenSalesController;
@@ -258,70 +259,55 @@ Route::get('/vegetable-harvests/{harvest}/pdf',  [VegetableHarvestController::cl
 
 
 Route::get('/all-vegetable-sales', [VegetableController::class, 'GetVegetableSalesPage'])->name('vegetables-sale.index');
-
-Route::get(
-    '/vegetable-sales',
-    [VegetableSaleController::class,'index']
-);
-
-Route::get(
-    '/vegetable-sales/{sale}',
-    [VegetableSaleController::class,'show']
-);
-
-Route::get(
-    '/all-vegetable-sales/harvests',
-    [VegetableSaleController::class, 'harvests']
-);
-
-Route::post(
-    '/vegetable-sales',
-    [VegetableSaleController::class,'store']
-);
-
-Route::put(
-    '/vegetable-sales/{sale}',
-    [VegetableSaleController::class,'update']
-);
-
-Route::delete(
-    '/vegetable-sales/{sale}',
-    [VegetableSaleController::class,'destroy']
-);
-
-Route::get(
-    '/vegetable-sales/export/pdf',
-    [VegetableSaleController::class,'exportPdf']
-);
-
-Route::get(
-    '/vegetable-sales/export/excel',
-    [VegetableSaleController::class,'exportExcel']
-);
-
-Route::get(
-    '/vegetable-sales/{sale}/receipt',
-    [VegetableSaleController::class,'receipt']
-);
-
-
-Route::get(
-    '/download-vegetable-sales/{sale}/pdf',
-    [VegetableSaleController::class,'downloadPdf']
-)->name('vegetable-sales.pdf');
+Route::get('/vegetable-sales', [VegetableSaleController::class,'index']);
+Route::get('/vegetable-sales/{sale}', [VegetableSaleController::class,'show']);
+Route::get('/all-vegetable-sales/harvests', [VegetableSaleController::class, 'harvests']);
+Route::post('/vegetable-sales', [VegetableSaleController::class,'store']);
+Route::put('/vegetable-sales/{sale}', [VegetableSaleController::class,'update']);
+Route::delete('/vegetable-sales/{sale}', [VegetableSaleController::class,'destroy']);
+Route::get('/vegetable-sales/export/pdf', [VegetableSaleController::class,'exportPdf']);
+Route::get('/vegetable-sales/export/excel', [VegetableSaleController::class,'exportExcel']);
+Route::get('/vegetable-sales/{sale}/receipt', [VegetableSaleController::class,'receipt']);
+Route::get('/download-vegetable-sales/{sale}/pdf', [VegetableSaleController::class,'downloadPdf'])->name('vegetable-sales.pdf');
+Route::get('/vegetable-sales/report/pdf', [VegetableSaleController::class, 'exportPdf'])->name('vegetable-sales.report.pdf');
 
 
 
-Route::get(
 
-    '/vegetable-sales/report/pdf',
 
-    [
-        VegetableSaleController::class,
-        'exportPdf'
-    ]
 
-)->name('vegetable-sales.report.pdf');
+
+
+
+
+
+
+
+Route::get('/all-vegetable-expenses', [VegetableController::class, 'GetVegetableExpensesPage'])->name('vegetables-expenses.index');
+
+ Route::get('/vegetable-expenses', [ VegetableExpenseController::class, 'index']);
+
+    Route::post('/vegetable-expenses', [VegetableExpenseController::class, 'store']);
+
+    Route::put('/vegetable-expenses/{expense}', [VegetableExpenseController::class, 'update']);
+
+    Route::delete('/vegetable-expenses/{expense}', [VegetableExpenseController::class, 'destroy']);
+
+    Route::get('/vegetable-expenses/pdf', [VegetableExpenseController::class, 'exportPdf']);
+
+    Route::get('/vegetable-expenses/excel', [VegetableExpenseController::class, 'exportExcel']);
+
+    Route::get('/vegetable-expenses/{expense}', [VegetableExpenseController::class, 'show']);
+
+    Route::get('/vegetable-productions-all', [VegetableExpenseController::class, 'productions']);
+
+
+
+
+
+
+
+
 
 
 

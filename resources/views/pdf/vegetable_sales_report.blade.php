@@ -4,77 +4,77 @@
 
 <head>
 
-<title>
-Vegetable Sales Report
-</title>
+    <title>
+        Vegetable Sales Report
+    </title>
 
 
-<style>
+    <style>
+        body {
 
-body{
+            font-family: Arial;
 
-font-family: Arial;
+            font-size: 12px;
 
-font-size:12px;
-
-}
-
-
-h2{
-
-text-align:center;
-
-color:#2f855a;
-
-}
+        }
 
 
-table{
+        h2 {
 
-width:100%;
+            text-align: center;
 
-border-collapse:collapse;
+            color: #2f855a;
 
-}
-
-
-table, th, td{
-
-border:1px solid #ccc;
-
-}
+        }
 
 
-th{
+        table {
 
-background:#f1f5f9;
+            width: 100%;
 
-}
+            border-collapse: collapse;
 
-
-th,td{
-
-padding:8px;
-
-}
+        }
 
 
+        table,
+        th,
+        td {
 
-.total{
+            border: 1px solid #ccc;
 
-font-weight:bold;
-
-}
-
-
-.summary{
-
-margin-bottom:20px;
-
-}
+        }
 
 
-</style>
+        th {
+
+            background: #f1f5f9;
+
+        }
+
+
+        th,
+        td {
+
+            padding: 8px;
+
+        }
+
+
+
+        .total {
+
+            font-weight: bold;
+
+        }
+
+
+        .summary {
+
+            margin-bottom: 20px;
+
+        }
+    </style>
 
 
 </head>
@@ -84,248 +84,248 @@ margin-bottom:20px;
 
 
 
-<h2>
-Alinaswe Farm
-</h2>
+    <h2>
+        Alinaswe Farm
+    </h2>
 
 
-<h3 style="text-align:center">
+    <h3 style="text-align:center">
 
-Vegetable Sales Report
+        Vegetable Sales Report
 
-</h3>
-
-
-
-<div class="summary">
-
-
-<strong>
-Generated:
-</strong>
-
-{{ date('d M Y') }}
-
-
-<br>
-
-
-<strong>
-Total Records:
-</strong>
-
-{{ $sales->count() }}
+    </h3>
 
 
 
-<br>
+    <div class="summary">
 
 
-<strong>
-Total Revenue:
-</strong>
+        <strong>
+            Generated:
+        </strong>
+
+        {{ date('d M Y') }}
 
 
-K {{ number_format(
-$sales->sum('total_amount'),
-2
+        <br>
+
+
+        <strong>
+            Total Records:
+        </strong>
+
+        {{ $sales->count() }}
+
+
+
+        <br>
+
+
+        <strong>
+            Total Revenue:
+        </strong>
+
+
+        K {{ number_format(
+    $sales->sum('total_amount'),
+    2
 ) }}
 
 
-</div>
+    </div>
 
 
 
 
-<table>
+    <table>
 
 
-<thead>
+        <thead>
 
 
-<tr>
+            <tr>
 
-<th>
-#
-</th>
+                <th>
+                    #
+                </th>
 
 
-<th>
-Invoice
-</th>
+                <th>
+                    Invoice
+                </th>
 
 
-<th>
-Date
-</th>
+                <th>
+                    Date
+                </th>
 
 
-<th>
-Crop
-</th>
+                <th>
+                    Crop
+                </th>
 
 
-<th>
-Batch
-</th>
+                <th>
+                    Batch
+                </th>
 
 
-<th>
-Customer
-</th>
+                <th>
+                    Customer
+                </th>
 
 
-<th>
-Qty Kg
-</th>
+                <th>
+                    Qty Kg
+                </th>
 
 
-<th>
-Unit Price
-</th>
+                <th>
+                    Unit Price
+                </th>
 
 
-<th>
-Total
-</th>
+                <th>
+                    Total
+                </th>
 
 
-<th>
-Payment
-</th>
+                <th>
+                    Payment
+                </th>
 
 
-</tr>
+            </tr>
 
 
-</thead>
+        </thead>
 
 
-<tbody>
+        <tbody>
 
 
-@foreach($sales as $index=>$sale)
+            @foreach($sales as $index => $sale)
 
 
-<tr>
+                            <tr>
 
 
-<td>
+                                <td>
 
-{{ $index+1 }}
+                                    {{ $index + 1 }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-{{ $sale->invoice_number }}
+                                    {{ $sale->invoice_number }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-{{ $sale->sale_date }}
+                                    {{ $sale->sale_date }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-{{ 
-$sale->harvest
-->production
-->vegetableType
-->name
-?? '-'
-}}
+                                    {{ 
+                $sale->harvest
+                            ->production
+                            ->vegetableType
+                            ->name
+                        ?? '-'
+                }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-{{
+                                    {{
 
-$sale->harvest
-->production
-->batch_number
+                        $sale->harvest
+                            ->production
+                            ->batch_number
 
-?? '-'
+                        ?? '-'
 
-}}
+                }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-{{ $sale->customer_name }}
+                                    {{ $sale->customer_name }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-{{ $sale->quantity }}
+                                    {{ $sale->quantity }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-K {{ number_format($sale->unit_price,2) }}
+                                    K {{ number_format($sale->unit_price, 2) }}
 
-</td>
+                                </td>
 
 
 
-<td class="total">
+                                <td class="total">
 
-K {{ number_format($sale->total_amount,2) }}
+                                    K {{ number_format($sale->total_amount, 2) }}
 
-</td>
+                                </td>
 
 
 
-<td>
+                                <td>
 
-{{ $sale->payment_method }}
+                                    {{ $sale->payment_method }}
 
-</td>
+                                </td>
 
 
 
-</tr>
+                            </tr>
 
 
-@endforeach
+            @endforeach
 
 
 
-</tbody>
+        </tbody>
 
 
 
-</table>
+    </table>
 
 
 
 
-<br><br>
+    <br><br>
 
 
- <div class="footer">
+    <div class="footer">
 
-    Generated from Alinaswe Farm Sales Management System
+        Generated from Alinaswe Farm Sales Management System
 
     </div>
 

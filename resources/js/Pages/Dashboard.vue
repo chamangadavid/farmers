@@ -4,7 +4,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import Card from "@/Components/Auth/Card.vue";
-import StartsCards from '@/Components/StartsCards.vue';
 
 import { 
   FileTextOutlined, 
@@ -73,21 +72,6 @@ const can = (permission) => {
   return props.auth?.permissions?.includes(permission);
 };
 
-// Chart insights
-const chartInsights = computed(() => {
-  if (!props.charts?.statusData?.length) return null;
-  
-  const total = props.charts.statusData.reduce((a, b) => a + b, 0);
-  const maxValue = Math.max(...props.charts.statusData);
-  const maxIndex = props.charts.statusData.indexOf(maxValue);
-  const maxLabel = props.charts.statusLabels[maxIndex];
-  const percentage = ((maxValue / total) * 100).toFixed(1);
-  
-  return {
-    total,
-    highest: { label: maxLabel, value: maxValue, percentage }
-  };
-});
 </script>
 
 <template>
@@ -115,14 +99,12 @@ const chartInsights = computed(() => {
 
     <div class="py-4">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-4">
-        <!-- Quick Stats Cards -->
-         <StartsCards :stats="stats" />
 
         <!-- Main Card with Tabs -->
         <div class="overflow-hidden bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700">
           <div class="p-6">
 
-            <!-- Professional Tabs -->
+            <!-- Professional Quick Links Tabs -->
             <div class="dashboard-tabs">
               <a-tabs v-model:activeKey="activeKey" class="custom-tabs">
                 
@@ -135,6 +117,7 @@ const chartInsights = computed(() => {
                   </template>
                   
                   <div class="mt-6">
+                      <div class="max-h-[500px] overflow-y-auto pr-2">
                     <div class="flex flex-wrap gap-4">
 
                       <Card 
@@ -153,7 +136,7 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit and delete of Staff Access Control" 
                         routeName="staff.index">
                         <template #icon>
-                          <SettingOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <TeamOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -163,7 +146,7 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit & delete chicken records" 
                         routeName="chicken.index">
                         <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <FileTextOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -173,7 +156,7 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit & delete sales records" 
                         routeName="sales-report.index">
                         <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <FileDoneOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -183,7 +166,7 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit & delete vegetable records" 
                         routeName="vegetables.index">
                         <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <FileTextOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -193,7 +176,7 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit & delete vegetable production records" 
                         routeName="vegetables-production.index">
                         <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <PieChartOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -203,7 +186,7 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit & delete vegetable production records" 
                         routeName="vegetables-harvest.index">
                         <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <RiseOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -213,7 +196,17 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit & delete vegetable sale records" 
                         routeName="vegetables-sale.index">
                         <template #icon>
-                          <CarOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <SwapOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
+
+                      <Card 
+                        title="Vagetable Expenses Management" 
+                        v-if="can('staff can manage vegetable expenses records')"
+                        subTitle="Create, edit & delete vegetable expenses records" 
+                        routeName="vegetables-expenses.index">
+                        <template #icon>
+                          <SwapOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -224,7 +217,7 @@ const chartInsights = computed(() => {
                         subTitle="Create, edit & delete product images" 
                         routeName="galleries.index">
                         <template #icon>
-                          <UsergroupAddOutlined style="font-size: 24px; color: #14b8a6;" />
+                          <PictureOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
 
@@ -307,6 +300,7 @@ const chartInsights = computed(() => {
                           <UserAddOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
+                    </div>
                     </div>
                   </div>
                 </a-tab-pane>
@@ -408,6 +402,31 @@ const chartInsights = computed(() => {
   gap: 8px;
 }
 
+
+/* Custom scrollbar */
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #14b8a6 #f3f4f6;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #14b8a6;
+  border-radius: 8px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #0f766e;
+}
+
 /* Custom animations */
 @keyframes pulse {
   0%, 100% {
@@ -456,9 +475,7 @@ const chartInsights = computed(() => {
 .chart-card:hover {
   transform: translateY(-2px);
 }
-</style>
 
-<style>
 /* Global styles for Ant Design tabs to match theme */
 .ant-tabs-tab-btn {
   transition: color 0.3s;
@@ -490,4 +507,5 @@ canvas {
   max-height: 300px;
   width: 100% !important;
 }
+
 </style>

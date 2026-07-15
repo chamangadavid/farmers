@@ -46,35 +46,24 @@ class VegetableProduction extends Model
         return $this->hasMany(VegetableHarvest::class);
     }
 
-    // public function sales()
-    // {
-    //     return $this->hasMany(VegetableSale::class);
-    // }
-
+    public function expenses()
+    {
+        return $this->hasMany(VegetableExpense::class, 'vegetable_production_id');
+    }
 
     public function sales()
-{
-    return $this->hasManyThrough(
+    {
+        return $this->hasManyThrough(
 
-        VegetableSale::class,
+            VegetableSale::class,
+            VegetableHarvest::class,
+            'vegetable_production_id',
+            'vegetable_harvest_id',
+            'id',
+            'id'
 
-        VegetableHarvest::class,
-
-        'vegetable_production_id',
-
-        'vegetable_harvest_id',
-
-        'id',
-
-        'id'
-
-    );
-}
-    // public function expenses()
-    // {
-    //     return $this->hasMany(VegetableExpense::class);
-    // }
-
+        );
+    }
 
 
 

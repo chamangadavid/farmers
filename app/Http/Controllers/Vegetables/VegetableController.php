@@ -29,6 +29,14 @@ class VegetableController extends Controller
         return Inertia::render('MyFarmer/Vegetables/Sales/Index');
     }
 
+    public function GetVegetableExpensesPage()
+    {
+        return Inertia::render('MyFarmer/Vegetables/Expenses/Index');
+    }
+
+
+    
+
 
 
 
