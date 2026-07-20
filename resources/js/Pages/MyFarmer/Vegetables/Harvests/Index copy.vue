@@ -32,7 +32,6 @@ import {
 import CreateHarvest from './CreateHarvest.vue'
 import EditHarvest from './EditHarvest.vue'
 import ViewHarvest from './ViewHarvest.vue'
-import SalesTab from '../Sales/SalesTab.vue'
 
 const app = VueApexCharts
 /*
@@ -41,7 +40,6 @@ const app = VueApexCharts
 |--------------------------------------------------------------------------
 */
 
-const activeTab = ref('harvests')
 const harvests = ref([])
 
 const loading = ref(false)
@@ -761,14 +759,13 @@ onMounted(() => {
     <Head title="Vegetable Production Management" />
 
     <AuthenticatedLayout>
-
         <div class="p-4">
-            <a-tabs v-model:activeKey="activeTab">
 
-            <!-- HARVEST TAB -->
-            <a-tab-pane key="harvests" tab="Harvest Management Records">
+
+            <!-- HEADER -->
 
             <div class="flex justify-between items-center mb-6">
+
 
                 <div>
 
@@ -782,9 +779,23 @@ onMounted(() => {
 
                 </div>
 
+
+
                 <a-button type="primary" @click="showCreate = true">
-                    <PlusOutlined /> Add Harvest </a-button>
+
+                    <PlusOutlined />
+
+                    Add Harvest
+
+                </a-button>
+
+
             </div>
+
+
+
+
+            <!-- KPI CARDS -->
 
             <a-row :gutter="16">
 
@@ -879,142 +890,376 @@ onMounted(() => {
 
             </a-row>
 
+
+
+
+
+            <!-- CHART AREA -->
+
+
+
+            <!-- ===================================================== -->
+            <!-- CHART AREA WITH SCROLL -->
+            <!-- ===================================================== -->
+
+            <div class="chart-scroll-container">
+
+
+                <a-row :gutter="16">
+
+
+                    <a-col :xs="24" :lg="12">
+
+
+                        <a-card title="Harvest Trend">
+
+
+                            <apexchart type="line" height="300" :options="harvestTrendOptions"
+                                :series="harvestTrendSeries" />
+
+
+                        </a-card>
+
+
+                    </a-col>
+
+
+
+                    <a-col :xs="24" :lg="12">
+
+
+                        <a-card title="Revenue Analysis">
+
+
+                            <apexchart type="area" height="300" :options="revenueOptions" :series="revenueSeries" />
+
+
+                        </a-card>
+
+
+                    </a-col>
+
+
+
+                    <a-col :xs="24" :lg="12">
+
+
+                        <a-card title="Grade Distribution">
+
+
+                            <apexchart type="pie" height="300" :options="gradeOptions" :series="gradeSeries" />
+
+
+                        </a-card>
+
+
+                    </a-col>
+
+
+
+                    <a-col :xs="24" :lg="12">
+
+
+                        <a-card title="Waste Analysis">
+
+
+                            <apexchart type="bar" height="300" :options="wasteOptions" :series="wasteSeries" />
+
+
+                        </a-card>
+
+
+                    </a-col>
+
+
+                </a-row>
+
+
+            </div>
+
+            <!-- <a-row
+:gutter="16"
+class="mt-5"
+>
+
+
+<a-col :xs="24" :lg="12">
+
+
+<a-card title="Harvest Trend">
+
+<apexchart
+
+type="line"
+
+height="300"
+
+:options="harvestTrendOptions"
+
+:series="harvestTrendSeries"
+
+/>
+
+</a-card>
+
+</a-col>
+
+<a-col :xs="24" :lg="12">
+
+<a-card title="Revenue Analysis">
+
+<apexchart
+
+type="area"
+
+height="300"
+
+:options="revenueOptions"
+
+:series="revenueSeries"
+
+/>
+
+
+</a-card>
+
+</a-col>
+
+
+</a-row>
+
+<a-row
+:gutter="16"
+class="mt-5"
+>
+
+
+<a-col :xs="24" :lg="12">
+
+
+<a-card title="Grade Distribution">
+
+
+<apexchart
+
+type="pie"
+
+height="300"
+
+:options="gradeOptions"
+
+:series="gradeSeries"
+
+/>
+
+
+</a-card>
+
+
+</a-col>
+</a-row> -->
+
+
+            <!-- TOOLBAR -->
+
+
             <a-card class="mt-5">
+
+
                 <div class="flex flex-wrap gap-3">
+
+
                     <a-input v-model:value="search" placeholder="Search crop or grade" style="width:250px">
+
                         <template #prefix>
+
                             <SearchOutlined />
+
                         </template>
+
                     </a-input>
 
+
+
                     <a-button @click="refresh">
+
                         <ReloadOutlined />
+
                         Refresh
+
                     </a-button>
+
 
                     <a-button @click="exportPDF">
+
                         <FilePdfOutlined />
+
                         PDF
+
                     </a-button>
 
+
                     <a-select v-model:value="dateFilter" style="width:160px">
+
                         <a-select-option value="today">
+
                             Today
+
                         </a-select-option>
+
 
                         <a-select-option value="week">
+
                             Last 7 Days
+
                         </a-select-option>
+
 
                         <a-select-option value="month">
+
                             This Month
+
                         </a-select-option>
+
 
                         <a-select-option value="custom">
+
                             Custom
+
                         </a-select-option>
 
+
                     </a-select>
+
                     <a-range-picker v-if="dateFilter === 'custom'" v-model:value="customDates" />
                 </div>
+
+
             </a-card>
 
+
+
+
+
+            <!-- TABLE -->
+
+
             <a-card class="mt-5">
+
+
                 <a-table :columns="columns" :data-source="filteredHarvests" :loading="loading"
                     :scroll="{ x: 1000, y: 450 }" row-key="id">
 
+
                     <template #bodyCell="{ column, record, index }">
+
+
                         <template v-if="column.key === 'index'">
+
                             {{ index + 1 }}
+
                         </template>
+
                         <template v-if="column.key === 'crop'">
+
                             {{
                                 record.production?.vegetable_type?.name
                                 ?? 'N/A'
                             }}
+
                         </template>
 
                         <template v-else-if="column.key === 'revenue'">
+
                             K {{ Number(record.estimated_value).toLocaleString() }}
+
                         </template>
 
+
                         <template v-else-if="column.key === 'revenue'">
+
                             K {{ Number(record.estimated_value).toLocaleString() }}
+
                         </template>
 
                         <template v-if="column.key === 'status'">
+
+
                             <a-tag v-if="record.remaining_yield > 0" color="blue">
+
                                 Partial
+
                             </a-tag>
 
+
                             <a-tag v-else color="green">
+
                                 Completed
+
                             </a-tag>
+
+
                         </template>
 
                         <template v-else-if="column.key === 'actions'">
+
+
                             <a-space>
+
+
                                 <a-button size="small" @click="openView(record)">
+
                                     <EyeOutlined />
+
                                 </a-button>
+
+
 
                                 <a-button size="small" @click="openEdit(record)">
+
                                     <EditOutlined />
+
                                 </a-button>
+
+
 
                                 <a-button danger size="small" @click="deleteHarvest(record)">
+
                                     <DeleteOutlined />
+
                                 </a-button>
 
+
                             </a-space>
+
+
                         </template>
+
+
+
                     </template>
+
+
                 </a-table>
+
+
             </a-card>
 
-             <div class="chart-scroll-container">
-                <a-row :gutter="16">
-                    <a-col :xs="24" :lg="12">
-                        <a-card title="Harvest Trend">
-                            <apexchart type="line" height="300" :options="harvestTrendOptions"
-                                :series="harvestTrendSeries" />
-                        </a-card>
-                    </a-col>
-
-                    <a-col :xs="24" :lg="12">
-                        <a-card title="Revenue Analysis">
-                            <apexchart type="area" height="300" :options="revenueOptions" :series="revenueSeries" />
-                        </a-card>
-                    </a-col>
-
-                    <a-col :xs="24" :lg="12">
-                        <a-card title="Grade Distribution">
-                            <apexchart type="pie" height="300" :options="gradeOptions" :series="gradeSeries" />
-                        </a-card>
-                    </a-col>
-
-                    <a-col :xs="24" :lg="12">
-                        <a-card title="Waste Analysis">
-                            <apexchart type="bar" height="300" :options="wasteOptions" :series="wasteSeries" />
-                        </a-card>
-                    </a-col>
-                </a-row>
-            </div>
-
-            </a-tab-pane>
-
-             <!-- SALES TAB -->
-            <a-tab-pane key="sales" tab="Sales Management Records">
-                <SalesTab />
-            </a-tab-pane>
-
-            </a-tabs>
 
 
-           
+
+            <!-- MODALS -->
+
 
             <CreateHarvest v-model:open="showCreate" @success="fetchHarvests" />
+
+
+
             <EditHarvest v-model:open="showEdit" :harvest="selectedHarvest" @success="fetchHarvests" />
+
+
+
+
             <ViewHarvest v-model:open="showView" :harvest="selectedHarvest" />
 
 

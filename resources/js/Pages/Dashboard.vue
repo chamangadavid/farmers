@@ -131,7 +131,7 @@ const can = (permission) => {
                       </Card>
 
                        <Card 
-                        title="Staff Control Management" 
+                        title="Staff Role Assignment" 
                         v-if="can('manage staff access control')"
                         subTitle="Create, edit and delete of Staff Access Control" 
                         routeName="staff.index">
@@ -151,7 +151,7 @@ const can = (permission) => {
                       </Card>
 
                        <Card 
-                        title="Chicken Report Management" 
+                        title="Chicken Reports Centre" 
                         v-if="can('staff can manage sales records')"
                         subTitle="Create, edit & delete sales records" 
                         routeName="sales-report.index">
@@ -181,7 +181,7 @@ const can = (permission) => {
                       </Card>
 
                       <Card 
-                        title="Vagetable Harvest Management" 
+                        title="Harvest & Sales Management" 
                         v-if="can('staff can manage vegetable harvest records')"
                         subTitle="Create, edit & delete vegetable production records" 
                         routeName="vegetables-harvest.index">
@@ -190,7 +190,7 @@ const can = (permission) => {
                         </template>
                       </Card>
 
-                      <Card 
+                      <!-- <Card 
                         title="Vagetable Sales Management" 
                         v-if="can('staff can manage vegetable sales records')"
                         subTitle="Create, edit & delete vegetable sale records" 
@@ -198,7 +198,7 @@ const can = (permission) => {
                         <template #icon>
                           <SwapOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
-                      </Card>
+                      </Card> -->
 
                       <Card 
                         title="Vagetable Expenses Management" 

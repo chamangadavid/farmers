@@ -25,7 +25,8 @@ import { ref, onMounted, onUnmounted } from 'vue';
 const images = [
   '/assets/back.png',
   '/assets/back-1.png',
-  '/assets/back-2.png'
+  '/assets/back-2.png',
+  '/assets/back-3.png'
 ];
 
 // Sliding animation
