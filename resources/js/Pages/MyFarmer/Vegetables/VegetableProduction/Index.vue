@@ -6,10 +6,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import CreateProduction from './CreateProduction.vue'
 import EditProduction from './EditProduction.vue'
 import ViewProduction from './ViewProduction.vue'
+import ExpensesTab from '../Expenses/ExpensesTab.vue'
 
 import axios from 'axios'
 import { debounce } from 'lodash'
-import {message,Modal,Tag, Space } from 'ant-design-vue'
+import { message, Modal, Tag, Space } from 'ant-design-vue'
 
 import {
     PlusOutlined,
@@ -25,6 +26,8 @@ import dayjs from 'dayjs'
 
 const loading = ref(false)
 const productions = ref([])
+
+const activeTab = ref('productions')
 
 const statistics = ref({
     total: 0,
@@ -69,12 +72,12 @@ const fetchProductions = async (page = 1) => {
     loading.value = true
     try {
         const { data } = await axios.get('/vegetable-productions', {
-                params: {
-                    page,
-                    search: search.value,
-                    perPage: pagination.value.pageSize
-                }
+            params: {
+                page,
+                search: search.value,
+                perPage: pagination.value.pageSize
             }
+        }
         )
 
         productions.value = data.data
@@ -408,423 +411,408 @@ onMounted(() => {
     <Head title="Vegetable Production Management" />
 
     <AuthenticatedLayout>
+        <a-tabs v-model:activeKey="activeTab">
+            <!-- HARVEST TAB -->
+            <a-tab-pane key="productions" tab="productions Records Management">
 
-        <div class="flex justify-between items-center pl-10 pr-10 mt-5">
-            <h2 class="text-xl font-semibold">
-                Vegetable Production Management
-            </h2>
+                <!-- YOUR EXISTING HARVEST DASHBOARD GOES HERE -->
+                <div class="flex justify-between items-center pl-10 pr-10 mt-5">
+                    <h2 class="text-xl font-semibold">
+                        Production Records
+                    </h2>
 
-            <div class="flex gap-2">
-                <a-button type="primary" @click="showCreate = true">
-                    <template #icon>
-                        <PlusOutlined />
-                    </template>
-                    New Production
-                </a-button>
-
-                <a-button @click="refreshTable">
-                    <template #icon>
-                        <ReloadOutlined />
-                    </template>
-                    Refresh
-                </a-button>
-            </div>
-        </div>
-
-        <!-- <template #header>
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-semibold">
-                    Vegetable Production Management
-                </h2>
-
-                <div class="flex gap-2">
-                    <a-button
-                        type="primary"
-                        @click="showCreate = true"
-                    >
-                        <template #icon>
-                            <PlusOutlined />
-                        </template>
-                        New Production
-                    </a-button>
-
-                    <a-button @click="refreshTable">
-                        <template #icon>
-                            <ReloadOutlined />
-                        </template>
-                        Refresh
-                    </a-button>
-                </div>
-            </div>
-        </template> -->
-
-
-        <div class="p-6">
-
-            <!-- ================================================= -->
-            <!-- SEARCH -->
-            <!-- ================================================= -->
-
-            <a-card class="mb-6">
-
-                <div class="flex flex-col md:flex-row justify-between gap-4">
-
-                    <a-input v-model:value="search" placeholder="Search batch, vegetable, season..." allow-clear
-                        style="max-width:400px" @input="searchRecords">
-
-                        <template #prefix>
-
-                            <SearchOutlined />
-
-                        </template>
-
-                    </a-input>
-
-                    <div class="text-gray-500">
-
-                        Total Records
-
-                        <strong>
-
-                            {{ pagination.total }}
-
-                        </strong>
-
+                    <div class="flex gap-2">
+                        <a-button type="primary" @click="showCreate = true">
+                            <template #icon>
+                                <PlusOutlined />
+                            </template>
+                            New Production
+                        </a-button>
+                       <a-tooltip title="Refresh Table">
+                            <a-button @click="refreshTable" shape="circle">
+                                <ReloadOutlined />
+                            </a-button>
+                        </a-tooltip>
                     </div>
-
                 </div>
 
-            </a-card>
 
-            <!-- ================================================= -->
-            <!-- DASHBOARD -->
-            <!-- ================================================= -->
+                <div class="p-6">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
+                    <!-- ================================================= -->
+                    <!-- SEARCH -->
+                    <!-- ================================================= -->
 
-                <a-card hoverable>
+                    <a-card class="mb-6">
 
-                    <div class="text-center">
+                        <div class="flex flex-col md:flex-row justify-between gap-4">
 
-                        <p class="text-gray-500">
+                            <a-input v-model:value="search" placeholder="Search batch, vegetable, season..." allow-clear
+                                style="max-width:400px" @input="searchRecords">
 
-                            Total Productions
+                                <template #prefix>
 
-                        </p>
+                                    <SearchOutlined />
 
-                        <h2 class="text-3xl font-bold text-blue-600">
+                                </template>
 
-                            {{ statistics.total }}
+                            </a-input>
 
-                        </h2>
+                            <div class="text-gray-500">
+
+                                Total Records
+
+                                <strong>
+
+                                    {{ pagination.total }}
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </a-card>
+
+                    <!-- ================================================= -->
+                    <!-- DASHBOARD -->
+                    <!-- ================================================= -->
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
+
+                        <a-card hoverable>
+
+                            <div class="text-center">
+
+                                <p class="text-gray-500">
+
+                                    Total Productions
+
+                                </p>
+
+                                <h2 class="text-3xl font-bold text-blue-600">
+
+                                    {{ statistics.total }}
+
+                                </h2>
+
+                            </div>
+
+                        </a-card>
+
+                        <a-card hoverable>
+
+                            <div class="text-center">
+
+                                <p class="text-gray-500">
+
+                                    Planning
+
+                                </p>
+
+                                <h2 class="text-3xl font-bold text-gray-600">
+
+                                    {{ statistics.planning }}
+
+                                </h2>
+
+                            </div>
+
+                        </a-card>
+
+                        <a-card hoverable>
+
+                            <div class="text-center">
+
+                                <p class="text-gray-500">
+
+                                    Growing
+
+                                </p>
+
+                                <h2 class="text-3xl font-bold text-green-600">
+
+                                    {{ statistics.growing }}
+
+                                </h2>
+
+                            </div>
+
+                        </a-card>
+
+                        <a-card hoverable>
+
+                            <div class="text-center">
+
+                                <p class="text-gray-500">
+
+                                    Harvesting
+
+                                </p>
+
+                                <h2 class="text-3xl font-bold text-orange-500">
+
+                                    {{ statistics.harvesting }}
+
+                                </h2>
+
+                            </div>
+
+                        </a-card>
+
+                        <a-card hoverable>
+
+                            <div class="text-center">
+
+                                <p class="text-gray-500">
+
+                                    Completed
+
+                                </p>
+
+                                <h2 class="text-3xl font-bold text-purple-600">
+
+                                    {{ statistics.completed }}
+
+                                </h2>
+
+                            </div>
+
+                        </a-card>
+
+                        <a-card hoverable>
+
+                            <div class="text-center">
+
+                                <p class="text-gray-500">
+
+                                    Expected Yield
+
+                                </p>
+
+                                <h2 class="text-xl font-bold text-indigo-600">
+
+                                    {{ number(statistics.expected_yield) }}
+
+                                </h2>
+
+                                <small>Kg</small>
+
+                            </div>
+
+                        </a-card>
+
+                        <a-card hoverable>
+
+                            <div class="text-center">
+
+                                <p class="text-gray-500">
+
+                                    Actual Yield
+
+                                </p>
+
+                                <h2 class="text-xl font-bold text-red-600">
+
+                                    {{ number(statistics.actual_yield) }}
+
+                                </h2>
+
+                                <small>Kg</small>
+
+                            </div>
+
+                        </a-card>
 
                     </div>
 
-                </a-card>
+                    <!-- ================================================= -->
+                    <!-- PRODUCTION TABLE -->
+                    <!-- ================================================= -->
 
-                <a-card hoverable>
+                    <a-card title="Vegetable Production Records" :bordered="false">
 
-                    <div class="text-center">
+                        <a-table :columns="columns" :data-source="productions" :loading="loading" rowKey="id" bordered
+                            size="middle" :pagination="{
 
-                        <p class="text-gray-500">
+                                current: pagination.current,
 
-                            Planning
+                                pageSize: pagination.pageSize,
 
-                        </p>
+                                total: pagination.total,
 
-                        <h2 class="text-3xl font-bold text-gray-600">
+                                showSizeChanger: true,
 
-                            {{ statistics.planning }}
+                                pageSizeOptions: ['10', '20', '50', '100'],
 
-                        </h2>
+                                showTotal: (total) => `Total ${total} Records`
 
-                    </div>
+                            }" @change="handleTableChange" :scroll="{
 
-                </a-card>
+                        x: 1800,
 
-                <a-card hoverable>
+                        y: 600
 
-                    <div class="text-center">
+                    }">
 
-                        <p class="text-gray-500">
+                            <!-- ====================================== -->
+                            <!-- Batch -->
+                            <!-- ====================================== -->
 
-                            Growing
+                            <template #bodyCell="{ column, record }">
 
-                        </p>
+                                <template v-if="column.dataIndex == 'batch_number'">
 
-                        <h2 class="text-3xl font-bold text-green-600">
+                                    <strong>
 
-                            {{ statistics.growing }}
+                                        {{ record.batch_number }}
 
-                        </h2>
+                                    </strong>
 
-                    </div>
+                                </template>
 
-                </a-card>
+                                <!-- ====================================== -->
+                                <!-- Vegetable -->
+                                <!-- ====================================== -->
 
-                <a-card hoverable>
+                                <template v-else-if="column.dataIndex?.[0] == 'vegetable_type'">
 
-                    <div class="text-center">
+                                    {{ record.vegetable_type?.name }}
 
-                        <p class="text-gray-500">
+                                </template>
 
-                            Harvesting
+                                <!-- ====================================== -->
+                                <!-- Expected Yield -->
+                                <!-- ====================================== -->
 
-                        </p>
+                                <template v-else-if="column.dataIndex == 'expected_yield'">
 
-                        <h2 class="text-3xl font-bold text-orange-500">
+                                    {{ number(record.expected_yield) }} Kg
 
-                            {{ statistics.harvesting }}
+                                </template>
 
-                        </h2>
+                                <!-- ====================================== -->
+                                <!-- Actual Yield -->
+                                <!-- ====================================== -->
 
-                    </div>
+                                <template v-else-if="column.dataIndex == 'actual_yield'">
 
-                </a-card>
+                                    {{ number(record.actual_yield) }} Kg
 
-                <a-card hoverable>
+                                </template>
 
-                    <div class="text-center">
+                                <!-- ====================================== -->
+                                <!-- Status -->
+                                <!-- ====================================== -->
 
-                        <p class="text-gray-500">
+                                <template v-else-if="column.dataIndex == 'status'">
 
-                            Completed
+                                    <a-tag :color="statusColor(record.status)">
 
-                        </p>
+                                        {{ record.status }}
 
-                        <h2 class="text-3xl font-bold text-purple-600">
+                                    </a-tag>
 
-                            {{ statistics.completed }}
+                                </template>
 
-                        </h2>
+                                <!-- ====================================== -->
+                                <!-- Actions -->
+                                <!-- ====================================== -->
 
-                    </div>
+                                <template v-else-if="column.key == 'actions'">
 
-                </a-card>
+                                    <a-space>
 
-                <a-card hoverable>
+                                        <a-tooltip title="View">
 
-                    <div class="text-center">
+                                            <a-button type="link" @click="viewProduction(record)">
 
-                        <p class="text-gray-500">
+                                                <EyeOutlined />
 
-                            Expected Yield
+                                            </a-button>
 
-                        </p>
+                                        </a-tooltip>
 
-                        <h2 class="text-xl font-bold text-indigo-600">
+                                        <a-tooltip title="Edit">
 
-                            {{ number(statistics.expected_yield) }}
+                                            <a-button type="link" @click="editProduction(record)">
 
-                        </h2>
+                                                <EditOutlined />
 
-                        <small>Kg</small>
+                                            </a-button>
 
-                    </div>
+                                        </a-tooltip>
 
-                </a-card>
+                                        <a-popconfirm title="Delete this production?" ok-text="Yes" cancel-text="No"
+                                            @confirm="deleteProduction(record)">
 
-                <a-card hoverable>
+                                            <a-tooltip title="Delete">
 
-                    <div class="text-center">
+                                                <a-button danger type="link">
 
-                        <p class="text-gray-500">
+                                                    <DeleteOutlined />
 
-                            Actual Yield
+                                                </a-button>
 
-                        </p>
+                                            </a-tooltip>
 
-                        <h2 class="text-xl font-bold text-red-600">
+                                        </a-popconfirm>
 
-                            {{ number(statistics.actual_yield) }}
+                                    </a-space>
 
-                        </h2>
+                                </template>
 
-                        <small>Kg</small>
+                            </template>
 
-                    </div>
+                        </a-table>
 
-                </a-card>
+                    </a-card>
 
-            </div>
+                    <!-- ================================================= -->
+                    <!-- EMPTY STATE -->
+                    <!-- ================================================= -->
 
-            <!-- ================================================= -->
-            <!-- PRODUCTION TABLE -->
-            <!-- ================================================= -->
+                    <a-empty v-if="!loading && productions.length === 0" description="No production records found."
+                        class="mt-8" />
 
-            <a-card title="Vegetable Production Records" :bordered="false">
+                </div>
 
-                <a-table :columns="columns" :data-source="productions" :loading="loading" rowKey="id" bordered
-                    size="middle" :pagination="{
 
-                        current: pagination.current,
+            </a-tab-pane>
 
-                        pageSize: pagination.pageSize,
+            <!-- SALES TAB -->
+            <a-tab-pane key="sales" tab="Expenses Record Management">
+                <ExpensesTab />
+            </a-tab-pane>
+        </a-tabs>
 
-                        total: pagination.total,
 
-                        showSizeChanger: true,
+        <!-- ================================================= -->
+        <!-- MODELS -->
+        <!-- ================================================= -->
 
-                        pageSizeOptions: ['10', '20', '50', '100'],
+        <CreateProduction :open="showCreate" @close="showCreate = false" @created="() => {
 
-                        showTotal: (total) => `Total ${total} Records`
+            showCreate = false
 
-                    }" @change="handleTableChange" :scroll="{
+            fetchProductions()
 
-            x: 1800,
+            fetchStatistics()
 
-            y: 600
+        }" />
 
-        }">
+        <EditProduction :open="showEdit" :production="selectedProduction" @close="showEdit = false" @updated="() => {
 
-                    <!-- ====================================== -->
-                    <!-- Batch -->
-                    <!-- ====================================== -->
+            showEdit = false
 
-                    <template #bodyCell="{ column, record }">
+            fetchProductions()
 
-                        <template v-if="column.dataIndex == 'batch_number'">
+            fetchStatistics()
 
-                            <strong>
+        }" />
 
-                                {{ record.batch_number }}
+        <ViewProduction :open="showView" :production="selectedProduction" @close="showView = false" />
 
-                            </strong>
-
-                        </template>
-
-                        <!-- ====================================== -->
-                        <!-- Vegetable -->
-                        <!-- ====================================== -->
-
-                        <template v-else-if="column.dataIndex?.[0] == 'vegetable_type'">
-
-                            {{ record.vegetable_type?.name }}
-
-                        </template>
-
-                        <!-- ====================================== -->
-                        <!-- Expected Yield -->
-                        <!-- ====================================== -->
-
-                        <template v-else-if="column.dataIndex == 'expected_yield'">
-
-                            {{ number(record.expected_yield) }} Kg
-
-                        </template>
-
-                        <!-- ====================================== -->
-                        <!-- Actual Yield -->
-                        <!-- ====================================== -->
-
-                        <template v-else-if="column.dataIndex == 'actual_yield'">
-
-                            {{ number(record.actual_yield) }} Kg
-
-                        </template>
-
-                        <!-- ====================================== -->
-                        <!-- Status -->
-                        <!-- ====================================== -->
-
-                        <template v-else-if="column.dataIndex == 'status'">
-
-                            <a-tag :color="statusColor(record.status)">
-
-                                {{ record.status }}
-
-                            </a-tag>
-
-                        </template>
-
-                        <!-- ====================================== -->
-                        <!-- Actions -->
-                        <!-- ====================================== -->
-
-                        <template v-else-if="column.key == 'actions'">
-
-                            <a-space>
-
-                                <a-tooltip title="View">
-
-                                    <a-button type="link" @click="viewProduction(record)">
-
-                                        <EyeOutlined />
-
-                                    </a-button>
-
-                                </a-tooltip>
-
-                                <a-tooltip title="Edit">
-
-                                    <a-button type="link" @click="editProduction(record)">
-
-                                        <EditOutlined />
-
-                                    </a-button>
-
-                                </a-tooltip>
-
-                                <a-popconfirm title="Delete this production?" ok-text="Yes" cancel-text="No"
-                                    @confirm="deleteProduction(record)">
-
-                                    <a-tooltip title="Delete">
-
-                                        <a-button danger type="link">
-
-                                            <DeleteOutlined />
-
-                                        </a-button>
-
-                                    </a-tooltip>
-
-                                </a-popconfirm>
-
-                            </a-space>
-
-                        </template>
-
-                    </template>
-
-                </a-table>
-
-            </a-card>
-
-            <!-- ================================================= -->
-            <!-- CREATE PRODUCTION -->
-            <!-- ================================================= -->
-
-            <CreateProduction :open="showCreate" @close="showCreate = false" @created="() => {
-
-                showCreate = false
-
-                fetchProductions()
-
-                fetchStatistics()
-
-            }" />
-
-            <EditProduction :open="showEdit" :production="selectedProduction" @close="showEdit = false" @updated="() => {
-
-                showEdit = false
-
-                fetchProductions()
-
-                fetchStatistics()
-
-            }" />
-
-            <ViewProduction :open="showView" :production="selectedProduction" @close="showView = false" />
-
-
-            <!-- ================================================= -->
-            <!-- EMPTY STATE -->
-            <!-- ================================================= -->
-
-            <a-empty v-if="!loading && productions.length === 0" description="No production records found."
-                class="mt-8" />
-
-        </div>
 
     </AuthenticatedLayout>
 

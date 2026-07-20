@@ -161,7 +161,7 @@ const can = (permission) => {
                       </Card>
 
                        <Card 
-                        title="Vagetable Management" 
+                        title="Crops & Vagetable Records" 
                         v-if="can('staff can manage vegetable records')"
                         subTitle="Create, edit & delete vegetable records" 
                         routeName="vegetables.index">
@@ -171,7 +171,7 @@ const can = (permission) => {
                       </Card>
 
                        <Card 
-                        title="Vagetable Production Management" 
+                        title="Crops Production & Expenses" 
                         v-if="can('staff can manage vegetable production records')"
                         subTitle="Create, edit & delete vegetable production records" 
                         routeName="vegetables-production.index">
@@ -179,6 +179,16 @@ const can = (permission) => {
                           <PieChartOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card>
+
+                       <!-- <Card 
+                        title="Vagetable Expenses Management" 
+                        v-if="can('staff can manage vegetable expenses records')"
+                        subTitle="Create, edit & delete vegetable expenses records" 
+                        routeName="vegetables-expenses.index">
+                        <template #icon>
+                          <SwapOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card> -->
 
                       <Card 
                         title="Harvest & Sales Management" 
@@ -200,15 +210,7 @@ const can = (permission) => {
                         </template>
                       </Card> -->
 
-                      <Card 
-                        title="Vagetable Expenses Management" 
-                        v-if="can('staff can manage vegetable expenses records')"
-                        subTitle="Create, edit & delete vegetable expenses records" 
-                        routeName="vegetables-expenses.index">
-                        <template #icon>
-                          <SwapOutlined style="font-size: 24px; color: #14b8a6;" />
-                        </template>
-                      </Card>
+                     
 
 
                       <Card 
