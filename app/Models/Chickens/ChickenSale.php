@@ -11,9 +11,12 @@ class ChickenSale extends Model
     protected $fillable=[
 
         'chicken_batch_id',
+        'sale_type',
         'sale_date',
         'quantity',
+        'total_weight',
         'unit_price',
+        'price_per_kg',
         'total_amount',
         'customer_name',
         'customer_phone',
@@ -23,10 +26,17 @@ class ChickenSale extends Model
 
     protected $casts = [
 
-        'sale_date' => 'date',
-        'total_amount' => 'decimal:2'
+    'sale_date' => 'date',
 
-    ];
+    'total_weight' => 'decimal:2',
+
+    'unit_price' => 'decimal:2',
+
+    'price_per_kg' => 'decimal:2',
+
+    'total_amount' => 'decimal:2'
+
+];
 
     protected $appends = [
 

@@ -28,6 +28,635 @@ class ChickenSalesController extends Controller
     }
 
     //store sales
+//   public function store(Request $request)
+//     {
+//         $request->validate([
+
+//             'chicken_batch_id' => 'required|exists:chicken_batches,id',
+//             'sale_date' => 'required|date',
+//             'quantity' => 'required|integer|min:1',
+//             'unit_price' => 'required|numeric|min:0',
+//             'payment_method' => 'required|in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
+//             'initial_payment' => 'nullable|numeric|min:0',
+//             'customer_name' => 'nullable|string|max:255',
+//             'customer_phone' => 'nullable|string|max:50',
+//             'notes' => 'nullable|string',
+            
+
+//         ]);
+
+//         DB::transaction(function () use ($request) {
+
+//             $batch = ChickenBatch::findOrFail(
+//                 $request->chicken_batch_id
+//             );
+
+//             if ($request->quantity > $batch->birds_remaining) {
+
+//                 abort(
+//                     422,
+//                     'Quantity exceeds birds remaining.'
+//                 );
+
+//             }
+
+//             $totalAmount =
+//                 $request->quantity *
+//                 $request->unit_price;
+
+
+//             $sale = ChickenSale::create([
+
+//                 'chicken_batch_id' => $batch->id,
+
+//                 'sale_date' => $request->sale_date,
+
+//                 'quantity' => $request->quantity,
+
+//                 'unit_price' => $request->unit_price,
+
+//                 'total_amount' => $totalAmount,
+
+//                 'customer_name' => $request->customer_name,
+
+//                 'customer_phone' => $request->customer_phone,
+
+//                 'notes' => $request->notes
+
+//             ]);
+
+
+//             /*
+//             |--------------------------------------------------------------------------
+//             | Create Initial Payment
+//             |--------------------------------------------------------------------------
+//             */
+
+//             $paymentAmount = 0;
+
+
+//             if ($request->payment_method === 'Credit') {
+
+//                 // Credit payment is optional
+//                 $paymentAmount =
+//                     $request->initial_payment ?? 0;
+
+//             } else {
+
+//                 // Cash, Card, Cheque, etc.
+//                 // are considered fully paid
+//                 $paymentAmount =
+//                     $totalAmount;
+
+//             }
+
+
+//             if ($paymentAmount > 0) {
+
+//                 ChickenSalePayment::create([
+
+//                     'chicken_sale_id' => $sale->id,
+
+//                     'payment_date' => $request->sale_date,
+
+//                     'amount' => $paymentAmount,
+
+//                     'payment_method' =>
+//                         $request->payment_method,
+
+//                     'notes' => 'Initial payment'
+
+//                 ]);
+
+//             }
+
+
+//             // Update batch
+//             $batch->birds_sold += $request->quantity;
+
+//             $batch->birds_remaining -= $request->quantity;
+
+
+//             if ($batch->birds_remaining == 0) {
+
+//                 $batch->status = 'Completed';
+
+//             } else {
+
+//                 $batch->status = 'Selling';
+
+//             }
+
+
+//             $batch->save();
+
+//         });
+
+//         // DB::transaction(function () use ($request) {
+//         //     $batch = ChickenBatch::findOrFail($request->chicken_batch_id);
+
+//         //     //Validate remaining birds
+//         //     if ($request->quantity > $batch->birds_remaining) {
+//         //         abort(422, 'Quantity exceeds birds remaining.');
+
+//         //     }
+
+//         //     //create sale
+//         //     $sale = ChickenSale::create([
+
+//         //         'chicken_batch_id' => $batch->id,
+//         //         'sale_date' => $request->sale_date,
+//         //         'quantity' => $request->quantity,
+//         //         'unit_price' => $request->unit_price,
+//         //         'total_amount' => $request->quantity * $request->unit_price,
+//         //         'customer_name' => $request->customer_name,
+//         //         'customer_phone' => $request->customer_phone,
+//         //         'notes' => $request->notes
+
+//         //     ]);
+
+
+//         //     //update batch
+//         //     $batch->birds_sold += $request->quantity;
+//         //     $batch->birds_remaining -= $request->quantity;
+
+
+//         //     //update status
+//         //     if ($batch->birds_remaining == 0) {
+//         //         $batch->status = 'Completed';
+
+//         //     } else {
+//         //         $batch->status = 'Selling';
+
+//         //     }
+
+//         //     $batch->save();
+
+//         // });
+
+//         return response()->json([
+
+//             'message' => 'Sale recorded successfully.'
+
+//         ]);
+
+//     }
+
+
+public function store(Request $request)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Request
+    |--------------------------------------------------------------------------
+    */
+
+    $request->validate([
+
+        'chicken_batch_id' => [
+            'required',
+            'exists:chicken_batches,id'
+        ],
+
+        'sale_date' => [
+            'required',
+            'date'
+        ],
+
+        'sale_type' => [
+            'required',
+            'in:Per Bird,Per Kg'
+        ],
+
+        'quantity' => [
+            'required',
+            'integer',
+            'min:1'
+        ],
+
+        'unit_price' => [
+            'nullable',
+            'numeric',
+            'min:0'
+        ],
+
+        'total_weight' => [
+            'nullable',
+            'numeric',
+            'min:0.01'
+        ],
+
+        'price_per_kg' => [
+            'nullable',
+            'numeric',
+            'min:0'
+        ],
+
+        'payment_method' => [
+            'required',
+            'in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer'
+        ],
+
+        'initial_payment' => [
+            'nullable',
+            'numeric',
+            'min:0'
+        ],
+
+        'customer_name' => [
+            'nullable',
+            'string',
+            'max:255'
+        ],
+
+        'customer_phone' => [
+            'nullable',
+            'string',
+            'max:50'
+        ],
+
+        'notes' => [
+            'nullable',
+            'string'
+        ]
+
+    ]);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Sale Type-Specific Fields
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->sale_type === 'Per Bird') {
+
+        if (
+            !$request->unit_price ||
+            $request->unit_price <= 0
+        ) {
+
+            return response()->json([
+
+                'message' =>
+                    'Price per bird is required.'
+
+            ], 422);
+
+        }
+
+    }
+
+
+    if ($request->sale_type === 'Per Kg') {
+
+        if (
+            !$request->total_weight ||
+            $request->total_weight <= 0
+        ) {
+
+            return response()->json([
+
+                'message' =>
+                    'Total weight is required.'
+
+            ], 422);
+
+        }
+
+
+        if (
+            !$request->price_per_kg ||
+            $request->price_per_kg <= 0
+        ) {
+
+            return response()->json([
+
+                'message' =>
+                    'Price per Kg is required.'
+
+            ], 422);
+
+        }
+
+    }
+    
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Process Sale
+    |--------------------------------------------------------------------------
+    */
+
+    DB::transaction(function () use ($request) {
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Get Batch
+        |--------------------------------------------------------------------------
+        */
+
+        $batch = ChickenBatch::findOrFail(
+
+            $request->chicken_batch_id
+
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Available Birds
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+
+            $request->quantity >
+
+            $batch->birds_remaining
+
+        ) {
+
+            abort(
+
+                422,
+
+                'Quantity exceeds birds remaining.'
+
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate Total Amount
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+
+            $request->sale_type === 'Per Kg'
+
+        ) {
+
+
+            $totalAmount =
+
+                $request->total_weight *
+
+                $request->price_per_kg;
+
+        $unitPrice =
+        $request->price_per_kg;
+
+
+        } else {
+
+
+            $totalAmount =
+
+                $request->quantity *
+
+                $request->unit_price;
+
+            $unitPrice =
+                $request->unit_price;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Sale
+        |--------------------------------------------------------------------------
+        */
+
+        $sale = ChickenSale::create([
+
+            'chicken_batch_id' =>
+
+                $batch->id,
+
+            'sale_date' =>
+
+                $request->sale_date,
+
+            'sale_type' =>
+
+                $request->sale_type,
+
+            'quantity' =>
+
+                $request->quantity,
+
+            'total_weight' =>
+
+                $request->sale_type === 'Per Kg'
+
+                    ? $request->total_weight
+
+                    : null,
+
+            'price_per_kg' =>
+
+                $request->sale_type === 'Per Kg'
+
+                    ? $request->price_per_kg
+
+                    : null,
+
+                    'unit_price' => $unitPrice,
+
+            'total_amount' =>
+
+                $totalAmount,
+
+            'customer_name' =>
+
+                $request->customer_name,
+
+            'customer_phone' =>
+
+                $request->customer_phone,
+
+            'notes' =>
+
+                $request->notes
+
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Determine Initial Payment
+        |--------------------------------------------------------------------------
+        */
+
+        $paymentAmount = 0;
+
+
+        if (
+
+            $request->payment_method === 'Credit'
+
+        ) {
+
+
+            // Credit sales can have an optional
+            // initial payment
+
+            $paymentAmount =
+
+                $request->initial_payment ?? 0;
+
+
+        } else {
+
+
+            // Other payment methods are treated
+            // as fully paid
+
+            $paymentAmount =
+
+                $totalAmount;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Overpayment
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+
+            $paymentAmount >
+
+            $totalAmount
+
+        ) {
+
+            abort(
+
+                422,
+
+                'Initial payment cannot exceed total sale amount.'
+
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Initial Payment
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+
+            $paymentAmount > 0
+
+        ) {
+
+
+            ChickenSalePayment::create([
+
+                'chicken_sale_id' =>
+
+                    $sale->id,
+
+                'payment_date' =>
+
+                    $request->sale_date,
+
+                'amount' =>
+
+                    $paymentAmount,
+
+                'payment_method' =>
+
+                    $request->payment_method,
+
+                'notes' =>
+
+                    'Initial payment'
+
+            ]);
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update Batch Inventory
+        |--------------------------------------------------------------------------
+        */
+
+        $batch->birds_sold +=
+
+            $request->quantity;
+
+
+        $batch->birds_remaining -=
+
+            $request->quantity;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update Batch Status
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+
+            $batch->birds_remaining <= 0
+
+        ) {
+
+            $batch->birds_remaining = 0;
+
+            $batch->status =
+
+                'Completed';
+
+
+        } else {
+
+
+            $batch->status =
+
+                'Selling';
+
+        }
+
+
+        $batch->save();
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Return Response
+    |--------------------------------------------------------------------------
+    */
+
+    return response()->json([
+
+        'message' =>
+
+            'Sale recorded successfully.'
+
+    ]);
+
+}
+
     // public function store(Request $request)
     // {
     //     $request->validate([
@@ -36,6 +665,8 @@ class ChickenSalesController extends Controller
     //         'sale_date' => 'required|date',
     //         'quantity' => 'required|integer|min:1',
     //         'unit_price' => 'required|numeric|min:0',
+    //         'payment_method' => 'required|in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
+    //         'initial_payment' => 'nullable|numeric|min:0',
     //         'customer_name' => 'nullable|string|max:255',
     //         'customer_phone' => 'nullable|string|max:50',
     //         'notes' => 'nullable|string'
@@ -43,46 +674,153 @@ class ChickenSalesController extends Controller
     //     ]);
 
     //     DB::transaction(function () use ($request) {
-    //         $batch = ChickenBatch::findOrFail($request->chicken_batch_id);
 
-    //         //Validate remaining birds
+    //         $batch = ChickenBatch::findOrFail(
+    //             $request->chicken_batch_id
+    //         );
+
     //         if ($request->quantity > $batch->birds_remaining) {
-    //             abort(422, 'Quantity exceeds birds remaining.');
+
+    //             abort(
+    //                 422,
+    //                 'Quantity exceeds birds remaining.'
+    //             );
 
     //         }
 
-    //         //create sale
+    //         $totalAmount =
+    //             $request->quantity *
+    //             $request->unit_price;
+
+
     //         $sale = ChickenSale::create([
 
     //             'chicken_batch_id' => $batch->id,
+
     //             'sale_date' => $request->sale_date,
+
     //             'quantity' => $request->quantity,
+
     //             'unit_price' => $request->unit_price,
-    //             'total_amount' => $request->quantity * $request->unit_price,
+
+    //             'total_amount' => $totalAmount,
+
     //             'customer_name' => $request->customer_name,
+
     //             'customer_phone' => $request->customer_phone,
+
     //             'notes' => $request->notes
 
     //         ]);
 
 
-    //         //update batch
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Create Initial Payment
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         $paymentAmount = 0;
+
+
+    //         if ($request->payment_method === 'Credit') {
+
+    //             // Credit payment is optional
+    //             $paymentAmount =
+    //                 $request->initial_payment ?? 0;
+
+    //         } else {
+
+    //             // Cash, Card, Cheque, etc.
+    //             // are considered fully paid
+    //             $paymentAmount =
+    //                 $totalAmount;
+
+    //         }
+
+
+    //         if ($paymentAmount > 0) {
+
+    //             ChickenSalePayment::create([
+
+    //                 'chicken_sale_id' => $sale->id,
+
+    //                 'payment_date' => $request->sale_date,
+
+    //                 'amount' => $paymentAmount,
+
+    //                 'payment_method' =>
+    //                     $request->payment_method,
+
+    //                 'notes' => 'Initial payment'
+
+    //             ]);
+
+    //         }
+
+
+    //         // Update batch
     //         $batch->birds_sold += $request->quantity;
+
     //         $batch->birds_remaining -= $request->quantity;
 
 
-    //         //update status
     //         if ($batch->birds_remaining == 0) {
+
     //             $batch->status = 'Completed';
 
     //         } else {
+
     //             $batch->status = 'Selling';
 
     //         }
 
+
     //         $batch->save();
 
     //     });
+
+    //     // DB::transaction(function () use ($request) {
+    //     //     $batch = ChickenBatch::findOrFail($request->chicken_batch_id);
+
+    //     //     //Validate remaining birds
+    //     //     if ($request->quantity > $batch->birds_remaining) {
+    //     //         abort(422, 'Quantity exceeds birds remaining.');
+
+    //     //     }
+
+    //     //     //create sale
+    //     //     $sale = ChickenSale::create([
+
+    //     //         'chicken_batch_id' => $batch->id,
+    //     //         'sale_date' => $request->sale_date,
+    //     //         'quantity' => $request->quantity,
+    //     //         'unit_price' => $request->unit_price,
+    //     //         'total_amount' => $request->quantity * $request->unit_price,
+    //     //         'customer_name' => $request->customer_name,
+    //     //         'customer_phone' => $request->customer_phone,
+    //     //         'notes' => $request->notes
+
+    //     //     ]);
+
+
+    //     //     //update batch
+    //     //     $batch->birds_sold += $request->quantity;
+    //     //     $batch->birds_remaining -= $request->quantity;
+
+
+    //     //     //update status
+    //     //     if ($batch->birds_remaining == 0) {
+    //     //         $batch->status = 'Completed';
+
+    //     //     } else {
+    //     //         $batch->status = 'Selling';
+
+    //     //     }
+
+    //     //     $batch->save();
+
+    //     // });
 
     //     return response()->json([
 
@@ -92,178 +830,8 @@ class ChickenSalesController extends Controller
 
     // }
 
-      public function store(Request $request)
-    {
-        $request->validate([
 
-            'chicken_batch_id' => 'required|exists:chicken_batches,id',
-            'sale_date' => 'required|date',
-            'quantity' => 'required|integer|min:1',
-            'unit_price' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
-            'initial_payment' => 'nullable|numeric|min:0',
-            'customer_name' => 'nullable|string|max:255',
-            'customer_phone' => 'nullable|string|max:50',
-            'notes' => 'nullable|string'
 
-        ]);
-
-        DB::transaction(function () use ($request) {
-
-            $batch = ChickenBatch::findOrFail(
-                $request->chicken_batch_id
-            );
-
-            if ($request->quantity > $batch->birds_remaining) {
-
-                abort(
-                    422,
-                    'Quantity exceeds birds remaining.'
-                );
-
-            }
-
-            $totalAmount =
-                $request->quantity *
-                $request->unit_price;
-
-
-            $sale = ChickenSale::create([
-
-                'chicken_batch_id' => $batch->id,
-
-                'sale_date' => $request->sale_date,
-
-                'quantity' => $request->quantity,
-
-                'unit_price' => $request->unit_price,
-
-                'total_amount' => $totalAmount,
-
-                'customer_name' => $request->customer_name,
-
-                'customer_phone' => $request->customer_phone,
-
-                'notes' => $request->notes
-
-            ]);
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Create Initial Payment
-            |--------------------------------------------------------------------------
-            */
-
-            $paymentAmount = 0;
-
-
-            if ($request->payment_method === 'Credit') {
-
-                // Credit payment is optional
-                $paymentAmount =
-                    $request->initial_payment ?? 0;
-
-            } else {
-
-                // Cash, Card, Cheque, etc.
-                // are considered fully paid
-                $paymentAmount =
-                    $totalAmount;
-
-            }
-
-
-            if ($paymentAmount > 0) {
-
-                ChickenSalePayment::create([
-
-                    'chicken_sale_id' => $sale->id,
-
-                    'payment_date' => $request->sale_date,
-
-                    'amount' => $paymentAmount,
-
-                    'payment_method' =>
-                        $request->payment_method,
-
-                    'notes' => 'Initial payment'
-
-                ]);
-
-            }
-
-
-            // Update batch
-            $batch->birds_sold += $request->quantity;
-
-            $batch->birds_remaining -= $request->quantity;
-
-
-            if ($batch->birds_remaining == 0) {
-
-                $batch->status = 'Completed';
-
-            } else {
-
-                $batch->status = 'Selling';
-
-            }
-
-
-            $batch->save();
-
-        });
-
-        // DB::transaction(function () use ($request) {
-        //     $batch = ChickenBatch::findOrFail($request->chicken_batch_id);
-
-        //     //Validate remaining birds
-        //     if ($request->quantity > $batch->birds_remaining) {
-        //         abort(422, 'Quantity exceeds birds remaining.');
-
-        //     }
-
-        //     //create sale
-        //     $sale = ChickenSale::create([
-
-        //         'chicken_batch_id' => $batch->id,
-        //         'sale_date' => $request->sale_date,
-        //         'quantity' => $request->quantity,
-        //         'unit_price' => $request->unit_price,
-        //         'total_amount' => $request->quantity * $request->unit_price,
-        //         'customer_name' => $request->customer_name,
-        //         'customer_phone' => $request->customer_phone,
-        //         'notes' => $request->notes
-
-        //     ]);
-
-
-        //     //update batch
-        //     $batch->birds_sold += $request->quantity;
-        //     $batch->birds_remaining -= $request->quantity;
-
-
-        //     //update status
-        //     if ($batch->birds_remaining == 0) {
-        //         $batch->status = 'Completed';
-
-        //     } else {
-        //         $batch->status = 'Selling';
-
-        //     }
-
-        //     $batch->save();
-
-        // });
-
-        return response()->json([
-
-            'message' => 'Sale recorded successfully.'
-
-        ]);
-
-    }
     //update sales
     public function update(Request $request, ChickenSale $sale)
     {

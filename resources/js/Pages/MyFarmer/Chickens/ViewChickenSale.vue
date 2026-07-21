@@ -272,7 +272,7 @@ const printReceipt = () => {
 
         <a-card title="Customer Information" class="mb-6">
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                 <div>
                     <label>Customer Name</label>
                     <a-input :value="sale?.customer_name" readonly
@@ -285,6 +285,12 @@ const printReceipt = () => {
                         style="border: 1px solid #e9e9e9; border-radius: 8px;" />
                 </div>
 
+                  <div>
+                    <label>Sale Type</label>
+                    <a-input :value="sale?.sale_type" readonly
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;" />
+                </div>
+
                 <!-- <div>
                     <label>Payment Method</label>
                     <a-tag :color="paymentColor">
@@ -293,12 +299,9 @@ const printReceipt = () => {
                 </div> -->
 
                 <div>
-                    <label>Payment Status</label>
-
+                    <label>Payment Status : </label>
                     <a-tag :color="paymentStatusColor">
-
                         {{ paymentStatus }}
-
                     </a-tag>
                 </div>
 

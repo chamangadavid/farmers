@@ -25,10 +25,13 @@ const loading = ref(false)
 const form = ref({
 
     chicken_batch_id: null,
+    sale_type: 'Per Bird',
     sale_date: '',
     quantity: 1,
+    total_weight: null,
     unit_price: 0,
 
+    price_per_kg: 0,
     payment_method: 'Cash',
     initial_payment: null,
 
@@ -43,21 +46,70 @@ const isCredit = computed(() => {
 
 })
 
-watch(() => props.batch, (batch) => {
-    if (batch) {
-        form.value.chicken_batch_id = batch.id
+// watch(() => props.batch, (batch) => {
+
+//     if (batch) {
+//         form.value.chicken_batch_id = batch.id
+
+//     }
+
+// })
+
+watch(
+    () => props.batch,
+
+    (batch) => {
+
+        if (batch?.id) {
+
+            form.value.chicken_batch_id = batch.id
+
+        }
+
+    },
+
+    {
+        immediate: true
+    }
+
+)
+
+//Calculate total automatically
+// const totalAmount = computed(() => {
+//     return form.value.quantity * form.value.unit_price
+
+// })
+
+const totalAmount = computed(() => {
+
+    if (form.value.sale_type === 'Per Kg') {
+
+        return (
+
+            Number(form.value.total_weight || 0) *
+
+            Number(form.value.price_per_kg || 0)
+
+        )
 
     }
 
+
+    return (
+
+        Number(form.value.quantity || 0) *
+
+        Number(form.value.unit_price || 0)
+
+    )
+
 })
 
-//Calculate total automatically
-const totalAmount = computed(() => {
-    return form.value.quantity *
-        form.value.unit_price
+
+const isPerKg = computed(() => {
+    return form.value.sale_type === 'Per Kg'
 
 })
-
 
 //close modal
 const closeModal = () => {
@@ -71,60 +123,221 @@ const resetForm = () => {
 
     form.value = {
 
-        chicken_batch_id: null,
+        chicken_batch_id: props.batch?.id ?? null,
+
+        sale_type: 'Per Bird',
+
         sale_date: '',
+
         quantity: 1,
+
+        total_weight: null,
+
         unit_price: 0,
+
+        price_per_kg: 0,
+
         payment_method: 'Cash',
+
         initial_payment: null,
+
         customer_name: '',
+
         customer_phone: '',
+
         notes: ''
 
     }
 
-
 }
+
+// const resetForm = () => {
+
+//     form.value = {
+
+//         chicken_batch_id: null,
+//         sale_date: '',
+//         quantity: 1,
+//         unit_price: 0,
+//         payment_method: 'Cash',
+//         initial_payment: null,
+//         customer_name: '',
+//         customer_phone: '',
+//         notes: ''
+
+//     }
+
+
+// }
 
 
 //save sales
 const submit = async () => {
+
     loading.value = true
+
     try {
 
         await axios.post('/chicken-sales', {
 
-            chicken_batch_id: form.value.chicken_batch_id,
+            // Always use the selected batch ID
+            chicken_batch_id: props.batch?.id,
+
             sale_date: form.value.sale_date,
+
+            sale_type: form.value.sale_type,
+
             quantity: form.value.quantity,
-            unit_price: form.value.unit_price,
+
+            total_weight:
+
+                form.value.sale_type === 'Per Kg'
+
+                    ? form.value.total_weight
+
+                    : null,
+
+            price_per_kg:
+
+                form.value.sale_type === 'Per Kg'
+
+                    ? form.value.price_per_kg
+
+                    : null,
+
+            unit_price:
+
+                form.value.sale_type === 'Per Bird'
+
+                    ? form.value.unit_price
+
+                    : null,
 
             payment_method: form.value.payment_method,
+
             initial_payment: form.value.initial_payment,
 
             customer_name: form.value.customer_name,
+
             customer_phone: form.value.customer_phone,
+
             notes: form.value.notes
 
         })
 
-        message.success('Chicken sale recorded successfully.')
+        message.success(
+            'Chicken sale recorded successfully.'
+        )
+
         emit('created')
+
         closeModal()
+
         resetForm()
 
     }
 
     catch (error) {
-        console.log(error)
-        message.error(error.response?.data?.message ?? 'Unable to save sale.')
+
+        console.log(
+            error.response?.data
+        )
+
+        message.error(
+
+            error.response?.data?.message ??
+
+            'Unable to save sale.'
+
+        )
 
     }
+
     finally {
+
         loading.value = false
 
     }
+
 }
+
+// const submit = async () => {
+//     loading.value = true
+//     try {
+
+//         // await axios.post('/chicken-sales', {
+
+//         //     chicken_batch_id: form.value.chicken_batch_id,
+//         //     sale_type: form.value.sale_type,
+//         //     sale_date: form.value.sale_date,
+//         //     quantity: form.value.quantity,
+//         //     total_weight: form.value.sale_type === 'Per Kg' ? form.value.total_weight : null,
+//         //     unit_price: form.value.sale_type === 'Per Bird' ? form.value.unit_price : null,
+//         //     price_per_kg: form.value.sale_type === 'Per Kg' ? form.value.price_per_kg : null,
+
+//         //     total_amount: totalAmount.value,
+            
+
+//         //     payment_method: form.value.payment_method,
+//         //     initial_payment: form.value.initial_payment,
+
+//         //     customer_name: form.value.customer_name,
+//         //     customer_phone: form.value.customer_phone,
+//         //     notes: form.value.notes
+
+//         // })
+
+//         await axios.post('/chicken-sales', {
+
+//     chicken_batch_id: form.value.chicken_batch_id,
+
+//     sale_date: form.value.sale_date,
+
+//     sale_type: form.value.sale_type,
+
+//     quantity: form.value.quantity,
+
+//     total_weight: form.value.sale_type === 'Per Kg'
+//         ? form.value.total_weight
+//         : null,
+
+//     price_per_kg: form.value.sale_type === 'Per Kg'
+//         ? form.value.price_per_kg
+//         : null,
+
+//     unit_price: form.value.sale_type === 'Per Bird'
+//         ? form.value.unit_price
+//         : null,
+
+//     payment_method: form.value.payment_method,
+
+//     initial_payment: form.value.initial_payment,
+
+//     customer_name: form.value.customer_name,
+
+//     customer_phone: form.value.customer_phone,
+
+//     notes: form.value.notes
+
+// })
+
+//         message.success('Chicken sale recorded successfully.')
+//         emit('created')
+//         closeModal()
+//         resetForm()
+
+//     }
+
+//     catch (error) {
+//         console.log(error)
+//         message.error(error.response?.data?.message ?? 'Unable to save sale.')
+
+//     }
+//     finally {
+//         loading.value = false
+
+//     }
+// }
 
 
 </script>
@@ -171,7 +384,7 @@ const submit = async () => {
                         style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
-                    <div>
+                    <!-- <div>
                         <label>Quantity Sold</label>
                         <a-input-number v-model:value="form.quantity" :min="1" :max="batch?.birds_remaining"
                             class="w-full" />
@@ -186,8 +399,111 @@ const submit = async () => {
                         <label>Total Amount</label>
                         <a-input :value="Number(totalAmount).toLocaleString()" readonly 
                         style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
-                    </div>
+                    </div> -->
 
+                    <!-- Sale Type -->
+
+<div>
+
+    <label>Sale Type</label>
+
+    <a-select
+        v-model:value="form.sale_type"
+        class="w-full">
+
+        <a-select-option value="Per Bird">
+
+            Per Bird
+
+        </a-select-option>
+
+        <a-select-option value="Per Kg">
+
+            Per Kg
+
+        </a-select-option>
+
+    </a-select>
+
+</div>
+
+
+<!-- Number of Chickens -->
+
+<div>
+
+    <label>Number of Chickens Sold</label>
+
+    <a-input-number
+        v-model:value="form.quantity"
+        :min="1"
+        :max="batch?.birds_remaining"
+        class="w-full" />
+
+</div>
+
+
+<!-- Per Bird -->
+
+<div v-if="!isPerKg">
+
+    <label>Price Per Bird</label>
+
+    <a-input-number
+        v-model:value="form.unit_price"
+        :min="0"
+        class="w-full" />
+
+</div>
+
+
+<!-- Per Kg -->
+
+<div v-if="isPerKg">
+
+    <label>Total Weight (Kg)</label>
+
+    <a-input-number
+        v-model:value="form.total_weight"
+        :min="0.01"
+        :precision="2"
+        class="w-full"
+        placeholder="e.g. 25.50" />
+
+</div>
+
+
+<div v-if="isPerKg">
+
+    <label>Price Per Kg</label>
+
+    <a-input-number
+        v-model:value="form.price_per_kg"
+        :min="0"
+        :precision="2"
+        class="w-full" />
+
+</div>
+
+
+<!-- Total -->
+
+<div>
+
+    <label>Total Amount</label>
+
+    <a-input
+        :value="`K ${Number(totalAmount).toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        )}`"
+        readonly
+        style="border: 1px solid #e9e9e9; border-radius: 8px;" />
+
+</div>
                     <div>
                         <label>Payment Method</label>
 

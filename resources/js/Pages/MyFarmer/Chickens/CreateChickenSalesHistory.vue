@@ -640,6 +640,17 @@ const columns = [
     },
 
     {
+        title: 'Sale Type',
+
+        dataIndex: 'sale_type',
+
+        customRender: ({ record }) =>
+
+            record.sale_type || '-'
+
+    },
+
+       {
         title: 'Customer',
 
         dataIndex: 'customer_name',
@@ -649,6 +660,8 @@ const columns = [
             record.customer_name || '-'
 
     },
+
+    
 
     {
         title: 'Phone',
@@ -668,8 +681,24 @@ const columns = [
 
     },
 
+     {
+        title: 'Total Weight',
+        dataIndex: 'total_weight'
+
+    },
+
+     {
+        title: 'Price per Kg',
+        dataIndex: 'price_per_kg'
+
+    },
+
+    
+
+    
+
     {
-        title: 'Price',
+        title: 'Unit Price',
 
         dataIndex: 'unit_price',
 
@@ -1206,6 +1235,8 @@ const downloadFilteredSales = () => {
 
             sale.customer_name || '-',
 
+            sale.sale_type || '-',
+
             sale.customer_phone || '-',
 
             sale.quantity,
@@ -1539,7 +1570,7 @@ const downloadFilteredSales = () => {
 
                         </a-select-option>
 
-                         <a-select-option value="Credit">
+                        <a-select-option value="Credit">
 
                             Credit
 
@@ -1577,10 +1608,8 @@ const downloadFilteredSales = () => {
                         Clear Filters
                     </a-button>
 
-                      <!-- Download -->
-                    <a-button
-                        type="primary"
-                        @click="downloadFilteredSales">
+                    <!-- Download -->
+                    <a-button type="primary" @click="downloadFilteredSales">
 
                         <DownloadOutlined />
 
@@ -1621,15 +1650,15 @@ const downloadFilteredSales = () => {
                 y: 400
             }" :pagination="{
 
-        pageSize: 8,
+                pageSize: 8,
 
-        showSizeChanger: true,
+                showSizeChanger: true,
 
-        showTotal: (total) =>
+                showTotal: (total) =>
 
-            `Showing ${total} filtered sales`
+                    `Showing ${total} filtered sales`
 
-    }" />
+            }" />
 
 
         </a-card>
@@ -1716,23 +1745,9 @@ const downloadFilteredSales = () => {
 
         </div>
 
-        <!-- ========================= -->
-        <!-- View Sale Modal -->
-        <!-- (Part 3) -->
-        <!-- ========================= -->
-
-
         <ViewChickenSale v-model:open="showViewModal" :sale="selectedSale" :batchInfo="batchInfo" />
-        <!-- ========================= -->
-        <!-- Edit Sale Modal -->
-        <!-- (Part 3) -->
-        <!-- ========================= -->
-
 
         <EditChickenSale v-model:open="showEditModal" :sale="selectedSale" @updated="fetchSales" />
-
-
-
 
     </a-modal>
 
