@@ -1,3 +1,4 @@
+{{-- resources\views\receipts\chicken-sale.blade.php --}}
 <!DOCTYPE html>
 <html>
 
@@ -20,6 +21,21 @@
 
         }
 
+        .payment-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding: 8px 0;
+
+    border-bottom: 1px solid #eee;
+
+    font-size: 12px;
+
+}
 
         .receipt {
 
@@ -259,8 +275,62 @@
     </div>
 
 
+<div class="row">
 
-    <div class="row">
+    <span>
+        Payment Status
+    </span>
+
+    <strong>
+
+        @if($sale->balance <= 0)
+
+            PAID
+
+        @elseif($sale->amount_paid > 0)
+
+            PARTIALLY PAID
+
+        @else
+
+            CREDIT
+
+        @endif
+
+    </strong>
+
+</div>
+
+<div class="row">
+
+    <span>
+        Total Paid
+    </span>
+
+    <strong>
+
+        K {{ number_format($sale->amount_paid, 2) }}
+
+    </strong>
+
+</div>
+
+
+<div class="row">
+
+    <span>
+        Balance
+    </span>
+
+    <strong>
+
+        K {{ number_format($sale->balance, 2) }}
+
+    </strong>
+
+</div>
+
+    {{-- <div class="row">
 
         <span>
             Payment
@@ -272,8 +342,49 @@
 
         </strong>
 
-    </div>
+    </div> --}}
 
+
+    @if($sale->payments->count())
+
+    <hr>
+
+    <h4>
+        Payment History
+    </h4>
+
+    @foreach($sale->payments as $payment)
+
+        <div class="payment-row">
+
+            <div>
+
+                {{ \Carbon\Carbon::parse(
+                    $payment->payment_date
+                )->format('d M Y') }}
+
+            </div>
+
+            <div>
+
+                {{ $payment->payment_method }}
+
+            </div>
+
+            <strong>
+
+                K {{ number_format(
+                    $payment->amount,
+                    2
+                ) }}
+
+            </strong>
+
+        </div>
+
+    @endforeach
+
+@endif
 
 
     @if($sale->notes)

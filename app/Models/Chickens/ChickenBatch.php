@@ -35,5 +35,13 @@ class ChickenBatch extends Model
         return $this->hasMany(ChickenSale::class);
     }
 
+//     public function sales()
+// {
+//     return $this->hasMany(
+//         ChickenSale::class,
+//         'chicken_batch_id'
+//     )->with('payments');
+// }
+
 
 }

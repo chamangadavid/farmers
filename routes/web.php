@@ -27,6 +27,7 @@ use App\Http\Controllers\Sales\SalesController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Staff\StaffsController;
 use App\Http\Controllers\UserSearchController;
+use App\Http\Controllers\GeneralExpenseController;
 use App\Models\Accident\AccidentReport;
 use App\Models\Contacts\Contact;
 use App\Models\Jobs\Job;
@@ -297,10 +298,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/summary-reports/pdf', [ChickenReportsController::class,'downloadPdf']);
     Route::get('/chicken-reports/excel', [ChickenReportsController::class,'downloadExcel']);
     Route::get('/chicken-reports/pdf', [ChickenReportsController::class,'pdf']);
-
     Route::get('/all-sales', [SalesController::class, 'GetSalesIndexPage'])->name('sales.index');
     
+    Route::get('/get-general-expenses', [VegetableController::class, 'GetGeneralExpensesPage'])->name('general-expense.index');
+    Route::get('/general-expenses', [GeneralExpenseController::class, 'index'])->name('index');
+    Route::post('/general-expenses', [GeneralExpenseController::class, 'store'])->name('store');
+    Route::get('/general-expenses/report/pdf', [GeneralExpenseController::class, 'exportPdf'])->name('export.pdf');
+    Route::get('/general-expenses/report/excel', [GeneralExpenseController::class, 'exportExcel'])->name('export.excel');    
+    Route::get('/general-expenses/{generalExpense}', [GeneralExpenseController::class, 'show'])->name('show');
+    Route::put('/general-expenses/{generalExpense}', [GeneralExpenseController::class, 'update'])->name('update');
+    Route::delete('/general-expenses/{generalExpense}', [GeneralExpenseController::class, 'destroy'])->name('destroy');
 
+    
     Route::get('/all-documents', [DocumentController::class, 'GetIDocuments'])->name('document.index');
     Route::get('/documents/folders', [DocumentController::class, 'index']);
     Route::post('/documents/folder', [DocumentController::class, 'storeFolder']);

@@ -28,9 +28,18 @@ const form = ref({
     sale_date: '',
     quantity: 1,
     unit_price: 0,
+
+    payment_method: 'Cash',
+    initial_payment: null,
+
     customer_name: '',
     customer_phone: '',
     notes: ''
+
+})
+
+const isCredit = computed(() => {
+    return form.value.payment_method === 'Credit'
 
 })
 
@@ -63,17 +72,13 @@ const resetForm = () => {
     form.value = {
 
         chicken_batch_id: null,
-
         sale_date: '',
-
         quantity: 1,
-
         unit_price: 0,
-
+        payment_method: 'Cash',
+        initial_payment: null,
         customer_name: '',
-
         customer_phone: '',
-
         notes: ''
 
     }
@@ -88,10 +93,15 @@ const submit = async () => {
     try {
 
         await axios.post('/chicken-sales', {
+
             chicken_batch_id: form.value.chicken_batch_id,
             sale_date: form.value.sale_date,
             quantity: form.value.quantity,
             unit_price: form.value.unit_price,
+
+            payment_method: form.value.payment_method,
+            initial_payment: form.value.initial_payment,
+
             customer_name: form.value.customer_name,
             customer_phone: form.value.customer_phone,
             notes: form.value.notes
@@ -144,18 +154,21 @@ const submit = async () => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label>Batch Number</label>
-                        <a-input :value="batch?.batch_number" readonly />
+                        <a-input :value="batch?.batch_number" readonly 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <div>
 
                         <label>Sale Date</label>
-                        <a-date-picker v-model:value="form.sale_date" value-format="YYYY-MM-DD" class="w-full" />
+                        <a-date-picker v-model:value="form.sale_date" value-format="YYYY-MM-DD" class="w-full" 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <div>
                         <label>Birds Remaining</label>
-                        <a-input :value="batch?.birds_remaining" readonly />
+                        <a-input :value="batch?.birds_remaining" readonly 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <div>
@@ -171,22 +184,53 @@ const submit = async () => {
 
                     <div>
                         <label>Total Amount</label>
-                        <a-input :value="Number(totalAmount).toLocaleString()" readonly />
+                        <a-input :value="Number(totalAmount).toLocaleString()" readonly 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
+                    </div>
+
+                    <div>
+                        <label>Payment Method</label>
+
+                        <a-select v-model:value="form.payment_method" class="w-full"
+                            placeholder="Select payment method">
+
+                            <a-select-option value="Cash"> Cash </a-select-option>
+                            <a-select-option value="Credit"> Credit </a-select-option>
+                            <a-select-option value="Card"> Card </a-select-option>
+                            <a-select-option value="Cheque"> Cheque </a-select-option>
+                            <a-select-option value="Mobile Money"> Mobile Money </a-select-option>
+                            <a-select-option value="Bank Transfer"> Bank Transfer </a-select-option>
+
+                        </a-select>
+                    </div>
+
+                  <div v-if="isCredit">
+                        <label> Down Payment <span class="text-gray-400"> (Optional) </span></label>
+
+                        <a-input-number v-model:value="form.initial_payment" :min="0" :max="totalAmount" class="w-full"
+                            placeholder="Enter amount paid now" />
+
+                        <small class="text-gray-500">
+                            Leave empty or enter 0 if the customer will pay later.
+                        </small>
+
                     </div>
 
                     <div>
                         <label>Customer Name</label>
-                        <a-input v-model:value="form.customer_name" />
+                        <a-input v-model:value="form.customer_name" placeholder="Enter customer name.."
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <div>
                         <label>Phone Number</label>
-                        <a-input v-model:value="form.customer_phone" />
+                        <a-input v-model:value="form.customer_phone" placeholder="Enter mobile number"
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <div class="md:col-span-2">
                         <label>Notes</label>
-                        <a-textarea v-model:value="form.notes" :rows="4" />
+                        <a-textarea v-model:value="form.notes" :rows="4" placeholder="Enter notes..."/>
                     </div>
                 </div>
             </a-card>

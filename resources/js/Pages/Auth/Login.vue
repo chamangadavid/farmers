@@ -9,7 +9,7 @@
                 <div class="hidden md:block md:w-1/2 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-br from-teal-600/40 to-emerald-600/40 mix-blend-multiply"></div>
                     <img
-                        src="/assets/back-4.png"
+                        src="/assets/back-3.png"
                         alt="Login Visual"
                         class="h-full w-full object-cover transform hover:scale-105 transition-transform duration-700"
                     />

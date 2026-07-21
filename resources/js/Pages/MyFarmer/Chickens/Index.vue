@@ -142,7 +142,7 @@ const columns = [
       }
       ),
 
-        h(Tooltip, { title: 'Record Sale' }, {
+        h(Tooltip, { title: 'Sale Chickens' }, {
           default: () => h(Button, {
             type: 'link',
             icon: h(DollarOutlined),
@@ -200,7 +200,7 @@ onMounted(() => {
       <div class="mt-6">
 
         <h1 class="text-3xl font-bold">
-          Chicken Management
+          CHICKEN MANAGEMENT
         </h1>
         <p class="text-gray-500">
           Manage poultry batches, expenses, sales and flock performance.

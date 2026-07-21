@@ -9,7 +9,7 @@
                 <div class="hidden md:block md:w-1/2 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-br from-teal-600/40 to-emerald-600/40 mix-blend-multiply"></div>
                     <img
-                        src="/assets/login.png"
+                        src="/assets/back-3.png"
                         alt="Register Visual"
                         class="h-full w-full object-cover transform hover:scale-105 transition-transform duration-700"
                     />
@@ -191,14 +191,14 @@
                     </div>
 
                     <!-- Terms and Privacy -->
-                    <div class="mt-6 text-center">
+                    <!-- <div class="mt-6 text-center">
                         <p class="text-xs text-gray-500">
                             By creating an account, you agree to our 
                             <a href="#" class="text-teal-600 hover:text-teal-700">Terms of Service</a> 
                             and 
                             <a href="#" class="text-teal-600 hover:text-teal-700">Privacy Policy</a>
                         </p>
-                    </div>
+                    </div> -->
                 </div>
 
             </div>

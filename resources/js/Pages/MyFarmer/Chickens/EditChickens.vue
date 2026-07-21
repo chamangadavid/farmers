@@ -392,21 +392,15 @@ const submit = async () => {
 <template>
 
     <a-modal
-        :open="open"
-        title="Edit Chicken Batch"
-        width="1300px"
-        :footer="null"
-        :maskClosable="false"
-        @cancel="closeModal">
+        :open="open" width="1300px" :footer="null" :maskClosable="false" @cancel="closeModal">
 
         <form @submit.prevent="submit">
-
             <!-- Header -->
             <div class="mb-8">
 
                 <h2 class="text-2xl font-bold text-gray-800">
 
-                    Chicken Batch Information
+                    Edit Chicken Batch Information
 
                 </h2>
 
@@ -438,7 +432,8 @@ const submit = async () => {
 
                         <a-input
                             type="date"
-                            v-model:value="form.arrival_date"/>
+                            v-model:value="form.arrival_date" 
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
 
                     </div>
 
@@ -471,7 +466,8 @@ const submit = async () => {
 
                         <a-input
                             placeholder="Batch-001"
-                            v-model:value="form.batch_number"/>
+                            v-model:value="form.batch_number" 
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
 
                     </div>
 
@@ -487,7 +483,8 @@ const submit = async () => {
 
                         <a-input
                             placeholder="January Batch"
-                            v-model:value="form.batch_name"/>
+                            v-model:value="form.batch_name" 
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
 
                     </div>
 
@@ -563,10 +560,9 @@ const submit = async () => {
                         </label>
 
                         <a-input
-
                             v-model:value="form.supplier"
-
-                            placeholder="Supplier Name"/>
+                            placeholder="Supplier Name"
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
 
                     </div>
 
@@ -791,11 +787,9 @@ const submit = async () => {
 
                         <template #default="{ record }">
 
-                            <a-input
-
-                                type="date"
-
+                            <a-input type="date"
                                 v-model:value="record.expense_date"
+                                style="border: 1px solid #e9e9e9; border-radius: 8px;"
 
                             />
 
@@ -811,10 +805,9 @@ const submit = async () => {
                         <template #default="{ record }">
 
                             <a-input
-
                                 v-model:value="record.item"
-
                                 placeholder="Feed, Vaccine, Transport..."
+                                style="border: 1px solid #e9e9e9; border-radius: 8px;"
 
                             />
 

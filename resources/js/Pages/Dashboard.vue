@@ -141,7 +141,7 @@ const can = (permission) => {
                       </Card>
 
                         <Card 
-                        title="Chicken Management" 
+                        title="Chicken & Sale Management" 
                         v-if="can('staff can manage chicken records')"
                         subTitle="Create, edit & delete chicken records" 
                         routeName="chicken.index">
@@ -209,6 +209,16 @@ const can = (permission) => {
                           <SwapOutlined style="font-size: 24px; color: #14b8a6;" />
                         </template>
                       </Card> -->
+
+                      <Card 
+                        title="General Expenses" 
+                        v-if="can('staff can manage general expenses records')"
+                        subTitle="Create, edit & delete vegetable general expenses records" 
+                        routeName="general-expense.index">
+                        <template #icon>
+                          <SwapOutlined style="font-size: 24px; color: #14b8a6;" />
+                        </template>
+                      </Card>
 
                      
 

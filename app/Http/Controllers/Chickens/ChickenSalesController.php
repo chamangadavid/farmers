@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Chickens\ChickenBatch;
 use App\Models\Chickens\ChickenSale;
+use App\Models\Chickens\ChickenSalePayment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -17,14 +18,81 @@ class ChickenSalesController extends Controller
     public function index()
     {
         return response()->json([
-            'sales' => ChickenSale::with('batch')
+            'sales' => ChickenSale::with([
+                'batch',
+                'payments',
+            ])
                 ->latest()
                 ->get()
         ]);
     }
 
     //store sales
-    public function store(Request $request)
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+
+    //         'chicken_batch_id' => 'required|exists:chicken_batches,id',
+    //         'sale_date' => 'required|date',
+    //         'quantity' => 'required|integer|min:1',
+    //         'unit_price' => 'required|numeric|min:0',
+    //         'customer_name' => 'nullable|string|max:255',
+    //         'customer_phone' => 'nullable|string|max:50',
+    //         'notes' => 'nullable|string'
+
+    //     ]);
+
+    //     DB::transaction(function () use ($request) {
+    //         $batch = ChickenBatch::findOrFail($request->chicken_batch_id);
+
+    //         //Validate remaining birds
+    //         if ($request->quantity > $batch->birds_remaining) {
+    //             abort(422, 'Quantity exceeds birds remaining.');
+
+    //         }
+
+    //         //create sale
+    //         $sale = ChickenSale::create([
+
+    //             'chicken_batch_id' => $batch->id,
+    //             'sale_date' => $request->sale_date,
+    //             'quantity' => $request->quantity,
+    //             'unit_price' => $request->unit_price,
+    //             'total_amount' => $request->quantity * $request->unit_price,
+    //             'customer_name' => $request->customer_name,
+    //             'customer_phone' => $request->customer_phone,
+    //             'notes' => $request->notes
+
+    //         ]);
+
+
+    //         //update batch
+    //         $batch->birds_sold += $request->quantity;
+    //         $batch->birds_remaining -= $request->quantity;
+
+
+    //         //update status
+    //         if ($batch->birds_remaining == 0) {
+    //             $batch->status = 'Completed';
+
+    //         } else {
+    //             $batch->status = 'Selling';
+
+    //         }
+
+    //         $batch->save();
+
+    //     });
+
+    //     return response()->json([
+
+    //         'message' => 'Sale recorded successfully.'
+
+    //     ]);
+
+    // }
+
+      public function store(Request $request)
     {
         $request->validate([
 
@@ -32,6 +100,8 @@ class ChickenSalesController extends Controller
             'sale_date' => 'required|date',
             'quantity' => 'required|integer|min:1',
             'unit_price' => 'required|numeric|min:0',
+            'payment_method' => 'required|in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
+            'initial_payment' => 'nullable|numeric|min:0',
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:50',
             'notes' => 'nullable|string'
@@ -39,46 +109,153 @@ class ChickenSalesController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
-            $batch = ChickenBatch::findOrFail($request->chicken_batch_id);
 
-            //Validate remaining birds
+            $batch = ChickenBatch::findOrFail(
+                $request->chicken_batch_id
+            );
+
             if ($request->quantity > $batch->birds_remaining) {
-                abort(422, 'Quantity exceeds birds remaining.');
+
+                abort(
+                    422,
+                    'Quantity exceeds birds remaining.'
+                );
 
             }
 
-            //create sale
+            $totalAmount =
+                $request->quantity *
+                $request->unit_price;
+
+
             $sale = ChickenSale::create([
 
                 'chicken_batch_id' => $batch->id,
+
                 'sale_date' => $request->sale_date,
+
                 'quantity' => $request->quantity,
+
                 'unit_price' => $request->unit_price,
-                'total_amount' => $request->quantity * $request->unit_price,
+
+                'total_amount' => $totalAmount,
+
                 'customer_name' => $request->customer_name,
+
                 'customer_phone' => $request->customer_phone,
+
                 'notes' => $request->notes
 
             ]);
 
 
-            //update batch
+            /*
+            |--------------------------------------------------------------------------
+            | Create Initial Payment
+            |--------------------------------------------------------------------------
+            */
+
+            $paymentAmount = 0;
+
+
+            if ($request->payment_method === 'Credit') {
+
+                // Credit payment is optional
+                $paymentAmount =
+                    $request->initial_payment ?? 0;
+
+            } else {
+
+                // Cash, Card, Cheque, etc.
+                // are considered fully paid
+                $paymentAmount =
+                    $totalAmount;
+
+            }
+
+
+            if ($paymentAmount > 0) {
+
+                ChickenSalePayment::create([
+
+                    'chicken_sale_id' => $sale->id,
+
+                    'payment_date' => $request->sale_date,
+
+                    'amount' => $paymentAmount,
+
+                    'payment_method' =>
+                        $request->payment_method,
+
+                    'notes' => 'Initial payment'
+
+                ]);
+
+            }
+
+
+            // Update batch
             $batch->birds_sold += $request->quantity;
+
             $batch->birds_remaining -= $request->quantity;
 
 
-            //update status
             if ($batch->birds_remaining == 0) {
+
                 $batch->status = 'Completed';
 
             } else {
+
                 $batch->status = 'Selling';
 
             }
 
+
             $batch->save();
 
         });
+
+        // DB::transaction(function () use ($request) {
+        //     $batch = ChickenBatch::findOrFail($request->chicken_batch_id);
+
+        //     //Validate remaining birds
+        //     if ($request->quantity > $batch->birds_remaining) {
+        //         abort(422, 'Quantity exceeds birds remaining.');
+
+        //     }
+
+        //     //create sale
+        //     $sale = ChickenSale::create([
+
+        //         'chicken_batch_id' => $batch->id,
+        //         'sale_date' => $request->sale_date,
+        //         'quantity' => $request->quantity,
+        //         'unit_price' => $request->unit_price,
+        //         'total_amount' => $request->quantity * $request->unit_price,
+        //         'customer_name' => $request->customer_name,
+        //         'customer_phone' => $request->customer_phone,
+        //         'notes' => $request->notes
+
+        //     ]);
+
+
+        //     //update batch
+        //     $batch->birds_sold += $request->quantity;
+        //     $batch->birds_remaining -= $request->quantity;
+
+
+        //     //update status
+        //     if ($batch->birds_remaining == 0) {
+        //         $batch->status = 'Completed';
+
+        //     } else {
+        //         $batch->status = 'Selling';
+
+        //     }
+
+        //     $batch->save();
+
+        // });
 
         return response()->json([
 
@@ -87,7 +264,6 @@ class ChickenSalesController extends Controller
         ]);
 
     }
-
     //update sales
     public function update(Request $request, ChickenSale $sale)
     {
@@ -99,136 +275,470 @@ class ChickenSalesController extends Controller
 
     }
 
-    public function updateSales(Request $request, ChickenSale $sale)
-    {
+    // public function updateSales(Request $request, ChickenSale $sale)
+    // {
 
-        $validated=$request->validate([
+    //     $validated=$request->validate([
 
-            'sale_date'=>'required|date',
+    //         'sale_date'=>'required|date',
 
-            'quantity'=>'required|integer|min:1',
+    //         'quantity'=>'required|integer|min:1',
 
-            'unit_price'=>'required|numeric|min:0',
+    //         'unit_price'=>'required|numeric|min:0',
 
-            'customer_name'=>'nullable|string',
+    //         'customer_name'=>'nullable|string',
 
-            'customer_phone'=>'nullable|string',
+    //         'customer_phone'=>'nullable|string',
 
-            'notes'=>'nullable|string'
+    //         'notes'=>'nullable|string'
 
-        ]);
-
-
-
-        DB::transaction(function() use($sale,$validated){
+    //     ]);
 
 
-            $batch=$sale->batch;
+
+    //     DB::transaction(function() use($sale,$validated){
+
+
+    //         $batch=$sale->batch;
+
+
+    //         /*
+    //         old quantity difference
+    //         */
+
+    //         $difference =
+    //             $validated['quantity']
+    //             -
+    //             $sale->quantity;
+
+
+
+    //         if($difference > 0){
+
+
+    //             // selling more birds
+
+    //             if($batch->birds_remaining < $difference){
+
+    //                 throw new \Exception(
+    //                     'Not enough birds available'
+    //                 );
+
+    //             }
+
+
+    //             $batch->birds_remaining -= $difference;
+
+    //             $batch->birds_sold += $difference;
+
+
+    //         }
+
+
+    //         elseif($difference < 0){
+
+
+    //             // reducing sale quantity
+
+    //             $returnBirds =
+    //                 abs($difference);
+
+
+    //             $batch->birds_remaining += $returnBirds;
+
+    //             $batch->birds_sold -= $returnBirds;
+
+
+    //         }
+
+
+
+    //         $batch->save();
+
+
+
+    //         $validated['total_amount'] =
+    //             $validated['quantity']
+    //             *
+    //             $validated['unit_price'];
+
+
+
+    //         $sale->update($validated);
+
+
+    //     });
+
+
+
+    //     return response()->json([
+
+    //         'message'=>'Sale updated successfully'
+
+    //     ]);
+
+    // }
+
+     
+
+
+
+        public function updateSales(
+    Request $request,
+    ChickenSale $sale
+) {
+
+    $validated = $request->validate([
+
+        'sale_date' =>
+            'required|date',
+
+        'quantity' =>
+            'required|integer|min:1',
+
+        'unit_price' =>
+            'required|numeric|min:0',
+
+        'customer_name' =>
+            'nullable|string',
+
+        'customer_phone' =>
+            'nullable|string',
+
+        'notes' =>
+            'nullable|string',
+
+        'payment_method' =>
+            'nullable|in:Cash,Card,Cheque,Mobile Money,Bank Transfer',
+
+        'payment_amount' =>
+            'nullable|numeric|min:0',
+
+    ]);
+
+
+    DB::transaction(function () use (
+        $sale,
+        $validated
+    ) {
+
+        $batch = $sale->batch;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate quantity difference
+        |--------------------------------------------------------------------------
+        */
+
+        $difference =
+            $validated['quantity']
+            -
+            $sale->quantity;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Increase quantity sold
+        |--------------------------------------------------------------------------
+        */
+
+        if ($difference > 0) {
+
+            if (
+                $batch->birds_remaining
+                <
+                $difference
+            ) {
+
+                throw new \Exception(
+                    'Not enough birds available.'
+                );
+
+            }
+
+
+            $batch->birds_remaining -=
+                $difference;
+
+            $batch->birds_sold +=
+                $difference;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reduce quantity sold
+        |--------------------------------------------------------------------------
+        */
+
+        elseif ($difference < 0) {
+
+            $returnBirds =
+                abs($difference);
+
+
+            $batch->birds_remaining +=
+                $returnBirds;
+
+            $batch->birds_sold -=
+                $returnBirds;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update Batch Status
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $batch->birds_remaining <= 0
+        ) {
+
+            $batch->status = 'Completed';
+
+        } else {
+
+            $batch->status = 'Selling';
+
+        }
+
+
+        $batch->save();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate New Sale Total
+        |--------------------------------------------------------------------------
+        */
+
+        $newTotalAmount =
+            $validated['quantity']
+            *
+            $validated['unit_price'];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Remove Payment Fields
+        |
+        | They do not belong in chicken_sales
+        |--------------------------------------------------------------------------
+        */
+
+        $paymentAmount =
+            $validated['payment_amount']
+            ?? null;
+
+
+        $paymentMethod =
+            $validated['payment_method']
+            ?? null;
+
+
+        unset(
+
+            $validated['payment_amount'],
+
+            $validated['payment_method']
+
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update Sale
+        |--------------------------------------------------------------------------
+        */
+
+        $validated['total_amount'] =
+            $newTotalAmount;
+
+
+        $sale->update($validated);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Add New Payment
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+
+            $paymentAmount !== null
+            &&
+            $paymentAmount > 0
+
+        ) {
 
 
             /*
-            old quantity difference
+            |--------------------------------------------------------------------------
+            | Calculate Current Total Paid
+            |--------------------------------------------------------------------------
             */
 
-            $difference =
-                $validated['quantity']
-                -
-                $sale->quantity;
+            $currentAmountPaid =
+                $sale->payments()->sum('amount');
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Prevent Overpayment
+            |--------------------------------------------------------------------------
+            */
 
-            if($difference > 0){
+            if (
 
+                $currentAmountPaid
+                +
+                $paymentAmount
+                >
+                $newTotalAmount
 
-                // selling more birds
+            ) {
 
-                if($batch->birds_remaining < $difference){
+                throw new \Exception(
 
-                    throw new \Exception(
-                        'Not enough birds available'
-                    );
+                    'Payment cannot exceed the total sale amount.'
 
-                }
-
-
-                $batch->birds_remaining -= $difference;
-
-                $batch->birds_sold += $difference;
-
-
-            }
-
-
-            elseif($difference < 0){
-
-
-                // reducing sale quantity
-
-                $returnBirds =
-                    abs($difference);
-
-
-                $batch->birds_remaining += $returnBirds;
-
-                $batch->birds_sold -= $returnBirds;
-
+                );
 
             }
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Create Payment
+            |--------------------------------------------------------------------------
+            */
 
-            $batch->save();
+            ChickenSalePayment::create([
+
+                'chicken_sale_id' =>
+                    $sale->id,
+
+                'payment_date' =>
+                    now()->toDateString(),
+
+                'amount' =>
+                    $paymentAmount,
+
+                'payment_method' =>
+                    $paymentMethod,
+
+                'notes' =>
+                    'Payment added during sale update'
+
+            ]);
+
+        }
+
+    });
 
 
+    return response()->json([
 
-            $validated['total_amount'] =
-                $validated['quantity']
-                *
-                $validated['unit_price'];
+        'message' =>
+            'Sale updated successfully'
 
+    ]);
 
+}
 
-            $sale->update($validated);
+   
 
+    // public function show(ChickenBatch $batch)
+    // {
+    //     $batch->load([
+    //         'expenses',
+    //         'sales.payments',
+    //     ]);
 
-        });
+    //     $totalExpenses = $batch->expenses->sum('amount');
+    //     $totalSales    = $batch->sales->sum('total_amount');
 
+    //     return response()->json([
 
+    //         'batch' => [
 
-        return response()->json([
+    //             'id' => $batch->id,
+    //             'batch_number' => $batch->batch_number,
+    //             'batch_name' => $batch->batch_name,
+    //             'arrival_date' => $batch->arrival_date,
+    //             'batch_size' => $batch->batch_size,
+    //             'estimated_sale_date' => $batch->estimated_sale_date,
+    //             'breed' => $batch->breed,
+    //             'supplier' => $batch->supplier,
+    //             'status' => $batch->status,
+    //             'mortality' => $batch->mortality,
+    //             'birds_sold' => $batch->birds_sold,
+    //             'birds_remaining' => $batch->birds_remaining,
 
-            'message'=>'Sale updated successfully'
+    //         ],
 
-        ]);
+    //         'sales' => $batch->sales,
 
-    }
+    //         'summary' => [
+
+    //             'batch_size' => $batch->batch_size,
+    //             'mortality' => $batch->mortality,
+    //             'birds_sold' => $batch->birds_sold,
+    //             'birds_remaining' => $batch->birds_remaining,
+    //             'total_expenses' => $totalExpenses,
+    //             'total_sales' => $totalSales,
+    //             'profit' => $totalSales - $totalExpenses,
+
+    //         ]
+
+    //     ]);
+    // }
 
     public function show(ChickenBatch $batch)
     {
         $batch->load([
+
             'expenses',
-            'sales'
+            'sales.payments',
+
         ]);
 
         $totalExpenses = $batch->expenses->sum('amount');
-        $totalSales    = $batch->sales->sum('total_amount');
+        $totalSales = $batch->sales->sum('total_amount');
 
         return response()->json([
 
             'batch' => [
 
                 'id' => $batch->id,
+
                 'batch_number' => $batch->batch_number,
+
                 'batch_name' => $batch->batch_name,
+
                 'arrival_date' => $batch->arrival_date,
+
                 'batch_size' => $batch->batch_size,
+
                 'estimated_sale_date' => $batch->estimated_sale_date,
+
                 'breed' => $batch->breed,
+
                 'supplier' => $batch->supplier,
+
                 'status' => $batch->status,
+
                 'mortality' => $batch->mortality,
+
                 'birds_sold' => $batch->birds_sold,
-                'birds_remaining' => $batch->birds_remaining,
+
+                'birds_remaining' =>
+                    $batch->birds_remaining,
 
             ],
 
@@ -237,11 +747,17 @@ class ChickenSalesController extends Controller
             'summary' => [
 
                 'batch_size' => $batch->batch_size,
+
                 'mortality' => $batch->mortality,
+
                 'birds_sold' => $batch->birds_sold,
+
                 'birds_remaining' => $batch->birds_remaining,
+
                 'total_expenses' => $totalExpenses,
+
                 'total_sales' => $totalSales,
+
                 'profit' => $totalSales - $totalExpenses,
 
             ]
@@ -250,40 +766,92 @@ class ChickenSalesController extends Controller
     }
 
     public function receipt(ChickenSale $sale)
-    {
-        // Load relationships
-        $sale->load([
-            'batch'
-        ]);
+{
+    $sale->load([
 
-        return view('receipts.chicken-sale', [
+        'batch',
+
+        'payments'
+
+    ]);
+
+    return view(
+        'receipts.chicken-sale',
+        [
 
             'sale' => $sale
 
-        ]);
-    }
+        ]
+    );
+}
+
+    // public function receipt(ChickenSale $sale)
+    // {
+    //     // Load relationships
+    //     $sale->load([
+    //         'batch'
+    //     ]);
+
+    //     return view('receipts.chicken-sale', [
+
+    //         'sale' => $sale
+
+    //     ]);
+    // }
+
 
     public function downloadReceipt(ChickenSale $sale)
-    {
+{
+    $sale->load([
 
-        $sale->load([
-            'batch'
-        ]);
+        'batch',
+
+        'payments'
+
+    ]);
+
+    $pdf = Pdf::loadView(
+
+        'receipts.chicken-sale',
+
+        [
+
+            'sale' => $sale
+
+        ]
+
+    );
+
+    return $pdf->download(
+
+        'Chicken-Sale-Receipt-'
+        . $sale->id
+        . '.pdf'
+
+    );
+}
+
+    // public function downloadReceipt(ChickenSale $sale)
+    // {
+
+    //     $sale->load([
+    //         'batch'
+    //     ]);
 
 
-        $pdf =Pdf::loadView(
-            'receipts.chicken-sale',
-            [
-                'sale' => $sale
-            ]
-        );
+    //     $pdf =Pdf::loadView(
+    //         'receipts.chicken-sale',
+    //         [
+    //             'sale' => $sale
+    //         ]
+    //     );
 
 
-        return $pdf->download(
-            'Chicken-Sale-Receipt-'.$sale->id.'.pdf'
-        );
+    //     return $pdf->download(
+    //         'Chicken-Sale-Receipt-'.$sale->id.'.pdf'
+    //     );
 
-    }
+    // }
 
 
     public function destroy(ChickenSale $sale)

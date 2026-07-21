@@ -6,17 +6,12 @@ import dayjs from 'dayjs'
 import { message } from 'ant-design-vue'
 
 const props = defineProps({
-
     open: Boolean
-
 })
 
 const emit = defineEmits([
-
     'update:open',
-
     'created'
-
 ])
 
 const loading = ref(false)
@@ -28,37 +23,23 @@ const form = ref({
     batch_number: '',
     batch_name: '',
     batch_size: '',
-
     mortality: 0,
-
     birds_sold: 0,
-
     birds_remaining: 0,
-
     breed: '',
-
     supplier: '',
-
     purchase_price: '',
-
     status: 'Growing',
-
     notes: ''
 
 })
 
 const expenses = ref([
-
     {
-
         expense_date: '',
-
         item: '',
-
         quantity: 1,
-
         unit_price: 0,
-
         amount: 0
 
     }
@@ -71,22 +52,10 @@ const expenses = ref([
 |--------------------------------------------------------------------------
 */
 
-watch(
-
-    () => form.value.arrival_date,
-
-    (value) => {
-
+watch(() => form.value.arrival_date, (value) => {
         if (!value) return
-
-        form.value.estimated_sale_date = dayjs(value)
-
-            .add(42, 'day')
-
-            .format('YYYY-MM-DD')
-
+        form.value.estimated_sale_date = dayjs(value).add(42, 'day').format('YYYY-MM-DD') 
     }
-
 )
 
 /*
@@ -95,29 +64,13 @@ watch(
 |--------------------------------------------------------------------------
 */
 
-watch(
-
-    [
-
-        () => form.value.batch_size,
-
-        () => form.value.mortality,
-
-        () => form.value.birds_sold
-
-    ],
+watch([ () => form.value.batch_size, () => form.value.mortality, () => form.value.birds_sold],
 
     () => {
-
         const batch = Number(form.value.batch_size || 0)
-
         const mortality = Number(form.value.mortality || 0)
-
         const sold = Number(form.value.birds_sold || 0)
-
-        form.value.birds_remaining =
-
-            batch - mortality - sold
+        form.value.birds_remaining = batch - mortality - sold
 
     }
 
@@ -132,17 +85,11 @@ watch(
 const addExpense = () => {
 
     expenses.value.push({
-
         expense_date: '',
-
         item: '',
-
         quantity: 1,
-
         unit_price: 0,
-
         amount: 0
-
     })
 
 }
@@ -154,7 +101,6 @@ const addExpense = () => {
 */
 
 const removeExpense = (index) => {
-
     expenses.value.splice(index, 1)
 
 }
@@ -166,15 +112,7 @@ const removeExpense = (index) => {
 */
 
 const calculateAmount = (expense) => {
-
-    expense.amount =
-
-        Number(expense.quantity || 0)
-
-        *
-
-        Number(expense.unit_price || 0)
-
+    expense.amount = Number(expense.quantity || 0) * Number(expense.unit_price || 0)
 }
 
 /*
@@ -184,17 +122,9 @@ const calculateAmount = (expense) => {
 */
 
 const totalExpenses = computed(() => {
-
     return expenses.value.reduce(
-
-        (sum, item) =>
-
-            sum + Number(item.amount || 0),
-
-        0
-
+        (sum, item) => sum + Number(item.amount || 0),  0
     )
-
 })
 
 /*
@@ -204,7 +134,6 @@ const totalExpenses = computed(() => {
 */
 
 const closeModal = () => {
-
     emit('update:open', false)
 
 }
@@ -218,31 +147,18 @@ const closeModal = () => {
 const resetForm = () => {
 
     form.value = {
-
         arrival_date: '',
-
         estimated_sale_date: '',
-
         batch_number: '',
-
         batch_name: '',
-
         batch_size: '',
-
         mortality: 0,
-
         birds_sold: 0,
-
         birds_remaining: 0,
-
         breed: '',
-
         supplier: '',
-
         purchase_price: '',
-
         status: 'Growing',
-
         notes: ''
 
     }
@@ -250,15 +166,10 @@ const resetForm = () => {
     expenses.value = [
 
         {
-
             expense_date: '',
-
             item: '',
-
             quantity: 1,
-
             unit_price: 0,
-
             amount: 0
 
         }
@@ -276,325 +187,172 @@ const resetForm = () => {
 const submit = async () => {
 
     loading.value = true
-
     try {
-
-        await axios.post(
-
-            '/chickens',
-
-            {
-
+        await axios.post('/chickens', {
                 ...form.value,
-
                 expenses: expenses.value
-
             }
-
         )
-
-        message.success(
-
-            'Chicken batch created successfully.'
-
-        )
-
+        message.success('Chicken batch created successfully.')
         emit('created')
-
         closeModal()
-
         resetForm()
-
     }
 
     catch (error) {
-
         if (error.response?.data?.errors) {
-
             Object.values(
-
                 error.response.data.errors
-
             ).forEach(err => {
-
                 message.error(err[0])
-
             })
-
         }
-
         else {
-
             message.error(
-
                 'Failed to save batch.'
-
             )
-
         }
-
     }
-
     finally {
-
         loading.value = false
-
     }
-
 }
 </script>
 
 <template>
 
-    <a-modal :open="open" title="Create Chicken Batch" width="1300px" :footer="null" :maskClosable="false"
+    <a-modal :open="open" width="1300px" :footer="null" :maskClosable="false"
         @cancel="closeModal">
 
         <form @submit.prevent="submit">
 
             <!-- Header -->
             <div class="mb-8">
-
                 <h2 class="text-2xl font-bold text-gray-800">
-
                     Chicken Batch Information
-
                 </h2>
-
                 <p class="text-gray-500 mt-1">
-
                     Capture information about a new batch of broiler chickens.
-
                 </p>
-
             </div>
 
             <!-- Batch Details -->
-
             <a-card title="Batch Details" class="mb-6">
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                    <!-- Arrival Date -->
-
                     <div>
-
                         <label class="font-medium">
-
                             Arrival Date
-
                         </label>
-
-                        <a-input type="date" v-model:value="form.arrival_date" />
-
+                        <a-input type="date" v-model:value="form.arrival_date" 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
-                    <!-- Estimated Sale -->
-
                     <div>
-
                         <label class="font-medium">
-
                             Estimated Sale Date
-
                         </label>
-
-                        <a-input disabled type="date" v-model:value="form.estimated_sale_date" />
-
+                        <a-input disabled type="date" v-model:value="form.estimated_sale_date" 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <!-- Batch Number -->
 
                     <div>
-
                         <label class="font-medium">
-
                             Batch Number
-
                         </label>
-
-                        <a-input placeholder="Batch-001" v-model:value="form.batch_number" />
-
+                        <a-input placeholder="Batch-001" v-model:value="form.batch_number"
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;" />
                     </div>
 
                     <!-- Batch Name -->
-
                     <div>
-
                         <label class="font-medium">
-
                             Batch Name
-
                         </label>
-
-                        <a-input placeholder="January Batch" v-model:value="form.batch_name" />
-
+                        <a-input placeholder="January Batch" v-model:value="form.batch_name" 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <!-- Batch Size -->
-
                     <div>
-
                         <label class="font-medium">
-
                             Batch Size
-
                         </label>
-
-                        <a-input-number class="w-full" :min="1" v-model:value="form.batch_size" />
-
+                        <a-input-number class="w-full" :min="1" v-model:value="form.batch_size" 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <!-- Breed -->
 
                     <div>
-
                         <label class="font-medium">
-
                             Breed
-
                         </label>
-
                         <a-select v-model:value="form.breed" style="width: 100%;">
-
-                            <a-select-option value="Ross 308">
-
-                                Ross 308
-
-                            </a-select-option>
-
-                            <a-select-option value="Cobb 500">
-
-                                Cobb 500
-
-                            </a-select-option>
-
-                            <a-select-option value="Arbor Acres">
-
-                                Arbor Acres
-
-                            </a-select-option>
-
-                            <a-select-option value="Other">
-
-                                Other
-
-                            </a-select-option>
-
+                            <a-select-option value="Ross 308"> Ross 308 </a-select-option>
+                            <a-select-option value="Cobb 500"> Cobb 500 </a-select-option>
+                            <a-select-option value="Arbor Acres"> Arbor Acres </a-select-option>
+                            <a-select-option value="Other"> Other </a-select-option>
                         </a-select>
-
                     </div>
 
                     <!-- Supplier -->
 
                     <div>
-
                         <label class="font-medium">
-
                             Supplier / Hatchery
-
                         </label>
-
-                        <a-input v-model:value="form.supplier" placeholder="Supplier Name" />
-
+                        <a-input v-model:value="form.supplier" placeholder="Supplier Name" 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <!-- Purchase Price -->
 
                     <div>
-
                         <label class="font-medium">
-
                             Purchase Price Per Chick
-
                         </label>
-
-                        <a-input-number class="w-full" :min="0" :precision="2" v-model:value="form.purchase_price" />
-
+                        <a-input-number class="w-full" :min="0" :precision="2" v-model:value="form.purchase_price" 
+                        style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
                     </div>
 
                     <!-- Status -->
 
                     <div>
-
                         <label class="font-medium">
-
                             Status
-
                         </label>
-
                         <a-select v-model:value="form.status" style="width: 100%;">
-
-                            <a-select-option value="Growing">
-
-                                Growing
-
-                            </a-select-option>
-
-                            <a-select-option value="Ready for Sale">
-
-                                Ready for Sale
-
-                            </a-select-option>
-
-                            <a-select-option value="Selling In Progress">
-
-                                Selling In Progress
-
-                            </a-select-option>
-
-                            <a-select-option value="Sold Out">
-
-                                Sold Out
-
-                            </a-select-option>
-
-                            <a-select-option value="Closed">
-
-                                Closed
-
-                            </a-select-option>
-
+                            <a-select-option value="Growing"> Growing </a-select-option>
+                            <a-select-option value="Ready for Sale"> Ready for Sale </a-select-option>
+                            <a-select-option value="Selling In Progress"> Selling In Progress </a-select-option>
+                            <a-select-option value="Sold Out"> Sold Out </a-select-option>
+                            <a-select-option value="Closed"> Closed </a-select-option>
                         </a-select>
-
                     </div>
-
                 </div>
-
             </a-card>
 
 
             <!-- Batch Statistics -->
-
             <a-card title="Batch Statistics" class="mb-6">
-
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
                     <!-- Mortality -->
-
                     <div>
-
                         <label class="font-medium">
-
                             Mortality
-
                         </label>
-
                         <a-input-number class="w-full" :min="0" v-model:value="form.mortality" />
-
                     </div>
 
                     <!-- Birds Sold -->
 
                     <div>
-
                         <label class="font-medium">
-
                             Birds Sold
-
                         </label>
-
                         <a-input-number class="w-full" :min="0" v-model:value="form.birds_sold" />
-
                     </div>
 
                     <!-- Remaining -->
@@ -663,7 +421,8 @@ const submit = async () => {
 
                         <template #default="{ record }">
 
-                            <a-input type="date" v-model:value="record.expense_date" />
+                            <a-input type="date" v-model:value="record.expense_date" 
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
 
                         </template>
 
@@ -675,7 +434,8 @@ const submit = async () => {
 
                         <template #default="{ record }">
 
-                            <a-input v-model:value="record.item" placeholder="Feed, Vaccine, Transport..." />
+                            <a-input v-model:value="record.item" placeholder="Feed, Vaccine, Transport..." 
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
 
                         </template>
 

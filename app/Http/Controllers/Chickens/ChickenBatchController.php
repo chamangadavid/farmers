@@ -17,7 +17,7 @@ class ChickenBatchController extends Controller
 
         $chickens = ChickenBatch::with([
             'expenses',
-            'sales'
+             'sales.payments',
         ])
 
             ->when($request->search, function ($query) use ($request) {

@@ -607,6 +607,7 @@ const closeModal = () => {
                                 Cash
 
                             </a-select-option>
+                            <a-select-option value="Credit">Credit</a-select-option>
 
 
                             <a-select-option value="Mobile Money">
