@@ -1090,182 +1090,52 @@ public function store(Request $request)
             $validated['unit_price'];
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Remove Payment Fields
-        |
-        | They do not belong in chicken_sales
-        |--------------------------------------------------------------------------
-        */
+        //remove payment fields - they do not belong in chicken_sales
+        $paymentAmount = $validated['payment_amount'] ?? null;
+        $paymentMethod = $validated['payment_method'] ?? null;
 
-        $paymentAmount =
-            $validated['payment_amount']
-            ?? null;
+        unset($validated['payment_amount'], $validated['payment_method']);
 
-
-        $paymentMethod =
-            $validated['payment_method']
-            ?? null;
-
-
-        unset(
-
-            $validated['payment_amount'],
-
-            $validated['payment_method']
-
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Update Sale
-        |--------------------------------------------------------------------------
-        */
-
-        $validated['total_amount'] =
-            $newTotalAmount;
-
+        //update sales
+        $validated['total_amount'] = $newTotalAmount;
 
         $sale->update($validated);
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Add New Payment
-        |--------------------------------------------------------------------------
-        */
+        //Add new payment
+        if ($paymentAmount !== null && $paymentAmount > 0 ) 
+        {
 
-        if (
+            //calculate current total paid
+            $currentAmountPaid = $sale->payments()->sum('amount');
 
-            $paymentAmount !== null
-            &&
-            $paymentAmount > 0
-
-        ) {
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Calculate Current Total Paid
-            |--------------------------------------------------------------------------
-            */
-
-            $currentAmountPaid =
-                $sale->payments()->sum('amount');
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Prevent Overpayment
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-
-                $currentAmountPaid
-                +
-                $paymentAmount
-                >
-                $newTotalAmount
-
-            ) {
-
-                throw new \Exception(
-
-                    'Payment cannot exceed the total sale amount.'
-
-                );
-
+            //prevent overpayment
+            if ($currentAmountPaid + $paymentAmount > $newTotalAmount) 
+            {
+                throw new \Exception('Payment cannot exceed the total sale amount.');
             }
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Create Payment
-            |--------------------------------------------------------------------------
-            */
-
+            //Create payment
             ChickenSalePayment::create([
 
-                'chicken_sale_id' =>
-                    $sale->id,
-
-                'payment_date' =>
-                    now()->toDateString(),
-
-                'amount' =>
-                    $paymentAmount,
-
-                'payment_method' =>
-                    $paymentMethod,
-
-                'notes' =>
-                    'Payment added during sale update'
+                'chicken_sale_id' => $sale->id,
+                'payment_date' => now()->toDateString(),
+                'amount' => $paymentAmount,
+                'payment_method' => $paymentMethod,
+                'notes' => 'Payment added during sale update'
 
             ]);
-
         }
-
     });
 
 
     return response()->json([
 
-        'message' =>
-            'Sale updated successfully'
+        'message' => 'Sale updated successfully'
 
     ]);
 
 }
-
-   
-
-    // public function show(ChickenBatch $batch)
-    // {
-    //     $batch->load([
-    //         'expenses',
-    //         'sales.payments',
-    //     ]);
-
-    //     $totalExpenses = $batch->expenses->sum('amount');
-    //     $totalSales    = $batch->sales->sum('total_amount');
-
-    //     return response()->json([
-
-    //         'batch' => [
-
-    //             'id' => $batch->id,
-    //             'batch_number' => $batch->batch_number,
-    //             'batch_name' => $batch->batch_name,
-    //             'arrival_date' => $batch->arrival_date,
-    //             'batch_size' => $batch->batch_size,
-    //             'estimated_sale_date' => $batch->estimated_sale_date,
-    //             'breed' => $batch->breed,
-    //             'supplier' => $batch->supplier,
-    //             'status' => $batch->status,
-    //             'mortality' => $batch->mortality,
-    //             'birds_sold' => $batch->birds_sold,
-    //             'birds_remaining' => $batch->birds_remaining,
-
-    //         ],
-
-    //         'sales' => $batch->sales,
-
-    //         'summary' => [
-
-    //             'batch_size' => $batch->batch_size,
-    //             'mortality' => $batch->mortality,
-    //             'birds_sold' => $batch->birds_sold,
-    //             'birds_remaining' => $batch->birds_remaining,
-    //             'total_expenses' => $totalExpenses,
-    //             'total_sales' => $totalSales,
-    //             'profit' => $totalSales - $totalExpenses,
-
-    //         ]
-
-    //     ]);
-    // }
 
     public function show(ChickenBatch $batch)
     {
@@ -1284,48 +1154,29 @@ public function store(Request $request)
             'batch' => [
 
                 'id' => $batch->id,
-
                 'batch_number' => $batch->batch_number,
-
                 'batch_name' => $batch->batch_name,
-
                 'arrival_date' => $batch->arrival_date,
-
                 'batch_size' => $batch->batch_size,
-
                 'estimated_sale_date' => $batch->estimated_sale_date,
-
                 'breed' => $batch->breed,
-
                 'supplier' => $batch->supplier,
-
                 'status' => $batch->status,
-
                 'mortality' => $batch->mortality,
-
                 'birds_sold' => $batch->birds_sold,
-
-                'birds_remaining' =>
-                    $batch->birds_remaining,
+                'birds_remaining' => $batch->birds_remaining,
 
             ],
 
             'sales' => $batch->sales,
 
             'summary' => [
-
                 'batch_size' => $batch->batch_size,
-
                 'mortality' => $batch->mortality,
-
                 'birds_sold' => $batch->birds_sold,
-
                 'birds_remaining' => $batch->birds_remaining,
-
                 'total_expenses' => $totalExpenses,
-
                 'total_sales' => $totalSales,
-
                 'profit' => $totalSales - $totalExpenses,
 
             ]
@@ -1334,93 +1185,26 @@ public function store(Request $request)
     }
 
     public function receipt(ChickenSale $sale)
-{
-    $sale->load([
+    {
+        $sale->load(['batch', 'payments']);
 
-        'batch',
-
-        'payments'
-
-    ]);
-
-    return view(
-        'receipts.chicken-sale',
-        [
-
-            'sale' => $sale
-
-        ]
-    );
-}
-
-    // public function receipt(ChickenSale $sale)
-    // {
-    //     // Load relationships
-    //     $sale->load([
-    //         'batch'
-    //     ]);
-
-    //     return view('receipts.chicken-sale', [
-
-    //         'sale' => $sale
-
-    //     ]);
-    // }
-
+        return view('receipts.chicken-sale', [
+                'sale' => $sale
+            ]
+        );
+    }
 
     public function downloadReceipt(ChickenSale $sale)
-{
-    $sale->load([
+    {
+        $sale->load(['batch', 'payments']);
 
-        'batch',
+        $pdf = Pdf::loadView('receipts.chicken-sale', ['sale' => $sale]);
 
-        'payments'
+        return $pdf->download(
 
-    ]);
-
-    $pdf = Pdf::loadView(
-
-        'receipts.chicken-sale',
-
-        [
-
-            'sale' => $sale
-
-        ]
-
-    );
-
-    return $pdf->download(
-
-        'Chicken-Sale-Receipt-'
-        . $sale->id
-        . '.pdf'
-
-    );
-}
-
-    // public function downloadReceipt(ChickenSale $sale)
-    // {
-
-    //     $sale->load([
-    //         'batch'
-    //     ]);
-
-
-    //     $pdf =Pdf::loadView(
-    //         'receipts.chicken-sale',
-    //         [
-    //             'sale' => $sale
-    //         ]
-    //     );
-
-
-    //     return $pdf->download(
-    //         'Chicken-Sale-Receipt-'.$sale->id.'.pdf'
-    //     );
-
-    // }
-
+            'Chicken-Sale-Receipt-' . $sale->id . '.pdf'
+        );
+    }
 
     public function destroy(ChickenSale $sale)
     {
@@ -1435,41 +1219,22 @@ public function store(Request $request)
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Return birds back to stock
-            |--------------------------------------------------------------------------
-            */
-
+            //return birds back to stock
             $batch->birds_sold -= $sale->quantity;
             $batch->birds_remaining += $sale->quantity;
 
-            /*
-            |--------------------------------------------------------------------------
-            | Update batch status
-            |--------------------------------------------------------------------------
-            */
-
-
+            //update batch status
             if ($batch->birds_sold <= 0) {
-
                 $batch->birds_sold = 0;
                 $batch->status = 'Growing';
 
             }
-
             elseif ($batch->birds_remaining > 0) {
                 $batch->status = 'Selling';
 
             }
 
             $batch->save();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Delete sale
-            |--------------------------------------------------------------------------
-            */
 
             $sale->delete();
 
@@ -1479,7 +1244,6 @@ public function store(Request $request)
         return response()->json([
 
             'message'=>'Sale reversed successfully.'
-
         ]);
 
     }
