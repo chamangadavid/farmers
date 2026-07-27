@@ -436,7 +436,7 @@ const handleDropdownClick = () => {
                         Contact Us
                     </Link>
 
-                    <Link :href="route('reportAccident')"
+                    <Link :href="route('productGalleries')"
                         class="block px-4 py-3 text-white bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg transition font-medium text-center"
                         @click="toggleMobileMenu">
                         Product Gallery
