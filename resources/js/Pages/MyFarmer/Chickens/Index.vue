@@ -142,27 +142,27 @@ const columns = [
       }
       ),
 
-        h(Tooltip, { title: 'Sale Chickens' }, {
-          default: () => h(Button, {
-            type: 'link',
-            icon: h(DollarOutlined),
-            onClick: () => {
-              selectedBatch.value = record
-              showSaleModal.value = true
-            }
-          })
-        }
-        ),
+      h(Tooltip, { title: 'Sale Chickens' }, {
+        default: () => h(Button, {
+          type: 'link',
+          icon: h(DollarOutlined),
+          onClick: () => {
+            selectedBatch.value = record
+            showSaleModal.value = true
+          }
+        })
+      }
+      ),
 
-        h(Tooltip, { title: 'Sales History' }, {
-          default: () => h(Button, {
-              type: 'link',
-              icon: h(UnorderedListOutlined),
-              onClick: () => {
-                  selectedBatch.value = record
-                  showSalesHistory.value = true
-              }
-          })
+      h(Tooltip, { title: 'Sales History' }, {
+        default: () => h(Button, {
+          type: 'link',
+          icon: h(UnorderedListOutlined),
+          onClick: () => {
+            selectedBatch.value = record
+            showSalesHistory.value = true
+          }
+        })
       }),
 
       h(Popconfirm, {
@@ -211,7 +211,7 @@ onMounted(() => {
         <template #icon>
           <PlusOutlined />
         </template>
-        Add Chicken
+        Add Chicken Batch
       </Button>
     </div>
 
@@ -287,7 +287,6 @@ onMounted(() => {
     </div>
 
     <!-- Search -->
-
     <Card class="mb-6">
       <div class="flex gap-3">
         <Input v-model:value="searchTerm" placeholder="Search batch number..." @input="handleSearch">
@@ -319,7 +318,7 @@ onMounted(() => {
 
     <CreateChickenSale v-model:open="showSaleModal" :batch="selectedBatch" @saved="fetchChickens" />
 
-   <CreateChickenSalesHistory v-model:open="showSalesHistory" :batch="selectedBatch" />
+    <CreateChickenSalesHistory v-model:open="showSalesHistory" :batch="selectedBatch" />
 
   </AuthenticatedLayout>
 </template>

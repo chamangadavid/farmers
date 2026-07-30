@@ -92,13 +92,13 @@ watch(
 
         expenses.value = value.expenses
             ? value.expenses.map(expense => ({
-                  id: expense.id,
-                  expense_date: expense.expense_date,
-                  item: expense.item,
-                  quantity: expense.quantity,
-                  unit_price: expense.unit_price,
-                  amount: expense.amount
-              }))
+                id: expense.id,
+                expense_date: expense.expense_date,
+                item: expense.item,
+                quantity: expense.quantity,
+                unit_price: expense.unit_price,
+                amount: expense.amount
+            }))
             : []
 
     },
@@ -391,8 +391,7 @@ const submit = async () => {
 
 <template>
 
-    <a-modal
-        :open="open" width="1300px" :footer="null" :maskClosable="false" @cancel="closeModal">
+    <a-modal :open="open" width="1300px" :footer="null" :maskClosable="false" @cancel="closeModal">
 
         <form @submit.prevent="submit">
             <!-- Header -->
@@ -414,9 +413,7 @@ const submit = async () => {
 
             <!-- Batch Details -->
 
-            <a-card
-                title="Batch Details"
-                class="mb-6">
+            <a-card title="Batch Details" class="mb-6">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
@@ -430,10 +427,8 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input
-                            type="date"
-                            v-model:value="form.arrival_date" 
-                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
+                        <a-input type="date" v-model:value="form.arrival_date"
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;" />
 
                     </div>
 
@@ -447,10 +442,7 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input
-                            disabled
-                            type="date"
-                            v-model:value="form.estimated_sale_date"/>
+                        <a-input disabled type="date" v-model:value="form.estimated_sale_date" />
 
                     </div>
 
@@ -464,10 +456,8 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input
-                            placeholder="Batch-001"
-                            v-model:value="form.batch_number" 
-                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
+                        <a-input placeholder="Batch-001" v-model:value="form.batch_number"
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;" />
 
                     </div>
 
@@ -481,10 +471,8 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input
-                            placeholder="January Batch"
-                            v-model:value="form.batch_name" 
-                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
+                        <a-input placeholder="January Batch" v-model:value="form.batch_name"
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;" />
 
                     </div>
 
@@ -498,13 +486,7 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input-number
-
-                            class="w-full"
-
-                            :min="1"
-
-                            v-model:value="form.batch_size"/>
+                        <a-input-number class="w-full" :min="1" v-model:value="form.batch_size" />
 
                     </div>
 
@@ -518,33 +500,12 @@ const submit = async () => {
 
                         </label>
 
-                        <a-select
-                            v-model:value="form.breed" style="width: 100%;">
-
-                            <a-select-option value="Ross 308">
-
-                                Ross 308
-
-                            </a-select-option>
-
-                            <a-select-option value="Cobb 500">
-
-                                Cobb 500
-
-                            </a-select-option>
-
-                            <a-select-option value="Arbor Acres">
-
-                                Arbor Acres
-
-                            </a-select-option>
-
-                            <a-select-option value="Other">
-
-                                Other
-
-                            </a-select-option>
-
+                        <a-select v-model:value="form.breed" style="width: 100%;">
+                            <a-select-option value="Ross Breeders"> Ross Breeders </a-select-option>
+                            <a-select-option value="Hybrid"> Hybrid </a-select-option>
+                            <a-select-option value="Tiger"> Tiger </a-select-option>
+                            <a-select-option value="Zamchick"> Zamchick </a-select-option>
+                            <a-select-option value="Other"> Other </a-select-option>
                         </a-select>
 
                     </div>
@@ -559,10 +520,8 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input
-                            v-model:value="form.supplier"
-                            placeholder="Supplier Name"
-                            style="border: 1px solid #e9e9e9; border-radius: 8px;"/>
+                        <a-input v-model:value="form.supplier" placeholder="Supplier Name"
+                            style="border: 1px solid #e9e9e9; border-radius: 8px;" />
 
                     </div>
 
@@ -576,15 +535,7 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input-number
-
-                            class="w-full"
-
-                            :min="0"
-
-                            :precision="2"
-
-                            v-model:value="form.purchase_price"/>
+                        <a-input-number class="w-full" :min="0" :precision="2" v-model:value="form.purchase_price" />
 
                     </div>
 
@@ -598,8 +549,7 @@ const submit = async () => {
 
                         </label>
 
-                        <a-select
-                            v-model:value="form.status" style="width: 100%;">
+                        <a-select v-model:value="form.status" style="width: 100%;">
 
                             <a-select-option value="Growing">
 
@@ -640,11 +590,9 @@ const submit = async () => {
             </a-card>
 
 
-                        <!-- Batch Statistics -->
+            <!-- Batch Statistics -->
 
-            <a-card
-                title="Batch Statistics"
-                class="mb-6">
+            <a-card title="Batch Statistics" class="mb-6">
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
@@ -658,15 +606,7 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input-number
-
-                            class="w-full"
-
-                            :min="0"
-
-                            v-model:value="form.mortality"
-
-                        />
+                        <a-input-number class="w-full" :min="0" v-model:value="form.mortality" />
 
                     </div>
 
@@ -680,15 +620,7 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input-number
-
-                            class="w-full"
-
-                            :min="0"
-
-                            v-model:value="form.birds_sold"
-
-                        />
+                        <a-input-number class="w-full" :min="0" v-model:value="form.birds_sold" />
 
                     </div>
 
@@ -702,15 +634,7 @@ const submit = async () => {
 
                         </label>
 
-                        <a-input-number
-
-                            class="w-full"
-
-                            disabled
-
-                            v-model:value="form.birds_remaining"
-
-                        />
+                        <a-input-number class="w-full" disabled v-model:value="form.birds_remaining" />
 
                     </div>
 
@@ -724,15 +648,7 @@ const submit = async () => {
 
                     </label>
 
-                    <a-textarea
-
-                        v-model:value="form.notes"
-
-                        :rows="3"
-
-                        placeholder="Additional notes about this batch"
-
-                    />
+                    <a-textarea v-model:value="form.notes" :rows="3" placeholder="Additional notes about this batch" />
 
                 </div>
 
@@ -756,11 +672,7 @@ const submit = async () => {
 
                         </span>
 
-                        <a-button
-
-                            type="primary"
-
-                            @click="addExpense">
+                        <a-button type="primary" @click="addExpense">
 
                             Add More
 
@@ -770,28 +682,16 @@ const submit = async () => {
 
                 </template>
 
-                <a-table
-
-                    bordered
-
-                    :pagination="false"
-
-                    :data-source="expenses"
-
-                    rowKey="index">
+                <a-table bordered :pagination="false" :data-source="expenses" rowKey="index">
 
                     <!-- Date -->
 
-                    <a-table-column
-                        title="Expense Date">
+                    <a-table-column title="Expense Date">
 
                         <template #default="{ record }">
 
-                            <a-input type="date"
-                                v-model:value="record.expense_date"
-                                style="border: 1px solid #e9e9e9; border-radius: 8px;"
-
-                            />
+                            <a-input type="date" v-model:value="record.expense_date"
+                                style="border: 1px solid #e9e9e9; border-radius: 8px;" />
 
                         </template>
 
@@ -799,17 +699,12 @@ const submit = async () => {
 
                     <!-- Item -->
 
-                    <a-table-column
-                        title="Expense">
+                    <a-table-column title="Expense">
 
                         <template #default="{ record }">
 
-                            <a-input
-                                v-model:value="record.item"
-                                placeholder="Feed, Vaccine, Transport..."
-                                style="border: 1px solid #e9e9e9; border-radius: 8px;"
-
-                            />
+                            <a-input v-model:value="record.item" placeholder="Feed, Vaccine, Transport..."
+                                style="border: 1px solid #e9e9e9; border-radius: 8px;" />
 
                         </template>
 
@@ -817,22 +712,12 @@ const submit = async () => {
 
                     <!-- Quantity -->
 
-                    <a-table-column
-                        title="Qty">
+                    <a-table-column title="Qty">
 
                         <template #default="{ record }">
 
-                            <a-input-number
-
-                                class="w-full"
-
-                                :min="1"
-
-                                v-model:value="record.quantity"
-
-                                @change="calculateAmount(record)"
-
-                            />
+                            <a-input-number class="w-full" :min="1" v-model:value="record.quantity"
+                                @change="calculateAmount(record)" />
 
                         </template>
 
@@ -840,24 +725,12 @@ const submit = async () => {
 
                     <!-- Unit Price -->
 
-                    <a-table-column
-                        title="Unit Price">
+                    <a-table-column title="Unit Price">
 
                         <template #default="{ record }">
 
-                            <a-input-number
-
-                                class="w-full"
-
-                                :precision="2"
-
-                                :min="0"
-
-                                v-model:value="record.unit_price"
-
-                                @change="calculateAmount(record)"
-
-                            />
+                            <a-input-number class="w-full" :precision="2" :min="0" v-model:value="record.unit_price"
+                                @change="calculateAmount(record)" />
 
                         </template>
 
@@ -865,20 +738,11 @@ const submit = async () => {
 
                     <!-- Amount -->
 
-                    <a-table-column
-                        title="Amount">
+                    <a-table-column title="Amount">
 
                         <template #default="{ record }">
 
-                            <a-input-number
-
-                                class="w-full"
-
-                                disabled
-
-                                v-model:value="record.amount"
-
-                            />
+                            <a-input-number class="w-full" disabled v-model:value="record.amount" />
 
                         </template>
 
@@ -886,21 +750,11 @@ const submit = async () => {
 
                     <!-- Delete -->
 
-                    <a-table-column
-                        title="Action"
-                        width="90">
+                    <a-table-column title="Action" width="90">
 
                         <template #default="{ index }">
 
-                            <a-button
-
-                                danger
-
-                                type="link"
-
-                                @click="removeExpense(index)"
-
-                                :disabled="expenses.length==1">
+                            <a-button danger type="link" @click="removeExpense(index)" :disabled="expenses.length == 1">
 
                                 Remove
 
@@ -914,17 +768,15 @@ const submit = async () => {
 
             </a-card>
 
-                        <!-- Summary -->
+            <!-- Summary -->
 
-            <a-card
-                class="mt-6">
+            <a-card class="mt-6">
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 
                     <!-- Batch Size -->
 
-                    <div
-                        class="bg-blue-50 rounded-xl p-5 text-center">
+                    <div class="bg-blue-50 rounded-xl p-5 text-center">
 
                         <p class="text-gray-500">
 
@@ -942,8 +794,7 @@ const submit = async () => {
 
                     <!-- Mortality -->
 
-                    <div
-                        class="bg-red-50 rounded-xl p-5 text-center">
+                    <div class="bg-red-50 rounded-xl p-5 text-center">
 
                         <p class="text-gray-500">
 
@@ -961,8 +812,7 @@ const submit = async () => {
 
                     <!-- Remaining -->
 
-                    <div
-                        class="bg-green-50 rounded-xl p-5 text-center">
+                    <div class="bg-green-50 rounded-xl p-5 text-center">
 
                         <p class="text-gray-500">
 
@@ -980,25 +830,14 @@ const submit = async () => {
 
                     <!-- Expenses -->
 
-                    <div
-                        class="bg-yellow-50 rounded-xl p-5 text-center">
-
-                        <p class="text-gray-500">
-
-                            Total Expenses
-
-                        </p>
+                    <div class="bg-yellow-50 rounded-xl p-5 text-center">
+                        <p class="text-gray-500"> Total Expenses </p>
 
                         <h2 class="text-3xl font-bold text-yellow-600">
-
                             K{{ Number(totalExpenses).toLocaleString() }}
-
                         </h2>
-
                     </div>
-
                 </div>
-
             </a-card>
 
 
@@ -1006,32 +845,13 @@ const submit = async () => {
 
 
             <!-- Footer Buttons -->
-
-            <div
-                class="flex justify-end gap-4 mt-8">
-
-                <a-button
-
-                    size="large"
-
-                    @click="closeModal">
-
+            <div class="flex justify-end gap-4 mt-8">
+                <a-button size="large" @click="closeModal">
                     Cancel
-
                 </a-button>
 
-                <a-button
-
-                    type="primary"
-
-                    size="large"
-
-                    :loading="loading"
-
-                    @click="submit">
-
+                <a-button type="primary" size="large" :loading="loading" @click="submit">
                     Uodate Chicken Batch
-
                 </a-button>
 
             </div>
@@ -1043,34 +863,33 @@ const submit = async () => {
 </template>
 
 <style scoped>
+:deep(.ant-modal-header) {
 
-:deep(.ant-modal-header){
-
-    border-bottom:1px solid #f0f0f0;
-
-}
-
-:deep(.ant-modal-title){
-
-    font-size:24px;
-
-    font-weight:700;
+    border-bottom: 1px solid #f0f0f0;
 
 }
 
-:deep(.ant-card){
+:deep(.ant-modal-title) {
 
-    border-radius:12px;
+    font-size: 24px;
 
-    margin-bottom:20px;
+    font-weight: 700;
 
 }
 
-:deep(.ant-card-head){
+:deep(.ant-card) {
 
-    background:#fafafa;
+    border-radius: 12px;
 
-    font-weight:600;
+    margin-bottom: 20px;
+
+}
+
+:deep(.ant-card-head) {
+
+    background: #fafafa;
+
+    font-weight: 600;
 
 }
 
@@ -1080,38 +899,37 @@ const submit = async () => {
 
 :deep(.ant-select-selector),
 
-:deep(.ant-picker){
+:deep(.ant-picker) {
 
-    border-radius:8px !important;
-
-}
-
-:deep(.ant-btn-primary){
-
-    background:#16a34a;
-
-    border-color:#16a34a;
+    border-radius: 8px !important;
 
 }
 
-:deep(.ant-btn-primary:hover){
+:deep(.ant-btn-primary) {
 
-    background:#15803d !important;
+    background: #16a34a;
 
-    border-color:#15803d !important;
-
-}
-
-label{
-
-    display:block;
-
-    margin-bottom:6px;
-
-    font-weight:600;
-
-    color:#374151;
+    border-color: #16a34a;
 
 }
 
+:deep(.ant-btn-primary:hover) {
+
+    background: #15803d !important;
+
+    border-color: #15803d !important;
+
+}
+
+label {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+}
 </style>

@@ -290,9 +290,10 @@ const submit = async () => {
                             Breed
                         </label>
                         <a-select v-model:value="form.breed" style="width: 100%;">
-                            <a-select-option value="Ross 308"> Ross 308 </a-select-option>
-                            <a-select-option value="Cobb 500"> Cobb 500 </a-select-option>
-                            <a-select-option value="Arbor Acres"> Arbor Acres </a-select-option>
+                            <a-select-option value="Ross Breeders"> Ross Breeders </a-select-option>
+                            <a-select-option value="Hybrid"> Hybrid </a-select-option>
+                            <a-select-option value="Tiger"> Tiger </a-select-option>
+                            <a-select-option value="Zamchick"> Zamchick </a-select-option>
                             <a-select-option value="Other"> Other </a-select-option>
                         </a-select>
                     </div>
