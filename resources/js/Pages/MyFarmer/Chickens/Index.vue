@@ -82,15 +82,15 @@ const columns = [
   { title: 'Arrival Date', dataIndex: 'arrival_date', },
   { title: 'Batch Size', dataIndex: 'batch_size', },
   { title: 'Mortality', dataIndex: 'mortality', },
-  { title: 'Birds Sold', dataIndex: 'birds_sold', },
-  { title: 'Birds Remaining', dataIndex: 'birds_remaining', },
+  // { title: 'Birds Sold', dataIndex: 'birds_sold', },
+  { title: 'Birds to be sold', dataIndex: 'birds_remaining', },
   {
     title: 'Expenses', dataIndex: 'total_expenses',
     customRender: ({ record }) =>
       `K ${Number(record.total_expenses).toLocaleString()}`
   },
 
-  { title: 'Expected Sale', dataIndex: 'estimated_sale_date' },
+  { title: 'Expected Sales Date', dataIndex: 'estimated_sale_date' },
 
   {
     title: 'Status', dataIndex: 'status',

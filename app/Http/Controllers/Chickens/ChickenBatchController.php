@@ -146,55 +146,175 @@ class ChickenBatchController extends Controller
     }
 
     public function update(Request $request, ChickenBatch $chicken)
-    {
-        $request->validate([
-            'arrival_date'=>'required|date',
-            'batch_number'=>'required',
-            'batch_name'=>'required',
-            'batch_size'=>'required|integer',
-            'estimated_sale_date'=>'required|date',
-            'status'=>'required'
+{
+    $request->validate([
+
+        'arrival_date' => 'required|date',
+        'batch_number' => 'required|string|max:100',
+        'batch_name' => 'nullable|string|max:255',
+        'batch_size' => 'required|integer|min:1',
+        'estimated_sale_date' => 'required|date',
+
+        'mortality' => 'nullable|integer|min:0',
+        'birds_sold' => 'nullable|integer|min:0',
+        'birds_survived' => 'nullable|integer|min:0',
+        'birds_remaining' => 'nullable|integer|min:0',
+
+        'breed' => 'nullable|string',
+        'supplier' => 'nullable|string',
+        'purchase_price' => 'nullable|numeric|min:0',
+
+        'status' => 'required|string',
+        'notes' => 'nullable|string',
+
+        'expenses' => 'nullable|array',
+        'expenses.*.expense_date' => 'required|date',
+        'expenses.*.item' => 'required|string',
+        'expenses.*.quantity' => 'required|numeric|min:0',
+        'expenses.*.unit_price' => 'required|numeric|min:0',
+        'expenses.*.amount' => 'required|numeric|min:0',
+
+    ]);
+
+    DB::transaction(function () use ($request, $chicken) {
+
+        // Update batch
+        $chicken->update([
+
+            'arrival_date' => $request->arrival_date,
+            'batch_number' => $request->batch_number,
+            'batch_name' => $request->batch_name,
+            'batch_size' => $request->batch_size,
+            'estimated_sale_date' => $request->estimated_sale_date,
+
+            'mortality' => $request->mortality,
+            'birds_sold' => $request->birds_sold,
+            'birds_survived' => $request->birds_survived,
+            'birds_remaining' => $request->birds_remaining,
+
+            'breed' => $request->breed,
+            'supplier' => $request->supplier,
+            'purchase_price' => $request->purchase_price,
+
+            'status' => $request->status,
+            'notes' => $request->notes,
+
         ]);
 
-        DB::transaction(function () use ($request,$chicken){
+        // Remove existing expenses
+        $chicken->expenses()->delete();
 
-            $chicken->update([
-                'arrival_date'=>$request->arrival_date,
-                'estimated_sale_date'=>$request->estimated_sale_date,
-                'batch_number'=>$request->batch_number,
-                'batch_name'=>$request->batch_name,
-                'batch_size'=>$request->batch_size,
-                'mortality'=>$request->mortality,
-                'birds_sold'=>$request->birds_sold,
-                'birds_remaining'=>$request->birds_remaining,
-                'breed'=>$request->breed,
-                'supplier'=>$request->supplier,
-                'purchase_price'=>$request->purchase_price,
-                'status'=>$request->status,
-                'notes'=>$request->notes,
+        // Create updated expenses
+        foreach ($request->expenses ?? [] as $expense) {
+
+            $chicken->expenses()->create([
+
+                'expense_date' => $expense['expense_date'],
+                'item' => $expense['item'],
+                'quantity' => $expense['quantity'],
+                'unit_price' => $expense['unit_price'],
+                'amount' => $expense['amount'],
+
             ]);
 
-            // Remove old expenses
+        }
+
+    });
+
+    return response()->json([
+        'message' => 'Chicken batch updated successfully.'
+    ]);
+}
+
+
+    // public function update(Request $request, ChickenBatch $chicken)
+    // {
+      
+    //     $request->validate([
+
+    //         'arrival_date' => 'required|date',
+    //         'batch_number' => 'required|string|max:100',
+    //         'batch_name' => 'nullable|string|max:255',
+    //         'batch_size' => 'required|integer|min:1',
+    //         'estimated_sale_date' => 'required|date',
+
+    //         'mortality' => 'nullable|integer|min:0',
+    //         'birds_sold' => 'nullable|integer|min:0',
+    //         'birds_remaining' => 'nullable|integer|min:0',
+
+    //         'breed' => 'nullable|string',
+    //         'supplier' => 'nullable|string',
+    //         'purchase_price' => 'nullable|numeric|min:0',
+
+    //         'status' => 'required|string',
+    //         'notes' => 'nullable|string',
+
+    //         'expenses' => 'nullable|array',
+    //         'expenses.*.expense_date' => 'required|date',
+    //         'expenses.*.item' => 'required|string',
+    //         'expenses.*.quantity' => 'required|numeric|min:0',
+    //         'expenses.*.unit_price' => 'required|numeric|min:0',
+    //         'expenses.*.amount' => 'required|numeric|min:0',
+
+    //     ]);
+
+    //     DB::transaction(function () use ($request,$chicken){
+
+    //         $chicken->update([
+    //             'arrival_date'=>$request->arrival_date,
+    //             'estimated_sale_date'=>$request->estimated_sale_date,
+    //             'batch_number'=>$request->batch_number,
+    //             'batch_name'=>$request->batch_name,
+    //             'batch_size'=>$request->batch_size,
+    //             'mortality'=>$request->mortality,
+    //             'birds_sold'=>$request->birds_sold,
+    //             'birds_remaining'=>$request->birds_remaining,
+    //             'breed'=>$request->breed,
+    //             'supplier'=>$request->supplier,
+    //             'purchase_price'=>$request->purchase_price,
+    //             'status'=>$request->status,
+    //             'notes'=>$request->notes,
+    //         ]);
+
+    //         // Remove old expenses
+    //         $chicken->expenses()->delete();
+
+    //         // Insert updated expenses
+    //         foreach($request->expenses ?? [] as $expense){
+
+    //             $chicken->expenses()->create([
+    //                 'expense_date'=>$expense['expense_date'],
+    //                 'item'=>$expense['item'],
+    //                 'quantity'=>$expense['quantity'],
+    //                 'unit_price'=>$expense['unit_price'],
+    //                 'amount'=>$expense['amount']
+    //             ]);
+
+    //         }
+
+    //     });
+
+    //     return response()->json([
+    //         'message'=>'Chicken batch updated successfully.'
+    //     ]);
+    // }
+
+    public function destroy(ChickenBatch $chicken)
+    {
+        DB::transaction(function () use ($chicken) {
+
+            // Delete expenses belonging to this batch
             $chicken->expenses()->delete();
 
-            // Insert updated expenses
-            foreach($request->expenses ?? [] as $expense){
-
-                $chicken->expenses()->create([
-                    'expense_date'=>$expense['expense_date'],
-                    'item'=>$expense['item'],
-                    'quantity'=>$expense['quantity'],
-                    'unit_price'=>$expense['unit_price'],
-                    'amount'=>$expense['amount']
-                ]);
-
-            }
-
+            // Delete the chicken batch
+            $chicken->delete();
         });
 
         return response()->json([
-            'message'=>'Chicken batch updated successfully.'
+            'message' => 'Chicken batch deleted successfully.'
         ]);
     }
+
+
 
 }

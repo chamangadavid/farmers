@@ -281,6 +281,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chickens', [ChickenBatchController::class, 'index']);
     Route::post('/chickens', [ChickenBatchController::class, 'store']);
     Route::put('/chickens/{chicken}', [ChickenBatchController::class,'update']);
+    Route::delete('/chickens/{chicken}', [ChickenBatchController::class, 'destroy'])->name('chickens.destroy');
     Route::get('/chicken-sales',[ChickenSalesController::class,'index']);
     Route::get('/chicken-sales/{batch}', [ChickenSalesController::class,'show']);
     Route::post('/chicken-sales',[ChickenSalesController::class,'store']);
@@ -288,6 +289,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/update-chicken-sales/{sale}', [ChickenSalesController::class,'updateSales']);
     Route::get('/chicken-sales/{sale}/receipt', [ChickenSalesController::class,'receipt']);
     Route::get('/chicken-sales/{sale}/receipt/download', [ChickenSalesController::class,'downloadReceipt']);
+  
     Route::delete('/chicken-sales/{sale}', [ChickenSalesController::class,'destroy'])->name('chicken-sales.destroy');
     Route::get('/chicken-reports/monthly-summary', [ChickenReportsController::class,'monthlySummary']);
     Route::get('/chicken-reports/sales', [ChickenReportsController::class,'salesReport']);

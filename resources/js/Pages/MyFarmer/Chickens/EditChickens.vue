@@ -8,7 +8,7 @@ import { message } from 'ant-design-vue'
 
 const props = defineProps({
     open: Boolean,
-    news: Object
+    chicken: Object
 })
 
 
@@ -22,53 +22,25 @@ const loading = ref(false)
 const form = ref({
 
     arrival_date: '',
-
     estimated_sale_date: '',
-
     batch_number: '',
-
     batch_name: '',
-
     batch_size: '',
-
     mortality: 0,
-
     birds_sold: 0,
-
     birds_remaining: 0,
-
     breed: '',
-
     supplier: '',
-
     purchase_price: '',
-
     status: 'Growing',
-
     notes: ''
 
 })
 
-// const expenses = ref([
 
-//     {
-
-//         expense_date: '',
-
-//         item: '',
-
-//         quantity: 1,
-
-//         unit_price: 0,
-
-//         amount: 0
-
-//     }
-
-// ])
 
 watch(
-    () => props.news,
+    () => props.chicken,
     (value) => {
 
         if (!value) return
@@ -106,6 +78,46 @@ watch(
         immediate: true
     }
 )
+
+// watch(
+//     () => props.chicken,
+//     (value) => {
+
+//         if (!value) return
+
+//         form.value = {
+//             id: value.id,
+//             arrival_date: value.arrival_date,
+//             estimated_sale_date: value.estimated_sale_date,
+//             batch_number: value.batch_number,
+//             batch_name: value.batch_name,
+//             batch_size: value.batch_size,
+//             mortality: value.mortality,
+//             birds_sold: value.birds_sold,
+//             birds_remaining: value.birds_remaining,
+//             breed: value.breed,
+//             supplier: value.supplier,
+//             purchase_price: value.purchase_price,
+//             status: value.status,
+//             notes: value.notes
+//         }
+
+//         expenses.value = value.expenses
+//             ? value.expenses.map(expense => ({
+//                 id: expense.id,
+//                 expense_date: expense.expense_date,
+//                 item: expense.item,
+//                 quantity: expense.quantity,
+//                 unit_price: expense.unit_price,
+//                 amount: expense.amount
+//             }))
+//             : []
+
+//     },
+//     {
+//         immediate: true
+//     }
+// )
 
 
 /*
@@ -322,25 +334,15 @@ const submit = async () => {
 
     try {
 
-        await axios.post(
-
-            '/chickens/${form.value.id}',
-
+        await axios.put(
+            `/chickens/${form.value.id}`,
             {
-
                 ...form.value,
-
                 expenses: expenses.value
-
             }
-
         )
 
-        message.success(
-
-            'Chicken batch updated successfully.'
-
-        )
+        message.success('Chicken batch updated successfully.')
 
         emit('updated')
 
@@ -348,43 +350,102 @@ const submit = async () => {
 
         resetForm()
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         if (error.response?.data?.errors) {
 
             Object.values(
-
                 error.response.data.errors
-
             ).forEach(err => {
-
                 message.error(err[0])
-
             })
 
-        }
-
-        else {
+        } else {
 
             message.error(
-
-                'Failed to save batch.'
-
+                error.response?.data?.message ||
+                'Failed to update batch.'
             )
 
         }
 
-    }
-
-    finally {
+    } finally {
 
         loading.value = false
 
     }
-
 }
+
+
+// const submit = async () => {
+
+//     loading.value = true
+
+//     try {
+
+//         await axios.post(
+
+//             '/chickens/${form.value.id}',
+
+//             {
+
+//                 ...form.value,
+
+//                 expenses: expenses.value
+
+//             }
+
+//         )
+
+//         message.success(
+
+//             'Chicken batch updated successfully.'
+
+//         )
+
+//         emit('updated')
+
+//         closeModal()
+
+//         resetForm()
+
+//     }
+
+//     catch (error) {
+
+//         if (error.response?.data?.errors) {
+
+//             Object.values(
+
+//                 error.response.data.errors
+
+//             ).forEach(err => {
+
+//                 message.error(err[0])
+
+//             })
+
+//         }
+
+//         else {
+
+//             message.error(
+
+//                 'Failed to save batch.'
+
+//             )
+
+//         }
+
+//     }
+
+//     finally {
+
+//         loading.value = false
+
+//     }
+
+// }
 </script>
 
 
@@ -839,11 +900,6 @@ const submit = async () => {
                     </div>
                 </div>
             </a-card>
-
-
-
-
-
             <!-- Footer Buttons -->
             <div class="flex justify-end gap-4 mt-8">
                 <a-button size="large" @click="closeModal">
@@ -851,7 +907,7 @@ const submit = async () => {
                 </a-button>
 
                 <a-button type="primary" size="large" :loading="loading" @click="submit">
-                    Uodate Chicken Batch
+                    Update Chicken Batch
                 </a-button>
 
             </div>
