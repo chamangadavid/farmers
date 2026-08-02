@@ -76,13 +76,34 @@ const deleteChicken = async (id) => {
   }
 }
 
+const handleSalesHistoryClose = (value) => {
+
+    showSalesHistory.value = value
+
+    if (!value) {
+        fetchChickens()
+    }
+
+}
+
+const handleSalesClose = (value) => {
+
+    showSaleModal.value = value
+
+    if (!value) {
+        fetchChickens()
+    }
+
+}
+
+
 const columns = [
 
   { title: 'Batch No', dataIndex: 'batch_number', },
   { title: 'Arrival Date', dataIndex: 'arrival_date', },
   { title: 'Batch Size', dataIndex: 'batch_size', },
   { title: 'Mortality', dataIndex: 'mortality', },
-  // { title: 'Birds Sold', dataIndex: 'birds_sold', },
+  { title: 'Birds Sold', dataIndex: 'birds_sold', },
   { title: 'Birds to be sold', dataIndex: 'birds_remaining', },
   {
     title: 'Expenses', dataIndex: 'total_expenses',
@@ -316,9 +337,12 @@ onMounted(() => {
 
     <ViewChickens :open="showViewModal" :news="selectedChicken" @update:open="showViewModal = $event" />
 
-    <CreateChickenSale v-model:open="showSaleModal" :batch="selectedBatch" @saved="fetchChickens" />
+    <!-- <CreateChickenSale v-model:open="showSaleModal" :batch="selectedBatch" @saved="fetchChickens" /> -->
+ <CreateChickenSale v-model:open="showSaleModal" :batch="selectedBatch" @update:open="handleSalesClose" />
+    
 
-    <CreateChickenSalesHistory v-model:open="showSalesHistory" :batch="selectedBatch" />
+
+    <CreateChickenSalesHistory v-model:open="showSalesHistory" :batch="selectedBatch"  @update:open="handleSalesHistoryClose"/>
 
   </AuthenticatedLayout>
 </template>
