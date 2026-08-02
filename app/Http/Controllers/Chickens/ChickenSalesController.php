@@ -951,36 +951,204 @@ public function store(Request $request)
 
 
 
-        public function updateSales(
-    Request $request,
-    ChickenSale $sale
-) {
+//         public function updateSales(Request $request, ChickenSale $sale) {
 
+//         $validated = $request->validate([
+
+//             'sale_date' => 'required|date',
+
+//             'quantity' => 'required|integer|min:1',
+
+//             'unit_price' => 'required|numeric|min:0',
+
+//             'customer_name' => 'nullable|string',
+
+//             'customer_phone' => 'nullable|string',
+
+//             'notes' => 'nullable|string',
+
+//             'payment_method' => 'nullable|in:Cash,Card,Cheque,Mobile Money,Bank Transfer',
+
+//             'payment_amount' => 'nullable|numeric|min:0',
+
+//         ]);
+
+
+//     DB::transaction(function () use (
+//         $sale,
+//         $validated
+//     ) {
+
+//         $batch = $sale->batch;
+
+
+//         /*
+//         |--------------------------------------------------------------------------
+//         | Calculate quantity difference
+//         |--------------------------------------------------------------------------
+//         */
+
+//         $difference =
+//             $validated['quantity']
+//             -
+//             $sale->quantity;
+
+
+//         /*
+//         |--------------------------------------------------------------------------
+//         | Increase quantity sold
+//         |--------------------------------------------------------------------------
+//         */
+
+//         if ($difference > 0) {
+
+//             if (
+//                 $batch->birds_remaining
+//                 <
+//                 $difference
+//             ) {
+
+//                 throw new \Exception(
+//                     'Not enough birds available.'
+//                 );
+
+//             }
+
+
+//             $batch->birds_remaining -=
+//                 $difference;
+
+//             $batch->birds_sold +=
+//                 $difference;
+
+//         }
+
+
+//         /*
+//         |--------------------------------------------------------------------------
+//         | Reduce quantity sold
+//         |--------------------------------------------------------------------------
+//         */
+
+//         elseif ($difference < 0) {
+
+//             $returnBirds =
+//                 abs($difference);
+
+
+//             $batch->birds_remaining +=
+//                 $returnBirds;
+
+//             $batch->birds_sold -=
+//                 $returnBirds;
+
+//         }
+
+
+//         /*
+//         |--------------------------------------------------------------------------
+//         | Update Batch Status
+//         |--------------------------------------------------------------------------
+//         */
+
+//         if (
+//             $batch->birds_remaining <= 0
+//         ) {
+
+//             $batch->status = 'Completed';
+
+//         } else {
+
+//             $batch->status = 'Selling';
+
+//         }
+
+
+//         $batch->save();
+
+
+//         /*
+//         |--------------------------------------------------------------------------
+//         | Calculate New Sale Total
+//         |--------------------------------------------------------------------------
+//         */
+
+//         $newTotalAmount =
+//             $validated['quantity']
+//             *
+//             $validated['unit_price'];
+
+
+//         //remove payment fields - they do not belong in chicken_sales
+//         $paymentAmount = $validated['payment_amount'] ?? null;
+//         $paymentMethod = $validated['payment_method'] ?? null;
+
+//         unset($validated['payment_amount'], $validated['payment_method']);
+
+//         //update sales
+//         $validated['total_amount'] = $newTotalAmount;
+
+//         $sale->update($validated);
+
+
+//         //Add new payment
+//         if ($paymentAmount !== null && $paymentAmount > 0 ) 
+//         {
+
+//             //calculate current total paid
+//             $currentAmountPaid = $sale->payments()->sum('amount');
+
+//             //prevent overpayment
+//             if ($currentAmountPaid + $paymentAmount > $newTotalAmount) 
+//             {
+//                 throw new \Exception('Payment cannot exceed the total sale amount.');
+//             }
+
+//             //Create payment
+//             ChickenSalePayment::create([
+
+//                 'chicken_sale_id' => $sale->id,
+//                 'payment_date' => now()->toDateString(),
+//                 'amount' => $paymentAmount,
+//                 'payment_method' => $paymentMethod,
+//                 'notes' => 'Payment added during sale update'
+
+//             ]);
+//         }
+//     });
+
+
+//     return response()->json([
+
+//         'message' => 'Sale updated successfully'
+
+//     ]);
+
+// }
+
+
+public function updateSales(Request $request, ChickenSale $sale)
+{
     $validated = $request->validate([
 
-        'sale_date' =>
-            'required|date',
+        'sale_date' => 'required|date',
 
-        'quantity' =>
-            'required|integer|min:1',
+        'quantity' => 'required|integer|min:1',
 
-        'unit_price' =>
-            'required|numeric|min:0',
+        'unit_price' => 'required|numeric|min:0',
 
-        'customer_name' =>
-            'nullable|string',
+        'customer_name' => 'nullable|string',
 
-        'customer_phone' =>
-            'nullable|string',
+        'customer_phone' => 'nullable|string',
 
-        'notes' =>
-            'nullable|string',
+        'notes' => 'nullable|string',
 
         'payment_method' =>
             'nullable|in:Cash,Card,Cheque,Mobile Money,Bank Transfer',
 
+        // Allow negative payment adjustments
         'payment_amount' =>
-            'nullable|numeric|min:0',
+            'nullable|numeric',
 
     ]);
 
@@ -1025,13 +1193,9 @@ public function store(Request $request)
 
             }
 
+            $batch->birds_remaining -= $difference;
 
-            $batch->birds_remaining -=
-                $difference;
-
-            $batch->birds_sold +=
-                $difference;
-
+            $batch->birds_sold += $difference;
         }
 
 
@@ -1043,16 +1207,11 @@ public function store(Request $request)
 
         elseif ($difference < 0) {
 
-            $returnBirds =
-                abs($difference);
+            $returnBirds = abs($difference);
 
+            $batch->birds_remaining += $returnBirds;
 
-            $batch->birds_remaining +=
-                $returnBirds;
-
-            $batch->birds_sold -=
-                $returnBirds;
-
+            $batch->birds_sold -= $returnBirds;
         }
 
 
@@ -1062,16 +1221,13 @@ public function store(Request $request)
         |--------------------------------------------------------------------------
         */
 
-        if (
-            $batch->birds_remaining <= 0
-        ) {
+        if ($batch->birds_remaining <= 0) {
 
             $batch->status = 'Completed';
 
         } else {
 
             $batch->status = 'Selling';
-
         }
 
 
@@ -1090,39 +1246,119 @@ public function store(Request $request)
             $validated['unit_price'];
 
 
-        //remove payment fields - they do not belong in chicken_sales
-        $paymentAmount = $validated['payment_amount'] ?? null;
-        $paymentMethod = $validated['payment_method'] ?? null;
+        /*
+        |--------------------------------------------------------------------------
+        | Remove payment fields from sale update
+        |--------------------------------------------------------------------------
+        */
 
-        unset($validated['payment_amount'], $validated['payment_method']);
+        $paymentAmount =
+            $validated['payment_amount'] ?? null;
 
-        //update sales
-        $validated['total_amount'] = $newTotalAmount;
+        $paymentMethod =
+            $validated['payment_method'] ?? null;
+
+
+        unset(
+            $validated['payment_amount'],
+            $validated['payment_method']
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update Sale
+        |--------------------------------------------------------------------------
+        */
+
+        $validated['total_amount'] =
+            $newTotalAmount;
 
         $sale->update($validated);
 
 
-        //Add new payment
-        if ($paymentAmount !== null && $paymentAmount > 0 ) 
-        {
+        /*
+        |--------------------------------------------------------------------------
+        | Record Payment / Payment Adjustment
+        |--------------------------------------------------------------------------
+        */
 
-            //calculate current total paid
-            $currentAmountPaid = $sale->payments()->sum('amount');
+        if ($paymentAmount !== null && $paymentAmount != 0) {
 
-            //prevent overpayment
-            if ($currentAmountPaid + $paymentAmount > $newTotalAmount) 
-            {
-                throw new \Exception('Payment cannot exceed the total sale amount.');
+            /*
+            |--------------------------------------------------------------------------
+            | Current amount paid
+            |--------------------------------------------------------------------------
+            */
+
+            $currentAmountPaid =
+                $sale->payments()->sum('amount');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Calculate amount after adjustment
+            |--------------------------------------------------------------------------
+            */
+
+            $newAmountPaid =
+                $currentAmountPaid + $paymentAmount;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Do not allow amount paid to become negative
+            |--------------------------------------------------------------------------
+            */
+
+            if ($newAmountPaid < 0) {
+
+                throw new \Exception(
+                    'Payment adjustment cannot make the total amount paid negative.'
+                );
+
             }
 
-            //Create payment
+
+            /*
+            |--------------------------------------------------------------------------
+            | Do not allow amount paid to exceed sale total
+            |--------------------------------------------------------------------------
+            */
+
+            if ($newAmountPaid > $newTotalAmount) {
+
+                throw new \Exception(
+                    'Payment cannot exceed the total sale amount.'
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create payment or payment adjustment
+            |--------------------------------------------------------------------------
+            */
+
             ChickenSalePayment::create([
 
-                'chicken_sale_id' => $sale->id,
-                'payment_date' => now()->toDateString(),
-                'amount' => $paymentAmount,
-                'payment_method' => $paymentMethod,
-                'notes' => 'Payment added during sale update'
+                'chicken_sale_id' =>
+                    $sale->id,
+
+                'payment_date' =>
+                    now()->toDateString(),
+
+                'amount' =>
+                    $paymentAmount,
+
+                'payment_method' =>
+                    $paymentMethod,
+
+                'notes' =>
+                    $paymentAmount < 0
+                        ? 'Payment adjustment during sale update'
+                        : 'Payment added during sale update',
 
             ]);
         }
@@ -1131,10 +1367,10 @@ public function store(Request $request)
 
     return response()->json([
 
-        'message' => 'Sale updated successfully'
+        'message' =>
+            'Sale updated successfully'
 
     ]);
-
 }
 
     public function show(ChickenBatch $batch)

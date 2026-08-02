@@ -776,90 +776,137 @@ const columns = [
 
     },
 
-    // {
-    //     title: 'Payment Status',
 
-    //     dataIndex: 'payment_status',
+{
+    title: 'Payment',
+    key: 'payment_methods',
+    width: 220,
 
-    //     customRender: ({ record }) =>
+    customRender: ({ record }) => {
 
-    //         h(
+        const payments = record.payments || []
 
-    //             Tag,
+        if (!payments.length) {
+            return h(
+                Tag,
+                { color: 'red' },
+                () => 'No Payment'
+            )
+        }
 
-    //             {
-    //                 color:
+        const trimPaymentMethod = (method) => {
 
-    //                     record.payment_status === 'Paid'
-
-    //                         ? 'green'
-
-    //                         : record.payment_status === 'Partially Paid'
-
-    //                             ? 'orange'
-
-    //                             : 'red'
-
-    //             },
-
-    //             () => record.payment_status
-
-    //         )
-
-    // },
-
-    {
-        title: 'Payment Methods',
-
-        key: 'payment_methods',
-
-        customRender: ({ record }) => {
-
-            const payments = record.payments || []
-
-            if (!payments.length) {
-
-                return h(
-
-                    Tag,
-
-                    { color: 'red' },
-
-                    () => 'No Payment'
-
-                )
-
+            if (!method) {
+                return '-'
             }
 
-            return h(
+            return method.length > 10
+                ? method.substring(0, 10) + '...'
+                : method
+        }
 
-                Space,
+        return h(
+            'div',
+            {
+                style: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    overflowX: 'auto',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '100%',
+                    paddingBottom: '2px'
+                }
+            },
 
-                { wrap: true },
+            payments.map(payment =>
 
-                () => payments.map(payment =>
+                h(
+                    Tooltip,
+                    {
+                        title: payment.payment_method
+                    },
 
-                    h(
-
-                        Tag,
-
-                        {
-                            color: getPaymentColor(
-                                payment.payment_method
+                    {
+                        default: () =>
+                            h(
+                                Tag,
+                                {
+                                    color: getPaymentColor(
+                                        payment.payment_method
+                                    ),
+                                    style: {
+                                        flexShrink: 0,
+                                        margin: 0,
+                                        cursor: 'pointer'
+                                    }
+                                },
+                                () =>
+                                    trimPaymentMethod(
+                                        payment.payment_method
+                                    )
                             )
-                        },
-
-                        () => payment.payment_method
-
-                    )
-
+                    }
                 )
 
             )
+        )
+    }
+},
 
-        }
+    // {
+    //     title: 'Payment Methods',
 
-    },
+    //     key: 'payment_methods',
+
+    //     customRender: ({ record }) => {
+
+    //         const payments = record.payments || []
+
+    //         if (!payments.length) {
+
+    //             return h(
+
+    //                 Tag,
+
+    //                 { color: 'red' },
+
+    //                 () => 'No Payment'
+
+    //             )
+
+    //         }
+
+    //         return h(
+
+    //             Space,
+
+    //             { wrap: true },
+
+    //             () => payments.map(payment =>
+
+    //                 h(
+
+    //                     Tag,
+
+    //                     {
+    //                         color: getPaymentColor(
+    //                             payment.payment_method
+    //                         )
+    //                     },
+
+    //                     () => payment.payment_method
+
+    //                 )
+
+    //             )
+
+    //         )
+
+    //     }
+
+    // },
+
 
     {
         title: 'Actions',

@@ -78,17 +78,16 @@ const balance = computed(() => {
 const loading = ref(false)
 
 
+
 watch(
     () => props.sale,
-    (sale) => {
+    (sale)=>{
 
-        if (sale && sale.id) {
+        if(sale && sale.id){
 
-            form.value = {
+            form.value={
 
-                sale_date: sale.sale_date
-                    ? dayjs(sale.sale_date)
-                    : null,
+                sale_date: sale.sale_date ? dayjs(sale.sale_date) : null,
 
                 quantity: sale.quantity ?? 0,
 
@@ -98,13 +97,7 @@ watch(
 
                 customer_phone: sale.customer_phone ?? '',
 
-                notes: sale.notes ?? '',
-
-                // Existing payment method
-                payment_method: sale.payment_method ?? null,
-
-                // Keep this empty because this is for a NEW payment
-                payment_amount: null
+                notes: sale.notes ?? ''
 
             }
 
@@ -112,40 +105,10 @@ watch(
 
     },
     {
-        immediate: true
+        immediate:true
     }
+
 )
-
-// watch(
-//     () => props.sale,
-//     (sale)=>{
-
-//         if(sale && sale.id){
-
-//             form.value={
-
-//                 sale_date: sale.sale_date ? dayjs(sale.sale_date) : null,
-
-//                 quantity: sale.quantity ?? 0,
-
-//                 unit_price: sale.unit_price ?? 0,
-
-//                 customer_name: sale.customer_name ?? '',
-
-//                 customer_phone: sale.customer_phone ?? '',
-
-//                 notes: sale.notes ?? ''
-
-//             }
-
-//         }
-
-//     },
-//     {
-//         immediate:true
-//     }
-
-// )
 
 
 
@@ -289,20 +252,7 @@ await axios.put(
 
 </a-form-item>
 
-<!-- <a-form-item label="Total Amount Paid">
-
-    <a-input
-        :value="Number(totalPaid).toLocaleString()"
-        readonly
-    />
-
-</a-form-item> -->
-
-<a-divider>
-    Payment Information
-</a-divider>
-
-<a-form-item label="Total Amount Paid So Far">
+<a-form-item label="Total Amount Paid">
 
     <a-input
         :value="Number(totalPaid).toLocaleString()"
@@ -319,9 +269,6 @@ await axios.put(
     />
 
 </a-form-item>
-
-
-
 
 <a-divider>
     Record New Payment
@@ -362,24 +309,19 @@ await axios.put(
 
 <a-form-item label="Amount Paid">
 
-    <!-- <a-input-number
+    <a-input-number
+
         v-model:value="form.payment_amount"
+
         :min="0"
+
         :max="balance"
+
         style="width: 100%"
+
         placeholder="Enter payment amount"
 
-    /> -->
-
-              <a-input-number v-model:value="form.payment_amount" :min="-totalPaid" :max="balance" style="width: 100%"
-                    placeholder="Enter payment adjustment" />
-
-                <small class="text-gray-500">
-                    Enter a positive amount to add payment.
-                    Enter a negative amount to subtract payment.
-                </small>
-
-        
+    />
 
     <small class="text-gray-500">
 
