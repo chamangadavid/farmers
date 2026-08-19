@@ -26,7 +26,7 @@ import {
 } from '@ant-design/icons-vue'
 
 const props = defineProps({
-
+    
     open: Boolean,
 
     batch: Object

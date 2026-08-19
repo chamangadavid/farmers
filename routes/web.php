@@ -319,6 +319,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/documents/{id}/rename', [DocumentController::class, 'rename']);
     Route::delete('/documents/{id}', [DocumentController::class, 'destroy']);
 
+    Route::get('/documents/{id}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
+    Route::get('/documents/{id}/download', [DocumentController::class, 'download'])->name('documents.download');
+
+
     //Job Vacancies routes
     Route::get('/all-jobs', [jobController::class, 'JobVacancies'])->name('job.index');
     Route::get('/jobs', [JobController::class, 'index']);

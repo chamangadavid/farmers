@@ -91,7 +91,8 @@ const categoryFilter = ref('All')
 
 const statusFilter = ref('All')
 
-const dateFilter = ref('Month')
+// const dateFilter = ref('Month')
+const dateFilter = ref('All')
 
 const customDates = ref([])
 
@@ -350,6 +351,24 @@ const fetchExpenses = async () => {
 const filteredExpenses = computed(() => {
 
 
+    console.log('TODAY:', dayjs().format('YYYY-MM-DD'))
+
+console.log(
+    'WEEK:',
+    dayjs().startOf('week').format('YYYY-MM-DD'),
+    '→',
+    dayjs().endOf('week').format('YYYY-MM-DD')
+)
+
+console.log(
+    'EXPENSE DATES:',
+    expenses.value.map(e => ({
+        id: e.id,
+        date: dayjs(e.expense_date).format('YYYY-MM-DD')
+    }))
+)
+
+
     return expenses.value.filter(expense => {
 
 
@@ -362,29 +381,29 @@ const filteredExpenses = computed(() => {
         const expenseName =
             expense.expense_name
                 ?.toLowerCase()
-                ??
-                ''
+            ??
+            ''
 
 
         const category =
             expense.expense_category
                 ?.toLowerCase()
-                ??
-                ''
+            ??
+            ''
 
 
         const vendor =
             expense.vendor
                 ?.toLowerCase()
-                ??
-                ''
+            ??
+            ''
 
 
         const reference =
             expense.reference_number
                 ?.toLowerCase()
-                ??
-                ''
+            ??
+            ''
 
 
         const searchMatch =
@@ -449,88 +468,199 @@ const filteredExpenses = computed(() => {
         */
 
 
-        let dateMatch = true
+let dateMatch = true
 
+if (
+    dateFilter.value !== 'All' &&
+    expense.expense_date
+) {
 
-        const expenseDate =
-            dayjs(
-                expense.expense_date
-            )
+    const expenseDate =
+        dayjs(expense.expense_date)
 
+    switch (dateFilter.value) {
 
-        switch (dateFilter.value) {
+        case 'Today': {
+            const today =
+                dayjs().format('YYYY-MM-DD')
 
+            const expenseDay =
+                expenseDate.format('YYYY-MM-DD')
 
-            case 'Today':
+            dateMatch =
+                expenseDay === today
 
-                dateMatch =
-                    expenseDate.isSame(
-                        dayjs(),
-                        'day'
-                    )
-
-                break
-
-
-            case 'Week':
-
-                dateMatch =
-                    expenseDate.isSame(
-                        dayjs(),
-                        'week'
-                    )
-
-                break
-
-
-            case 'Month':
-
-                dateMatch =
-                    expenseDate.isSame(
-                        dayjs(),
-                        'month'
-                    )
-
-                break
-
-
-            case 'Year':
-
-                dateMatch =
-                    expenseDate.isSame(
-                        dayjs(),
-                        'year'
-                    )
-
-                break
-
-
-            case 'Custom':
-
-                if (
-
-                    customDates.value.length === 2
-
-                ) {
-
-                    dateMatch =
-                        expenseDate.isBetween(
-
-                            customDates.value[0],
-
-                            customDates.value[1],
-
-                            'day',
-
-                            '[]'
-
-                        )
-
-                }
-
-                break
-
+            break
         }
+
+        case 'Week': {
+            const today = dayjs()
+
+            const startOfWeek =
+                today
+                    .startOf('week')
+                    .format('YYYY-MM-DD')
+
+            const endOfWeek =
+                today
+                    .endOf('week')
+                    .format('YYYY-MM-DD')
+
+            const expenseDay =
+                expenseDate.format('YYYY-MM-DD')
+
+            dateMatch =
+                expenseDay >= startOfWeek &&
+                expenseDay <= endOfWeek
+
+            break
+        }
+
+        case 'Month':
+            dateMatch =
+                expenseDate.isSame(
+                    dayjs(),
+                    'month'
+                )
+            break
+
+        case 'Year':
+            dateMatch =
+                expenseDate.isSame(
+                    dayjs(),
+                    'year'
+                )
+            break
+
+        case 'Custom':
+            if (
+                customDates.value.length === 2
+            ) {
+                dateMatch =
+                    expenseDate.isBetween(
+                        customDates.value[0],
+                        customDates.value[1],
+                        'day',
+                        '[]'
+                    )
+            }
+            break
+    }
+}
+
+//         let dateMatch = true
+
+
+//         // const expenseDate =
+//         //     dayjs(
+//         //         expense.expense_date
+//         //     )
+//         const expenseDate = dayjs(
+//             expense.expense_date
+//         ).startOf('day')
+
+//         switch (dateFilter.value) {
+            
+
+//             case 'Today': {
+//     const today = dayjs().format('YYYY-MM-DD')
+
+//     dateMatch =
+//         expenseDate.format('YYYY-MM-DD') === today
+
+//     break
+// }
+
+// case 'Week': {
+//     const startOfWeek =
+//         dayjs().startOf('week').format('YYYY-MM-DD')
+
+//     const endOfWeek =
+//         dayjs().endOf('week').format('YYYY-MM-DD')
+
+//     const expenseDay =
+//         expenseDate.format('YYYY-MM-DD')
+
+//     dateMatch =
+//         expenseDay >= startOfWeek &&
+//         expenseDay <= endOfWeek
+
+//     break
+// }
+
+
+     
+
+            // case 'Today':
+
+            //     dateMatch =
+            //         expenseDate.isSame(
+            //             dayjs(),
+            //             'day'
+            //         )
+
+            //     break
+
+
+            // case 'Week':
+
+            //     dateMatch =
+            //         expenseDate.isSame(
+            //             dayjs(),
+            //             'week'
+            //         )
+
+            //     break
+
+
+        //     case 'Month':
+
+        //         dateMatch =
+        //             expenseDate.isSame(
+        //                 dayjs(),
+        //                 'month'
+        //             )
+
+        //         break
+
+
+        //     case 'Year':
+
+        //         dateMatch =
+        //             expenseDate.isSame(
+        //                 dayjs(),
+        //                 'year'
+        //             )
+
+        //         break
+
+
+        //     case 'Custom':
+
+        //         if (
+
+        //             customDates.value.length === 2
+
+        //         ) {
+
+        //             dateMatch =
+        //                 expenseDate.isBetween(
+
+        //                     customDates.value[0],
+
+        //                     customDates.value[1],
+
+        //                     'day',
+
+        //                     '[]'
+
+        //                 )
+
+        //         }
+
+        //         break
+
+        // }
 
 
         return (
@@ -1365,9 +1495,7 @@ onMounted(() => {
             <!-- HEADER -->
 
 
-            <div
-                class="flex flex-col md:flex-row justify-between items-center mb-6"
-            >
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
 
 
                 <div>
@@ -1396,9 +1524,7 @@ onMounted(() => {
                     <a-tooltip title="Refresh expenses">
 
 
-                        <a-button
-                            @click="refreshTable"
-                        >
+                        <a-button @click="refreshTable">
 
                             <template #icon>
 
@@ -1417,9 +1543,7 @@ onMounted(() => {
                     <a-tooltip title="Export PDF">
 
 
-                        <a-button
-                            @click="exportPdf"
-                        >
+                        <a-button @click="exportPdf">
 
                             <template #icon>
 
@@ -1438,9 +1562,7 @@ onMounted(() => {
                     <a-tooltip title="Export Excel">
 
 
-                        <a-button
-                            @click="exportExcel"
-                        >
+                        <a-button @click="exportExcel">
 
                             <template #icon>
 
@@ -1456,10 +1578,7 @@ onMounted(() => {
                     </a-tooltip>
 
 
-                    <a-button
-                        type="primary"
-                        @click="showCreate = true"
-                    >
+                    <a-button type="primary" @click="showCreate = true">
 
                         <template #icon>
 
@@ -1481,36 +1600,26 @@ onMounted(() => {
             <!-- KPI CARDS -->
 
 
-            <a-row
-                :gutter="[16, 16]"
-            >
+            <a-row :gutter="[16, 16]">
 
 
                 <!-- TOTAL EXPENSES -->
 
 
-                <a-col
-                    :xs="24"
-                    :sm="12"
-                    :lg="6"
-                >
+                <a-col :xs="24" :sm="12" :lg="6">
 
 
                     <a-card>
 
 
-                        <div
-                            class="text-gray-500"
-                        >
+                        <div class="text-gray-500">
 
                             Total Expenses
 
                         </div>
 
 
-                        <div
-                            class="text-3xl font-bold"
-                        >
+                        <div class="text-3xl font-bold">
 
                             {{
                                 statistics.totalExpenses
@@ -1528,28 +1637,20 @@ onMounted(() => {
                 <!-- TOTAL AMOUNT -->
 
 
-                <a-col
-                    :xs="24"
-                    :sm="12"
-                    :lg="6"
-                >
+                <a-col :xs="24" :sm="12" :lg="6">
 
 
                     <a-card>
 
 
-                        <div
-                            class="text-gray-500"
-                        >
+                        <div class="text-gray-500">
 
                             Total Amount
 
                         </div>
 
 
-                        <div
-                            class="text-3xl font-bold"
-                        >
+                        <div class="text-3xl font-bold">
 
                             K
 
@@ -1572,28 +1673,20 @@ onMounted(() => {
                 <!-- PAID -->
 
 
-                <a-col
-                    :xs="24"
-                    :sm="12"
-                    :lg="6"
-                >
+                <a-col :xs="24" :sm="12" :lg="6">
 
 
                     <a-card>
 
 
-                        <div
-                            class="text-gray-500"
-                        >
+                        <div class="text-gray-500">
 
                             Paid Amount
 
                         </div>
 
 
-                        <div
-                            class="text-3xl font-bold text-green-600"
-                        >
+                        <div class="text-3xl font-bold text-green-600">
 
                             K
 
@@ -1616,28 +1709,20 @@ onMounted(() => {
                 <!-- PENDING -->
 
 
-                <a-col
-                    :xs="24"
-                    :sm="12"
-                    :lg="6"
-                >
+                <a-col :xs="24" :sm="12" :lg="6">
 
 
                     <a-card>
 
 
-                        <div
-                            class="text-gray-500"
-                        >
+                        <div class="text-gray-500">
 
                             Pending Amount
 
                         </div>
 
 
-                        <div
-                            class="text-3xl font-bold text-orange-500"
-                        >
+                        <div class="text-3xl font-bold text-orange-500">
 
                             K
 
@@ -1659,33 +1744,19 @@ onMounted(() => {
 
             </a-row>
 
-                 <!-- FILTERS -->
+            <!-- FILTERS -->
 
 
-            <a-card
-                class="mt-5"
-            >
+            <a-card class="mt-5">
 
 
-                <div
-                    class="flex flex-wrap gap-3"
-                >
+                <div class="flex flex-wrap gap-3">
 
 
                     <!-- SEARCH -->
 
 
-                    <a-input
-
-                        v-model:value="search"
-
-                        placeholder="Search expenses..."
-
-                        style="width: 260px"
-
-                        allow-clear
-
-                    >
+                    <a-input v-model:value="search" placeholder="Search expenses..." style="width: 260px" allow-clear>
 
                         <template #prefix>
 
@@ -1700,178 +1771,53 @@ onMounted(() => {
                     <!-- CATEGORY -->
 
 
-                    <a-select
+                    <a-select v-model:value="categoryFilter" style="width: 200px">
 
-                        v-model:value="categoryFilter"
-
-                        style="width: 200px"
-
-                    >
-
-                        <a-select-option
-                            value="All"
-                        >
-
+                        <a-select-option value="All">
                             All Categories
-
                         </a-select-option>
 
-
-                        <a-select-option
-
-                            v-for="category in categories"
-
-                            :key="category"
-
-                            :value="category"
-
-                        >
-
+                        <a-select-option v-for="category in categories" :key="category" :value="category">
                             {{ category }}
-
                         </a-select-option>
-
-
                     </a-select>
 
 
                     <!-- STATUS -->
-
-
-                    <a-select
-
-                        v-model:value="statusFilter"
-
-                        style="width: 170px"
-
-                    >
-
-                        <a-select-option
-                            value="All"
-                        >
-
-                            All Statuses
-
-                        </a-select-option>
-
-
-                        <a-select-option
-
-                            v-for="status in paymentStatuses"
-
-                            :key="status"
-
-                            :value="status"
-
-                        >
-
+                    <a-select v-model:value="statusFilter" style="width: 170px">
+                        <a-select-option value="All"> All Statuses </a-select-option>
+                        <a-select-option v-for="status in paymentStatuses" :key="status" :value="status">
                             {{ status }}
-
                         </a-select-option>
-
-
                     </a-select>
 
 
                     <!-- DATE -->
-
-
-                    <a-select
-
-                        v-model:value="dateFilter"
-
-                        style="width: 150px"
-
-                    >
-
-                        <a-select-option
-                            value="Today"
-                        >
-
-                            Today
-
-                        </a-select-option>
-
-
-                        <a-select-option
-                            value="Week"
-                        >
-
-                            This Week
-
-                        </a-select-option>
-
-
-                        <a-select-option
-                            value="Month"
-                        >
-
-                            This Month
-
-                        </a-select-option>
-
-
-                        <a-select-option
-                            value="Year"
-                        >
-
-                            This Year
-
-                        </a-select-option>
-
-
-                        <a-select-option
-                            value="Custom"
-                        >
-
-                            Custom
-
-                        </a-select-option>
-
-
+                    <a-select v-model:value="dateFilter" style="width: 150px">
+                        <a-select-option value="All"> All Dates </a-select-option>
+                        <a-select-option value="Today"> Today </a-select-option>
+                        <a-select-option value="Week"> This Week </a-select-option>
+                        <a-select-option value="Month"> This Month </a-select-option>
+                        <a-select-option value="Year"> This Year </a-select-option>
+                        <a-select-option value="Custom"> Custom </a-select-option>
+                        
                     </a-select>
-
-
+                    <span style="margin-left: 10px">
+                        {{ filteredExpenses.length }} records
+                    </span>
                     <!-- CUSTOM DATE -->
-
-
-                    <a-range-picker
-
-                        v-if="
-                            dateFilter === 'Custom'
-                        "
-
-                        v-model:value="customDates"
-
-                    />
-
-
+                    <a-range-picker v-if=" dateFilter === 'Custom' " v-model:value="customDates" />
                 </div>
-
-
             </a-card>
 
 
-                 <!-- TABLE -->
+            <!-- TABLE -->
 
 
-            <a-card
-                class="mt-5"
-            >
+            <a-card class="mt-5">
 
 
-                <a-table
-
-                    :columns="columns"
-
-                    :data-source="filteredExpenses"
-
-                    :loading="loading"
-
-                    row-key="id"
-
-                    bordered
-
+                <a-table :columns="columns" :data-source="filteredExpenses" :loading="loading" row-key="id" bordered
                     :pagination="{
 
                         pageSize: 10,
@@ -1880,36 +1826,28 @@ onMounted(() => {
 
                         showQuickJumper: true
 
-                    }"
-
-                    :scroll="{
+                    }" :scroll="{
 
                         x: 1500,
 
                         y: 500
 
-                    }"
-
-                >
+                    }">
 
 
-                    <template
-                        #bodyCell="{
-                            column,
-                            record,
-                            index
-                        }"
-                    >
+                    <template #bodyCell="{
+                        column,
+                        record,
+                        index
+                    }">
 
 
                         <!-- INDEX -->
 
 
-                        <template
-                            v-if="
-                                column.key === 'index'
-                            "
-                        >
+                        <template v-if="
+                            column.key === 'index'
+                        ">
 
                             {{
                                 index + 1
@@ -1921,13 +1859,11 @@ onMounted(() => {
                         <!-- DATE -->
 
 
-                        <template
-                            v-else-if="
-                                column.key
-                                ===
-                                'expense_date'
-                            "
-                        >
+                        <template v-else-if="
+                            column.key
+                            ===
+                            'expense_date'
+                        ">
 
                             {{
                                 dayjs(
@@ -1944,13 +1880,11 @@ onMounted(() => {
                         <!-- AMOUNT -->
 
 
-                        <template
-                            v-else-if="
-                                column.key
-                                ===
-                                'amount'
-                            "
-                        >
+                        <template v-else-if="
+                            column.key
+                            ===
+                            'amount'
+                        ">
 
                             <strong>
 
@@ -1971,73 +1905,47 @@ onMounted(() => {
                         <!-- STATUS -->
 
 
-                        <template
-                            v-else-if="
-                                column.key
+                        <template v-else-if="
+                            column.key
+                            ===
+                            'payment_status'
+                        ">
+
+
+                            <a-tag v-if="
+                                record.payment_status
                                 ===
-                                'payment_status'
-                            "
-                        >
-
-
-                            <a-tag
-
-                                v-if="
-                                    record.payment_status
-                                    ===
-                                    'Paid'
-                                "
-
-                                color="green"
-
-                            >
+                                'Paid'
+                            " color="green">
 
                                 Paid
 
                             </a-tag>
 
 
-                            <a-tag
-
-                                v-else-if="
-                                    record.payment_status
-                                    ===
-                                    'Partial'
-                                "
-
-                                color="orange"
-
-                            >
+                            <a-tag v-else-if="
+                                record.payment_status
+                                ===
+                                'Partial'
+                            " color="orange">
 
                                 Partial
 
                             </a-tag>
 
 
-                            <a-tag
-
-                                v-else-if="
-                                    record.payment_status
-                                    ===
-                                    'Pending'
-                                "
-
-                                color="blue"
-
-                            >
+                            <a-tag v-else-if="
+                                record.payment_status
+                                ===
+                                'Pending'
+                            " color="blue">
 
                                 Pending
 
                             </a-tag>
 
 
-                            <a-tag
-
-                                v-else
-
-                                color="red"
-
-                            >
+                            <a-tag v-else color="red">
 
                                 Cancelled
 
@@ -2050,33 +1958,23 @@ onMounted(() => {
                         <!-- ACTIONS -->
 
 
-                        <template
-                            v-else-if="
-                                column.key
-                                ===
-                                'actions'
-                            "
-                        >
+                        <template v-else-if="
+                            column.key
+                            ===
+                            'actions'
+                        ">
 
 
                             <a-space>
 
 
-                                <a-tooltip
-                                    title="View expense"
-                                >
+                                <a-tooltip title="View expense">
 
-                                    <a-button
-
-                                        size="small"
-
-                                        @click="
-                                            openView(
-                                                record
-                                            )
-                                        "
-
-                                    >
+                                    <a-button size="small" @click="
+                                        openView(
+                                            record
+                                        )
+                                        ">
 
                                         <EyeOutlined />
 
@@ -2086,25 +1984,13 @@ onMounted(() => {
                                 </a-tooltip>
 
 
-                                <a-tooltip
-                                    title="Edit expense"
-                                >
+                                <a-tooltip title="Edit expense">
 
-                                    <a-button
-
-                                        type="primary"
-
-                                        ghost
-
-                                        size="small"
-
-                                        @click="
-                                            openEdit(
-                                                record
-                                            )
-                                        "
-
-                                    >
+                                    <a-button type="primary" ghost size="small" @click="
+                                        openEdit(
+                                            record
+                                        )
+                                        ">
 
                                         <EditOutlined />
 
@@ -2114,23 +2000,13 @@ onMounted(() => {
                                 </a-tooltip>
 
 
-                                <a-tooltip
-                                    title="Delete expense"
-                                >
+                                <a-tooltip title="Delete expense">
 
-                                    <a-button
-
-                                        danger
-
-                                        size="small"
-
-                                        @click="
-                                            deleteExpense(
-                                                record
-                                            )
-                                        "
-
-                                    >
+                                    <a-button danger size="small" @click="
+                                        deleteExpense(
+                                            record
+                                        )
+                                        ">
 
                                         <DeleteOutlined />
 
@@ -2158,41 +2034,21 @@ onMounted(() => {
             <!-- CHARTS -->
 
 
-            <a-row
-                :gutter="[16, 16]"
-                class="mt-5"
-            >
+            <a-row :gutter="[16, 16]" class="mt-5">
 
 
                 <!-- MONTHLY EXPENSES -->
 
 
-                <a-col
-                    :xs="24"
-                    :lg="14"
-                >
+                <a-col :xs="24" :lg="14">
 
 
-                    <a-card
-                        title="Monthly Expenses"
-                    >
+                    <a-card title="Monthly Expenses">
 
 
-                        <apexchart
-
-                            type="line"
-
-                            height="320"
-
-                            :options="
-                                monthlyExpenseOptions
-                            "
-
-                            :series="
-                                monthlyExpenseSeries
-                            "
-
-                        />
+                        <apexchart type="line" height="320" :options="monthlyExpenseOptions
+                            " :series="monthlyExpenseSeries
+                                " />
 
 
                     </a-card>
@@ -2204,32 +2060,15 @@ onMounted(() => {
                 <!-- CATEGORY EXPENSES -->
 
 
-                <a-col
-                    :xs="24"
-                    :lg="10"
-                >
+                <a-col :xs="24" :lg="10">
 
 
-                    <a-card
-                        title="Expenses by Category"
-                    >
+                    <a-card title="Expenses by Category">
 
 
-                        <apexchart
-
-                            type="donut"
-
-                            height="320"
-
-                            :options="
-                                categoryExpenseOptions
-                            "
-
-                            :series="
-                                categoryExpenseSeries
-                            "
-
-                        />
+                        <apexchart type="donut" height="320" :options="categoryExpenseOptions
+                            " :series="categoryExpenseSeries
+                                " />
 
 
                     </a-card>
@@ -2241,39 +2080,19 @@ onMounted(() => {
             </a-row>
 
 
-       
 
-       
+
+
             <!-- MODALS -->
 
 
-            <CreateGeneralExpenses
-
-                v-model:open="showCreate"
-
-                @success="fetchExpenses"
-
-            />
+            <CreateGeneralExpenses v-model:open="showCreate" @success="fetchExpenses" />
 
 
-            <EditGeneralExpenses
-
-                v-model:open="showEdit"
-
-                :expense="selectedExpense"
-
-                @success="fetchExpenses"
-
-            />
+            <EditGeneralExpenses v-model:open="showEdit" :expense="selectedExpense" @success="fetchExpenses" />
 
 
-            <ViewGeneralExpenses
-
-                v-model:open="showView"
-
-                :expense="selectedExpense"
-
-            />
+            <ViewGeneralExpenses v-model:open="showView" :expense="selectedExpense" />
 
 
         </div>
@@ -2286,13 +2105,9 @@ onMounted(() => {
 
 
 <style scoped>
-
-
 :deep(.ant-card) {
 
     border-radius: 14px;
 
 }
-
-
 </style>

@@ -842,36 +842,480 @@ public function store(Request $request)
         ]);
 
     }
+     
+
+    public function updateSales(Request $request, ChickenSale $sale)
+    {
+        $validated = $request->validate([
+
+            'sale_date' => 'required|date',
+            'sale_type' => ['required', 'in:Per Bird,Per Kg'],
+            'quantity' => 'required|integer|min:1',
+            'unit_price' => 'nullable|numeric|min:0',
+            'total_weight' => 'nullable|numeric|min:0.01',
+            'price_per_kg' => 'nullable|numeric|min:0',
+            'customer_name' => 'nullable|string',
+            'customer_phone' => 'nullable|string',
+            'notes' => 'nullable|string', 
+            // 'payment_method' =>'nullable|in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
+            // 'payment_amount' =>'nullable|numeric',
+
+            'payment_method' => [
+                'nullable',
+                'required_with:payment_amount',
+                'in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
+            ], //No payment amount → payment method can be empty || Payment amount entered → payment method must be supplied.
+
+            'payment_amount' => [
+                'nullable',
+                'numeric',
+            ],
+            
+
+        ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Sale Type Specific Fields
+        |--------------------------------------------------------------------------
+        */
+
+        if ($validated['sale_type'] === 'Per Bird') {
+
+            if (
+                empty($validated['unit_price']) ||
+                $validated['unit_price'] <= 0
+            ) {
+
+                throw new \Exception(
+                    'Price per bird is required.'
+                );
+            }
+
+        }
+
+
+        if ($validated['sale_type'] === 'Per Kg') {
+
+            if (
+                empty($validated['total_weight']) ||
+                $validated['total_weight'] <= 0
+            ) {
+
+                throw new \Exception(
+                    'Total weight is required.'
+                );
+            }
+
+
+            if (
+                empty($validated['price_per_kg']) ||
+                $validated['price_per_kg'] <= 0
+            ) {
+
+                throw new \Exception(
+                    'Price per Kg is required.'
+                );
+            }
+
+        }
+
+
+        DB::transaction(function () use (
+            $sale,
+            $validated
+        ) {
+
+            $batch = $sale->batch;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Calculate Quantity Difference
+            |--------------------------------------------------------------------------
+            */
+
+            $difference =
+                $validated['quantity']
+                -
+                $sale->quantity;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Increase Quantity Sold
+            |--------------------------------------------------------------------------
+            */
+
+            if ($difference > 0) {
+
+                if (
+                    $batch->birds_remaining < $difference
+                ) {
+
+                    throw new \Exception(
+                        'Not enough birds available.'
+                    );
+
+                }
+
+                $batch->birds_remaining -= $difference;
+
+                $batch->birds_sold += $difference;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reduce Quantity Sold
+            |--------------------------------------------------------------------------
+            */
+
+            elseif ($difference < 0) {
+
+                $returnBirds = abs($difference);
+
+                $batch->birds_remaining += $returnBirds;
+
+                $batch->birds_sold -= $returnBirds;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Batch Status
+            |--------------------------------------------------------------------------
+            */
+
+            if ($batch->birds_remaining <= 0) {
+
+                $batch->birds_remaining = 0;
+
+                $batch->status = 'Completed';
+
+            } else {
+
+                $batch->status = 'Selling';
+            }
+
+
+            $batch->save();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Calculate New Sale Amount
+            |--------------------------------------------------------------------------
+            */
+
+            if ($validated['sale_type'] === 'Per Kg') {
+
+                $newTotalAmount =
+                    $validated['total_weight']
+                    *
+                    $validated['price_per_kg'];
+
+                $unitPrice =
+                    $validated['price_per_kg'];
+
+            } else {
+
+                $newTotalAmount =
+                    $validated['quantity']
+                    *
+                    $validated['unit_price'];
+
+                $unitPrice =
+                    $validated['unit_price'];
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment Information
+            |--------------------------------------------------------------------------
+            */
+
+            $paymentAmount =
+                $validated['payment_amount'] ?? null;
+
+            $paymentMethod =
+                $validated['payment_method'] ?? null;
+
+
+            unset(
+                $validated['payment_amount'],
+                $validated['payment_method']
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Sale
+            |--------------------------------------------------------------------------
+            */
+
+            $validated['unit_price'] =
+                $unitPrice;
+
+            $validated['total_amount'] =
+                $newTotalAmount;
+
+
+            /*
+            | Clear fields that don't apply
+            |--------------------------------------------------------------------------
+            */
+
+            if ($validated['sale_type'] === 'Per Bird') {
+
+                $validated['total_weight'] = null;
+
+                $validated['price_per_kg'] = null;
+
+            } else {
+
+                $validated['unit_price'] = $unitPrice;
+            }
+
+
+            $sale->update($validated);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Record Payment / Payment Adjustment
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $paymentAmount !== null &&
+                $paymentAmount != 0
+            ) {
+
+                $currentAmountPaid =
+                    $sale->payments()->sum('amount');
+
+
+                $newAmountPaid =
+                    $currentAmountPaid +
+                    $paymentAmount;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent Negative Amount Paid
+                |--------------------------------------------------------------------------
+                */
+
+                if ($newAmountPaid < 0) {
+
+                    throw new \Exception(
+                        'Payment adjustment cannot make the total amount paid negative.'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent Overpayment
+                |--------------------------------------------------------------------------
+                */
+
+                if ($newAmountPaid > $newTotalAmount) {
+
+                    throw new \Exception(
+                        'Payment cannot exceed the total sale amount.'
+                    );
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Create Payment / Adjustment
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                        $paymentAmount !== null &&
+                        $paymentAmount != 0
+                    ) {
+
+                        if (empty($paymentMethod)) {
+                            throw new \Exception(
+                                'Payment method is required when entering a payment amount.'
+                            );
+                        }
+
+                        $currentAmountPaid =
+                            $sale->payments()->sum('amount');
+
+                        $newAmountPaid =
+                            $currentAmountPaid + $paymentAmount;
+
+                        if ($newAmountPaid < 0) {
+                            throw new \Exception(
+                                'Payment adjustment cannot make the total amount paid negative.'
+                            );
+                        }
+
+                        if ($newAmountPaid > $newTotalAmount) {
+                            throw new \Exception(
+                                'Payment cannot exceed the total sale amount.'
+                            );
+                        }
+
+                        ChickenSalePayment::create([
+
+                            'chicken_sale_id' =>
+                                $sale->id,
+
+                            'payment_date' =>
+                                now()->toDateString(),
+
+                            'amount' =>
+                                $paymentAmount,
+
+                            'payment_method' =>
+                                $paymentMethod,
+
+                            'notes' =>
+                                $paymentAmount < 0
+                                    ? 'Payment adjustment during sale update'
+                                    : 'Payment added during sale update',
+
+                        ]);
+                    }
+
+                // ChickenSalePayment::create([
+
+                //     'chicken_sale_id' =>
+                //         $sale->id,
+
+                //     'payment_date' =>
+                //         now()->toDateString(),
+
+                //     'amount' =>
+                //         $paymentAmount,
+
+                //     'payment_method' =>
+                //         $paymentMethod,
+
+                //     'notes' =>
+                //         $paymentAmount < 0
+                //             ? 'Payment adjustment during sale update'
+                //             : 'Payment added during sale update',
+
+                // ]);
+            }
+
+        });
+
+
+        return response()->json([
+
+            'message' =>
+                'Sale updated successfully'
+
+        ]);
+    }
 
     // public function updateSales(Request $request, ChickenSale $sale)
     // {
+    //     $validated = $request->validate([
 
-    //     $validated=$request->validate([
+    //         'sale_date' => 'required|date',
 
-    //         'sale_date'=>'required|date',
+    //         'sale_type' => [
+    //             'required',
+    //             'in:Per Bird,Per Kg'
+    //         ],
 
-    //         'quantity'=>'required|integer|min:1',
+    //         'quantity' => 'required|integer|min:1',
 
-    //         'unit_price'=>'required|numeric|min:0',
+    //         'unit_price' => 'nullable|numeric|min:0',
 
-    //         'customer_name'=>'nullable|string',
+    //         'total_weight' => 'nullable|numeric|min:0.01',
 
-    //         'customer_phone'=>'nullable|string',
+    //         'price_per_kg' => 'nullable|numeric|min:0',
 
-    //         'notes'=>'nullable|string'
+    //         'customer_name' => 'nullable|string',
+
+    //         'customer_phone' => 'nullable|string',
+
+    //         'notes' => 'nullable|string',
+
+    //         'payment_method' =>
+    //             'nullable|in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
+
+    //         'payment_amount' =>
+    //             'nullable|numeric',
 
     //     ]);
 
 
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Validate Sale Type Specific Fields
+    //     |--------------------------------------------------------------------------
+    //     */
 
-    //     DB::transaction(function() use($sale,$validated){
+    //     if ($validated['sale_type'] === 'Per Bird') {
+
+    //         if (
+    //             empty($validated['unit_price']) ||
+    //             $validated['unit_price'] <= 0
+    //         ) {
+
+    //             throw new \Exception(
+    //                 'Price per bird is required.'
+    //             );
+    //         }
+
+    //     }
 
 
-    //         $batch=$sale->batch;
+    //     if ($validated['sale_type'] === 'Per Kg') {
+
+    //         if (
+    //             empty($validated['total_weight']) ||
+    //             $validated['total_weight'] <= 0
+    //         ) {
+
+    //             throw new \Exception(
+    //                 'Total weight is required.'
+    //             );
+    //         }
+
+
+    //         if (
+    //             empty($validated['price_per_kg']) ||
+    //             $validated['price_per_kg'] <= 0
+    //         ) {
+
+    //             throw new \Exception(
+    //                 'Price per Kg is required.'
+    //             );
+    //         }
+
+    //     }
+
+
+    //     DB::transaction(function () use (
+    //         $sale,
+    //         $validated
+    //     ) {
+
+    //         $batch = $sale->batch;
 
 
     //         /*
-    //         old quantity difference
+    //         |--------------------------------------------------------------------------
+    //         | Calculate Quantity Difference
+    //         |--------------------------------------------------------------------------
     //         */
 
     //         $difference =
@@ -880,650 +1324,236 @@ public function store(Request $request)
     //             $sale->quantity;
 
 
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Increase Quantity Sold
+    //         |--------------------------------------------------------------------------
+    //         */
 
-    //         if($difference > 0){
+    //         if ($difference > 0) {
 
-
-    //             // selling more birds
-
-    //             if($batch->birds_remaining < $difference){
+    //             if (
+    //                 $batch->birds_remaining < $difference
+    //             ) {
 
     //                 throw new \Exception(
-    //                     'Not enough birds available'
+    //                     'Not enough birds available.'
     //                 );
 
     //             }
 
-
     //             $batch->birds_remaining -= $difference;
 
     //             $batch->birds_sold += $difference;
-
-
     //         }
 
 
-    //         elseif($difference < 0){
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Reduce Quantity Sold
+    //         |--------------------------------------------------------------------------
+    //         */
 
+    //         elseif ($difference < 0) {
 
-    //             // reducing sale quantity
-
-    //             $returnBirds =
-    //                 abs($difference);
-
+    //             $returnBirds = abs($difference);
 
     //             $batch->birds_remaining += $returnBirds;
 
     //             $batch->birds_sold -= $returnBirds;
-
-
     //         }
 
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Update Batch Status
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         if ($batch->birds_remaining <= 0) {
+
+    //             $batch->birds_remaining = 0;
+
+    //             $batch->status = 'Completed';
+
+    //         } else {
+
+    //             $batch->status = 'Selling';
+    //         }
 
 
     //         $batch->save();
 
 
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Calculate New Sale Amount
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         if ($validated['sale_type'] === 'Per Kg') {
+
+    //             $newTotalAmount =
+    //                 $validated['total_weight']
+    //                 *
+    //                 $validated['price_per_kg'];
+
+    //             $unitPrice =
+    //                 $validated['price_per_kg'];
+
+    //         } else {
+
+    //             $newTotalAmount =
+    //                 $validated['quantity']
+    //                 *
+    //                 $validated['unit_price'];
+
+    //             $unitPrice =
+    //                 $validated['unit_price'];
+    //         }
+
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Payment Information
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         $paymentAmount =
+    //             $validated['payment_amount'] ?? null;
+
+    //         $paymentMethod =
+    //             $validated['payment_method'] ?? null;
+
+
+    //         unset(
+    //             $validated['payment_amount'],
+    //             $validated['payment_method']
+    //         );
+
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Update Sale
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         $validated['unit_price'] =
+    //             $unitPrice;
 
     //         $validated['total_amount'] =
-    //             $validated['quantity']
-    //             *
-    //             $validated['unit_price'];
+    //             $newTotalAmount;
 
+
+    //         /*
+    //         | Clear fields that don't apply
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         if ($validated['sale_type'] === 'Per Bird') {
+
+    //             $validated['total_weight'] = null;
+
+    //             $validated['price_per_kg'] = null;
+
+    //         } else {
+
+    //             $validated['unit_price'] = $unitPrice;
+    //         }
 
 
     //         $sale->update($validated);
 
 
-    //     });
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Record Payment / Payment Adjustment
+    //         |--------------------------------------------------------------------------
+    //         */
 
+    //         if (
+    //             $paymentAmount !== null &&
+    //             $paymentAmount != 0
+    //         ) {
+
+    //             $currentAmountPaid =
+    //                 $sale->payments()->sum('amount');
+
+
+    //             $newAmountPaid =
+    //                 $currentAmountPaid +
+    //                 $paymentAmount;
+
+
+    //             /*
+    //             |--------------------------------------------------------------------------
+    //             | Prevent Negative Amount Paid
+    //             |--------------------------------------------------------------------------
+    //             */
+
+    //             if ($newAmountPaid < 0) {
+
+    //                 throw new \Exception(
+    //                     'Payment adjustment cannot make the total amount paid negative.'
+    //                 );
+
+    //             }
+
+
+    //             /*
+    //             |--------------------------------------------------------------------------
+    //             | Prevent Overpayment
+    //             |--------------------------------------------------------------------------
+    //             */
+
+    //             if ($newAmountPaid > $newTotalAmount) {
+
+    //                 throw new \Exception(
+    //                     'Payment cannot exceed the total sale amount.'
+    //                 );
+
+    //             }
+
+
+    //             /*
+    //             |--------------------------------------------------------------------------
+    //             | Create Payment / Adjustment
+    //             |--------------------------------------------------------------------------
+    //             */
+
+    //             ChickenSalePayment::create([
+
+    //                 'chicken_sale_id' =>
+    //                     $sale->id,
+
+    //                 'payment_date' =>
+    //                     now()->toDateString(),
+
+    //                 'amount' =>
+    //                     $paymentAmount,
+
+    //                 'payment_method' =>
+    //                     $paymentMethod,
+
+    //                 'notes' =>
+    //                     $paymentAmount < 0
+    //                         ? 'Payment adjustment during sale update'
+    //                         : 'Payment added during sale update',
+
+    //             ]);
+    //         }
+
+    //     });
 
 
     //     return response()->json([
 
-    //         'message'=>'Sale updated successfully'
+    //         'message' =>
+    //             'Sale updated successfully'
 
     //     ]);
-
     // }
 
-     
-    public function updateSales(Request $request, ChickenSale $sale)
-{
-    $validated = $request->validate([
-
-        'sale_date' => 'required|date',
-
-        'sale_type' => [
-            'required',
-            'in:Per Bird,Per Kg'
-        ],
-
-        'quantity' => 'required|integer|min:1',
-
-        'unit_price' => 'nullable|numeric|min:0',
-
-        'total_weight' => 'nullable|numeric|min:0.01',
-
-        'price_per_kg' => 'nullable|numeric|min:0',
-
-        'customer_name' => 'nullable|string',
-
-        'customer_phone' => 'nullable|string',
-
-        'notes' => 'nullable|string',
-
-        'payment_method' =>
-            'nullable|in:Cash,Credit,Card,Cheque,Mobile Money,Bank Transfer',
-
-        'payment_amount' =>
-            'nullable|numeric',
-
-    ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Validate Sale Type Specific Fields
-    |--------------------------------------------------------------------------
-    */
-
-    if ($validated['sale_type'] === 'Per Bird') {
-
-        if (
-            empty($validated['unit_price']) ||
-            $validated['unit_price'] <= 0
-        ) {
-
-            throw new \Exception(
-                'Price per bird is required.'
-            );
-        }
-
-    }
-
-
-    if ($validated['sale_type'] === 'Per Kg') {
-
-        if (
-            empty($validated['total_weight']) ||
-            $validated['total_weight'] <= 0
-        ) {
-
-            throw new \Exception(
-                'Total weight is required.'
-            );
-        }
-
-
-        if (
-            empty($validated['price_per_kg']) ||
-            $validated['price_per_kg'] <= 0
-        ) {
-
-            throw new \Exception(
-                'Price per Kg is required.'
-            );
-        }
-
-    }
-
-
-    DB::transaction(function () use (
-        $sale,
-        $validated
-    ) {
-
-        $batch = $sale->batch;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Calculate Quantity Difference
-        |--------------------------------------------------------------------------
-        */
-
-        $difference =
-            $validated['quantity']
-            -
-            $sale->quantity;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Increase Quantity Sold
-        |--------------------------------------------------------------------------
-        */
-
-        if ($difference > 0) {
-
-            if (
-                $batch->birds_remaining < $difference
-            ) {
-
-                throw new \Exception(
-                    'Not enough birds available.'
-                );
-
-            }
-
-            $batch->birds_remaining -= $difference;
-
-            $batch->birds_sold += $difference;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Reduce Quantity Sold
-        |--------------------------------------------------------------------------
-        */
-
-        elseif ($difference < 0) {
-
-            $returnBirds = abs($difference);
-
-            $batch->birds_remaining += $returnBirds;
-
-            $batch->birds_sold -= $returnBirds;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Update Batch Status
-        |--------------------------------------------------------------------------
-        */
-
-        if ($batch->birds_remaining <= 0) {
-
-            $batch->birds_remaining = 0;
-
-            $batch->status = 'Completed';
-
-        } else {
-
-            $batch->status = 'Selling';
-        }
-
-
-        $batch->save();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Calculate New Sale Amount
-        |--------------------------------------------------------------------------
-        */
-
-        if ($validated['sale_type'] === 'Per Kg') {
-
-            $newTotalAmount =
-                $validated['total_weight']
-                *
-                $validated['price_per_kg'];
-
-            $unitPrice =
-                $validated['price_per_kg'];
-
-        } else {
-
-            $newTotalAmount =
-                $validated['quantity']
-                *
-                $validated['unit_price'];
-
-            $unitPrice =
-                $validated['unit_price'];
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Payment Information
-        |--------------------------------------------------------------------------
-        */
-
-        $paymentAmount =
-            $validated['payment_amount'] ?? null;
-
-        $paymentMethod =
-            $validated['payment_method'] ?? null;
-
-
-        unset(
-            $validated['payment_amount'],
-            $validated['payment_method']
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Update Sale
-        |--------------------------------------------------------------------------
-        */
-
-        $validated['unit_price'] =
-            $unitPrice;
-
-        $validated['total_amount'] =
-            $newTotalAmount;
-
-
-        /*
-        | Clear fields that don't apply
-        |--------------------------------------------------------------------------
-        */
-
-        if ($validated['sale_type'] === 'Per Bird') {
-
-            $validated['total_weight'] = null;
-
-            $validated['price_per_kg'] = null;
-
-        } else {
-
-            $validated['unit_price'] = $unitPrice;
-        }
-
-
-        $sale->update($validated);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Record Payment / Payment Adjustment
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            $paymentAmount !== null &&
-            $paymentAmount != 0
-        ) {
-
-            $currentAmountPaid =
-                $sale->payments()->sum('amount');
-
-
-            $newAmountPaid =
-                $currentAmountPaid +
-                $paymentAmount;
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Prevent Negative Amount Paid
-            |--------------------------------------------------------------------------
-            */
-
-            if ($newAmountPaid < 0) {
-
-                throw new \Exception(
-                    'Payment adjustment cannot make the total amount paid negative.'
-                );
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Prevent Overpayment
-            |--------------------------------------------------------------------------
-            */
-
-            if ($newAmountPaid > $newTotalAmount) {
-
-                throw new \Exception(
-                    'Payment cannot exceed the total sale amount.'
-                );
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Create Payment / Adjustment
-            |--------------------------------------------------------------------------
-            */
-
-            ChickenSalePayment::create([
-
-                'chicken_sale_id' =>
-                    $sale->id,
-
-                'payment_date' =>
-                    now()->toDateString(),
-
-                'amount' =>
-                    $paymentAmount,
-
-                'payment_method' =>
-                    $paymentMethod,
-
-                'notes' =>
-                    $paymentAmount < 0
-                        ? 'Payment adjustment during sale update'
-                        : 'Payment added during sale update',
-
-            ]);
-        }
-
-    });
-
-
-    return response()->json([
-
-        'message' =>
-            'Sale updated successfully'
-
-    ]);
-}
-
-// public function updateSales(Request $request, ChickenSale $sale)
-// {
-//     $validated = $request->validate([
-
-//         'sale_date' => 'required|date',
-
-//         'quantity' => 'required|integer|min:1',
-
-//         'unit_price' => 'required|numeric|min:0',
-
-//         'customer_name' => 'nullable|string',
-
-//         'customer_phone' => 'nullable|string',
-
-//         'notes' => 'nullable|string',
-
-//         'payment_method' =>
-//             'nullable|in:Cash,Card,Cheque,Mobile Money,Bank Transfer',
-
-//         // Allow negative payment adjustments
-//         'payment_amount' =>
-//             'nullable|numeric',
-
-//     ]);
-
-
-//     DB::transaction(function () use (
-//         $sale,
-//         $validated
-//     ) {
-
-//         $batch = $sale->batch;
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Calculate quantity difference
-//         |--------------------------------------------------------------------------
-//         */
-
-//         $difference =
-//             $validated['quantity']
-//             -
-//             $sale->quantity;
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Increase quantity sold
-//         |--------------------------------------------------------------------------
-//         */
-
-//         if ($difference > 0) {
-
-//             if (
-//                 $batch->birds_remaining
-//                 <
-//                 $difference
-//             ) {
-
-//                 throw new \Exception(
-//                     'Not enough birds available.'
-//                 );
-
-//             }
-
-//             $batch->birds_remaining -= $difference;
-
-//             $batch->birds_sold += $difference;
-//         }
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Reduce quantity sold
-//         |--------------------------------------------------------------------------
-//         */
-
-//         elseif ($difference < 0) {
-
-//             $returnBirds = abs($difference);
-
-//             $batch->birds_remaining += $returnBirds;
-
-//             $batch->birds_sold -= $returnBirds;
-//         }
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Update Batch Status
-//         |--------------------------------------------------------------------------
-//         */
-
-//         if ($batch->birds_remaining <= 0) {
-
-//             $batch->status = 'Completed';
-
-//         } else {
-
-//             $batch->status = 'Selling';
-//         }
-
-
-//         $batch->save();
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Calculate New Sale Total
-//         |--------------------------------------------------------------------------
-//         */
-
-//         $newTotalAmount =
-//             $validated['quantity']
-//             *
-//             $validated['unit_price'];
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Remove payment fields from sale update
-//         |--------------------------------------------------------------------------
-//         */
-
-//         $paymentAmount =
-//             $validated['payment_amount'] ?? null;
-
-//         $paymentMethod =
-//             $validated['payment_method'] ?? null;
-
-
-//         unset(
-//             $validated['payment_amount'],
-//             $validated['payment_method']
-//         );
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Update Sale
-//         |--------------------------------------------------------------------------
-//         */
-
-//         $validated['total_amount'] =
-//             $newTotalAmount;
-
-//         $sale->update($validated);
-
-
-//         /*
-//         |--------------------------------------------------------------------------
-//         | Record Payment / Payment Adjustment
-//         |--------------------------------------------------------------------------
-//         */
-
-//         if ($paymentAmount !== null && $paymentAmount != 0) {
-
-//             /*
-//             |--------------------------------------------------------------------------
-//             | Current amount paid
-//             |--------------------------------------------------------------------------
-//             */
-
-//             $currentAmountPaid =
-//                 $sale->payments()->sum('amount');
-
-
-//             /*
-//             |--------------------------------------------------------------------------
-//             | Calculate amount after adjustment
-//             |--------------------------------------------------------------------------
-//             */
-
-//             $newAmountPaid =
-//                 $currentAmountPaid + $paymentAmount;
-
-
-//             /*
-//             |--------------------------------------------------------------------------
-//             | Do not allow amount paid to become negative
-//             |--------------------------------------------------------------------------
-//             */
-
-//             if ($newAmountPaid < 0) {
-
-//                 throw new \Exception(
-//                     'Payment adjustment cannot make the total amount paid negative.'
-//                 );
-
-//             }
-
-
-//             /*
-//             |--------------------------------------------------------------------------
-//             | Do not allow amount paid to exceed sale total
-//             |--------------------------------------------------------------------------
-//             */
-
-//             if ($newAmountPaid > $newTotalAmount) {
-
-//                 throw new \Exception(
-//                     'Payment cannot exceed the total sale amount.'
-//                 );
-
-//             }
-
-
-//             /*
-//             |--------------------------------------------------------------------------
-//             | Create payment or payment adjustment
-//             |--------------------------------------------------------------------------
-//             */
-
-//             ChickenSalePayment::create([
-
-//                 'chicken_sale_id' =>
-//                     $sale->id,
-
-//                 'payment_date' =>
-//                     now()->toDateString(),
-
-//                 'amount' =>
-//                     $paymentAmount,
-
-//                 'payment_method' =>
-//                     $paymentMethod,
-
-//                 'notes' =>
-//                     $paymentAmount < 0
-//                         ? 'Payment adjustment during sale update'
-//                         : 'Payment added during sale update',
-
-//             ]);
-//         }
-//     });
-
-
-//     return response()->json([
-
-//         'message' =>
-//             'Sale updated successfully'
-
-//     ]);
-// }
 
     public function show(ChickenBatch $batch)
     {

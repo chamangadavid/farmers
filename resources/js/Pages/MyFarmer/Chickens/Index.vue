@@ -17,6 +17,23 @@ import {
 } from '@ant-design/icons-vue';
 
 
+// Props from Inertia
+const props = defineProps({
+  auth: Object,
+  stats: Object,
+  charts: Object
+});
+
+const activeKey = ref('1');
+
+// Function to check if user has a permission
+const can = (permission) => {
+  if (props.auth?.user?.roles?.some(role => role.name === 'Super Admin')) {
+    return true;
+  }
+  return props.auth?.permissions?.includes(permission);
+};
+
 const chickens = ref([])
 const loading = ref(false)
 const searchTerm = ref('')
@@ -137,72 +154,174 @@ const columns = [
   },
 
   {
-    title: 'Actions', align: 'center', width: 170,
+    title: 'Actions',
+    align: 'center',
+    width: 170,
+
     customRender: ({ record }) =>
-      h(Space, {}, () => [h(Tooltip, { title: 'View' }, {
-        default: () => h(Button, {
-          type: 'link',
-          icon: h(EyeOutlined),
-          onClick: () => {
-            selectedChicken.value = record
-            showViewModal.value = true
-          }
-        })
-      }
-      ),
+        h(Space, {}, () => [
 
-      h(Tooltip, { title: 'Edit' }, {
-        default: () => h(Button, {
-          type: 'link',
-          icon: h(EditOutlined),
-          onClick: () => {
-            selectedChicken.value = record
-            showEditModal.value = true
-          }
-        })
-      }
-      ),
+            // VIEW
+            h(
+                Tooltip,
+                { title: 'View' },
+                {
+                    default: () =>
+                        h(Button, {
+                            type: 'link',
+                            icon: h(EyeOutlined),
+                            onClick: () => {
+                                selectedChicken.value = record
+                                showViewModal.value = true
+                            }
+                        })
+                }
+            ),
 
-      h(Tooltip, { title: 'Sale Chickens' }, {
-        default: () => h(Button, {
-          type: 'link',
-          icon: h(DollarOutlined),
-          onClick: () => {
-            selectedBatch.value = record
-            showSaleModal.value = true
-          }
-        })
-      }
-      ),
+            // EDIT
+            h(
+                Tooltip,
+                { title: 'Edit' },
+                {
+                    default: () =>
+                        h(Button, {
+                            type: 'link',
+                            icon: h(EditOutlined),
+                            onClick: () => {
+                                selectedChicken.value = record
+                                showEditModal.value = true
+                            }
+                        })
+                }
+            ),
 
-      h(Tooltip, { title: 'Sales History' }, {
-        default: () => h(Button, {
-          type: 'link',
-          icon: h(UnorderedListOutlined),
-          onClick: () => {
-            selectedBatch.value = record
-            showSalesHistory.value = true
-          }
-        })
-      }),
+            // SALE CHICKENS
+            h(
+                Tooltip,
+                { title: 'Sale Chickens' },
+                {
+                    default: () =>
+                        h(Button, {
+                            type: 'link',
+                            icon: h(DollarOutlined),
+                            onClick: () => {
+                                selectedBatch.value = record
+                                showSaleModal.value = true
+                            }
+                        })
+                }
+            ),
 
-      h(Popconfirm, {
-        title: 'Delete Batch?',
-        onConfirm: () => deleteChicken(record.id)
-      },
+            // SALES HISTORY
+            h(
+                Tooltip,
+                { title: 'Sales History' },
+                {
+                    default: () =>
+                        h(Button, {
+                            type: 'link',
+                            icon: h(UnorderedListOutlined),
+                            onClick: () => {
+                                selectedBatch.value = record
+                                showSalesHistory.value = true
+                            }
+                        })
+                }
+            ),
 
-        {
-          default: () => h(Button, {
-            danger: true,
-            type: 'link',
-            icon: h(DeleteOutlined)
-          })
-        }
-      )
-      ]
-      )
-  }
+            // DELETE - PERMISSION CONTROLLED
+            can('staff can delete chicken batch')
+                ? h(
+                    Popconfirm,
+                    {
+                        title: 'Delete Batch?',
+                        okText: 'Yes',
+                        cancelText: 'No',
+                        okType: 'danger',
+                        onConfirm: () => deleteChicken(record.id)
+                    },
+                    {
+                        default: () =>
+                            h(Button, {
+                                danger: true,
+                                type: 'link',
+                                icon: h(DeleteOutlined)
+                            })
+                    }
+                )
+                : null
+        ])
+}
+
+  // {
+  //   title: 'Actions', align: 'center', width: 170,
+  //   customRender: ({ record }) =>
+  //     h(Space, {}, () => [h(Tooltip, { title: 'View' }, {
+  //       default: () => h(Button, {
+  //         type: 'link',
+  //         icon: h(EyeOutlined),
+  //         onClick: () => {
+  //           selectedChicken.value = record
+  //           showViewModal.value = true
+  //         }
+  //       })
+  //     }
+  //     ),
+
+  //     h(Tooltip, { title: 'Edit' }, {
+  //       default: () => h(Button, {
+  //         type: 'link',
+  //         icon: h(EditOutlined),
+  //         onClick: () => {
+  //           selectedChicken.value = record
+  //           showEditModal.value = true
+  //         }
+  //       })
+  //     }
+  //     ),
+
+  //     h(Tooltip, { title: 'Sale Chickens' }, {
+  //       default: () => h(Button, {
+  //         type: 'link',
+  //         icon: h(DollarOutlined),
+  //         onClick: () => {
+  //           selectedBatch.value = record
+  //           showSaleModal.value = true
+  //         }
+  //       })
+  //     }
+  //     ),
+
+  //     h(Tooltip, { title: 'Sales History' }, {
+  //       default: () => h(Button, {
+  //         type: 'link',
+  //         icon: h(UnorderedListOutlined),
+  //         onClick: () => {
+  //           selectedBatch.value = record
+  //           showSalesHistory.value = true
+  //         }
+  //       })
+  //     }),
+
+  //     h(Popconfirm, {
+  //       title: 'Delete Batch?',
+  //       onConfirm: () => deleteChicken(record.id)
+  //     },
+
+  //       {
+  //         default: () => h(Button, {
+  //           danger: true,
+  //           type: 'link',
+  //           icon: h(DeleteOutlined)
+  //         })
+  //       }
+  //     )
+  //     ]
+  //     )
+  // }
 ];
+
+
 
 
 onMounted(() => {

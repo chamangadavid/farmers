@@ -17,7 +17,8 @@ import {
   FileImageOutlined,
   FileTextOutlined,
   FileExcelOutlined,
-  FileWordOutlined
+  FileWordOutlined,
+  EyeOutlined
 } from '@ant-design/icons-vue';
 import axios from 'axios';
 import { debounce } from 'lodash';
@@ -42,7 +43,18 @@ const fetchFolders = async () => {
     }
 };
 
+// const openFolder = (folder) => {
+//     selectedFolder.value = folder;
+// };
+
 const openFolder = (folder) => {
+    console.log('SELECTED FOLDER:', folder);
+    console.log('DOCUMENTS:', folder.documents);
+
+    if (folder.documents?.length) {
+        console.log('FIRST DOCUMENT:', folder.documents[0]);
+    }
+
     selectedFolder.value = folder;
 };
 
@@ -129,112 +141,186 @@ const columns = [
     {
         title: 'Name',
         dataIndex: 'name',
-        width: '40%',
+        key: 'name',
+        width: '35%',
+
         customRender: ({ record }) => {
             const IconComponent = getFileIcon(record.name);
-            return h('div', { class: 'flex items-center gap-2' }, [
-                h(IconComponent, { class: 'text-teal-500 text-lg' }),
-                h('span', { class: 'font-medium text-gray-700' }, record.name)
-            ]);
+
+            return h(
+                'div',
+                {
+                    class: 'flex items-center gap-2 min-w-0'
+                },
+                [
+                    h(IconComponent, {
+                        class: 'text-teal-500 text-lg flex-shrink-0'
+                    }),
+
+                    h(
+                        'span',
+                        {
+                            class: 'font-medium text-gray-700 truncate',
+                            title: record.name
+                        },
+                        record.name
+                    )
+                ]
+            );
         }
     },
     {
-        title: 'Type',
-        dataIndex: 'file_type',
-        width: '15%',
-        customRender: ({ record }) => {
-            return h(Tag, { color: 'teal' }, record.file_type?.toUpperCase() || 'FILE');
-        }
-    },
+    title: 'Type',
+    key: 'file_type',
+    width: '10%',
+
+    customRender: ({ record }) => {
+        const extension = record.name?.split('.').pop()?.toUpperCase() || 'FILE';
+
+        return h(
+            Tag,
+            { color: 'teal' },
+            {
+                default: () => extension
+            }
+        );
+    }
+},
+
     {
         title: 'Size',
-        dataIndex: 'size',
+        key: 'size',
         width: '15%',
-        customRender: ({ record }) => formatFileSize(record.size)
+
+        customRender: ({ record }) => {
+            return h(
+                'span',
+                {
+                    class: 'text-gray-600'
+                },
+                formatFileSize(record.size)
+            );
+        }
     },
+
     {
         title: 'Date',
-        dataIndex: 'created_at',
-        width: '20%',
-        customRender: ({ record }) => formatDate(record.created_at)
+        key: 'created_at',
+        width: '15%',
+
+        customRender: ({ record }) => {
+            return h(
+                'span',
+                {
+                    class: 'text-gray-600'
+                },
+                formatDate(record.created_at)
+            );
+        }
     },
+
     {
-    title: 'Actions',
-    key: 'actions',
-    width: '10%',
-    align: 'center',
-    customRender: ({ record }) => {
-        return h('div', { class: 'flex gap-2 justify-center' }, [
+        title: 'Actions',
+        key: 'actions',
+        width: '20%',
+        align: 'center',
 
-            // DOWNLOAD
-            h(Tooltip, { title: 'Download File' }, {
-                default: () =>
-                    h('a', {
-                        href: `/storage/${record.file_path}`,
-                        target: '_blank',
-                        class: 'text-teal-600 hover:text-teal-700'
-                    }, [
-                        h(DownloadOutlined, { class: 'text-lg' })
-                    ])
-            }),
+        customRender: ({ record }) => {
+            return h(
+                'div',
+                {
+                    class: 'flex gap-3 justify-center items-center whitespace-nowrap'
+                },
+                [
 
-            // DELETE
-            h(Popconfirm, {
-                title: 'Are you sure you want to delete this file?',
-                onConfirm: () => deleteFile(record.id),
-                okText: 'Yes',
-                cancelText: 'No',
-                okType: 'danger'
-            }, {
-                default: () =>
-                    h(Tooltip, { title: 'Delete File' }, {
-                        default: () =>
-                            h(Button, {
-                                type: 'link',
-                                danger: true,
-                                size: 'small',
-                                icon: h(DeleteOutlined),
-                                class: 'p-0'
-                            })
-                    })
-            })
+                    // PREVIEW
+                    h(
+                        Tooltip,
+                        {
+                            title: 'Preview File'
+                        },
+                        {
+                            default: () =>
+                                h(
+                                    'a',
+                                    {
+                                        href: `/documents/${record.id}/preview`,
+                                        target: '_blank',
+                                        rel: 'noopener noreferrer',
+                                        class: 'text-blue-600 hover:text-blue-700'
+                                    },
+                                    [
+                                        h(EyeOutlined, {
+                                            class: 'text-lg'
+                                        })
+                                    ]
+                                )
+                        }
+                    ),
 
-        ]);
+                    // DOWNLOAD
+                    h(
+                        Tooltip,
+                        {
+                            title: 'Download File'
+                        },
+                        {
+                            default: () =>
+                                h(
+                                    'a',
+                                    {
+                                        href: `/documents/${record.id}/download`,
+                                        class: 'text-teal-600 hover:text-teal-700'
+                                    },
+                                    [
+                                        h(DownloadOutlined, {
+                                            class: 'text-lg'
+                                        })
+                                    ]
+                                )
+                        }
+                    ),
+
+                    // DELETE
+                    h(
+                        Popconfirm,
+                        {
+                            title: 'Are you sure you want to delete this file?',
+                            onConfirm: () => deleteFile(record.id),
+                            okText: 'Yes',
+                            cancelText: 'No',
+                            okType: 'danger'
+                        },
+                        {
+                            default: () =>
+                                h(
+                                    Tooltip,
+                                    {
+                                        title: 'Delete File'
+                                    },
+                                    {
+                                        default: () =>
+                                            h(
+                                                Button,
+                                                {
+                                                    type: 'link',
+                                                    danger: true,
+                                                    size: 'small',
+                                                    icon: h(DeleteOutlined),
+                                                    class: 'p-0'
+                                                }
+                                            )
+                                    }
+                                )
+                        }
+                    )
+
+                ]
+            );
+        }
     }
-}
-    // {
-    //     title: 'Actions',
-    //     key: 'actions',
-    //     width: '10%',
-    //     align: 'center',
-    //     customRender: ({ record }) => {
-    //         return h('div', { class: 'flex gap-2 justify-center' }, [
-    //             h('a', {
-    //                 href: `/storage/${record.file_path}`,
-    //                 target: '_blank',
-    //                 class: 'text-teal-600 hover:text-teal-700'
-    //             }, [
-    //                 h(DownloadOutlined, { class: 'text-lg' })
-    //             ]),
-    //             h(Popconfirm, {
-    //                 title: 'Are you sure you want to delete this file?',
-    //                 onConfirm: () => deleteFile(record.id),
-    //                 okText: 'Yes',
-    //                 cancelText: 'No',
-    //                 okType: 'danger'
-    //             }, {
-    //                 default: () => h(Button, { 
-    //                     type: 'link', 
-    //                     danger: true, 
-    //                     size: 'small',
-    //                     icon: h(DeleteOutlined),
-    //                     class: 'p-0'
-    //                 })
-    //             })
-    //         ]);
-    //     }
-    // }
 ];
+
 </script>
 
 <template>
@@ -243,7 +329,7 @@ const columns = [
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Document Repository
+                Document Repositoryxx
             </h2>
         </template>
 
@@ -399,6 +485,7 @@ const columns = [
                                             :dataSource="selectedFolder.documents" 
                                             :columns="columns" 
                                             rowKey="id"
+                                            :scroll="{ x: 800 }"
                                             :pagination="{ 
                                                 pageSize: 5, 
                                                 showSizeChanger: true,
@@ -533,165 +620,3 @@ const columns = [
     }
 }
 </style>
-
-<!-- <script setup>
-    import { ref, onMounted, h } from 'vue';
-    import { Head } from '@inertiajs/vue3';
-    import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-    import CreateDocument from './CreateDocument.vue';
-    import { Tabs, Button, Input, message, Popconfirm, Upload, } from 'ant-design-vue';
-    import axios from 'axios';
-    import { debounce } from 'lodash';
-
-
-
-    const folders = ref([]);
-    const selectedFolder = ref(null);
-    const showCreateFolder = ref(false);
-    const showUpload = ref(false);
-    const uploading = ref(false);
-
-    const fetchFolders = async () => {
-        const res = await axios.get('/documents/folders');
-        folders.value = res.data;
-    };
-
-    const openFolder = (folder) => {
-        selectedFolder.value = folder;
-    };
-
-    const refreshFolder = async () => {
-        const res = await axios.get('/documents/folders');
-        folders.value = res.data;
-
-        selectedFolder.value = folders.value.find(
-            f => f.id === selectedFolder.value.id
-        );
-    };
-
-    const deleteFile = async (id) => {
-        await axios.delete(`/documents/${id}`);
-        message.success('Deleted');
-        refreshFolder();
-    };
-
-    const customRequest = async ({ file, onSuccess, onError }) => {
-        try {
-            const formData = new FormData();
-
-            formData.append('file', file);
-
-            if (!selectedFolder.value?.id) {
-                message.error('Please select a folder first');
-                return onError(new Error('No folder selected'));
-            }
-
-            formData.append('folder_id', selectedFolder.value.id);
-
-            const res = await axios.post('/documents/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-
-            message.success('Uploaded successfully');
-
-            await refreshFolder();
-
-            onSuccess(res.data);
-
-        } catch (e) {
-            console.log(e.response?.data || e);
-
-            message.error(
-                e.response?.data?.message || 'Upload failed'
-            );
-
-            onError(e);
-        }
-    };
-
-    onMounted(fetchFolders);
-
-</script>
-
-<template>
-
-    <Head title="Document Repository" />
-
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Documents Repository
-            </h2>
-        </template>
-
-        <div class="grid grid-cols-12 gap-6">
-
-            <div class="col-span-4 border p-4 rounded">
-                <div class="flex justify-between mb-3">
-                    <h3 class="font-bold">Folders</h3>
-
-                    <a-button type="primary" @click="showCreateFolder = true">
-                        + Folder
-                    </a-button>
-                </div>
-
-                <div v-for="folder in folders" :key="folder.id" @dblclick="openFolder(folder)"
-                    class="p-3 border rounded mb-2 cursor-pointer hover:bg-gray-100">
-                    📁 {{ folder.name }}
-                </div>
-            </div>
-
-            <div class="col-span-8 border p-4 rounded">
-
-                <h3 class="font-bold mb-3">
-                    {{ selectedFolder ? selectedFolder.name : 'Select Folder' }}
-                </h3>
-
-                <div v-if="selectedFolder" class="mb-4">
-
-                    <a-upload-dragger name="file" multiple :showUploadList="false" :customRequest="customRequest">
-                        <p class="ant-upload-drag-icon">
-                            📤
-                        </p>
-
-                        <p class="ant-upload-text">
-                            Click or drag file to this area to upload
-                        </p>
-
-                        <p class="ant-upload-hint">
-                            PDF, DOCX, XLSX, JPG supported
-                        </p>
-                    </a-upload-dragger>
-
-                </div>
-
-                <a-table v-if="selectedFolder" :dataSource="selectedFolder.documents" rowKey="id">
-                    <a-table-column title="Name" dataIndex="name" />
-                    <a-table-column title="Type" dataIndex="file_type" />
-
-                    <a-table-column title="Actions">
-                        <template #default="{ record }">
-
-                            <a :href="`/storage/${record.file_path}`" target="_blank" class="text-blue-500 mr-2">
-                                Download
-                            </a>
-
-                            <a-button size="small">Rename</a-button>
-
-                            <a-popconfirm title="Delete this file?" @confirm="deleteFile(record.id)">
-                                <a-button size="small" danger>Delete</a-button>
-                            </a-popconfirm>
-
-                        </template>
-                    </a-table-column>
-                </a-table>
-
-                <CreateDocument :open="showCreateFolder" @update:open="showCreateFolder = $event"
-                    @created="fetchFolders" />
-
-            </div>
-        </div>
-    </AuthenticatedLayout>
-</template> -->

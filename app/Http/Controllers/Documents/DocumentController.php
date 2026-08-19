@@ -7,6 +7,7 @@ use App\Models\Documents\Document;
 use App\Models\Documents\DocumentFolder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 use Inertia\Inertia;
 
 class DocumentController extends Controller
@@ -97,6 +98,35 @@ class DocumentController extends Controller
             DocumentFolder::with('documents')->get()
         );
     }
+
+    public function preview($id)
+    {
+        $document = Document::findOrFail($id);
+
+        if (!Storage::disk('public')->exists($document->file_path)) {
+            abort(404, 'File not found.');
+        }
+
+        $path = Storage::disk('public')->path($document->file_path);
+
+        return response()->file($path);
+    }
+
+    public function download($id)
+    {
+        $document = Document::findOrFail($id);
+
+        if (!Storage::disk('public')->exists($document->file_path)) {
+            abort(404, 'File not found.');
+        }
+
+        return Storage::disk('public')->download(
+            $document->file_path,
+            $document->name
+        );
+    }
+
+
 
 
     
