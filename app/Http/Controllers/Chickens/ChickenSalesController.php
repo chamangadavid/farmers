@@ -8,8 +8,10 @@ use App\Models\Chickens\ChickenBatch;
 use App\Models\Chickens\ChickenSale;
 use App\Models\Chickens\ChickenSalePayment;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class ChickenSalesController extends Controller
 {
@@ -1043,6 +1045,17 @@ public function store(Request $request)
             $paymentMethod =
                 $validated['payment_method'] ?? null;
 
+                Log::info('CHICKEN SALE EDIT VALUES', [
+                'sale_id' => $sale->id,
+                'sale_type' => $validated['sale_type'] ?? null,
+                'quantity' => $validated['quantity'] ?? null,
+                'unit_price' => $validated['unit_price'] ?? null,
+                'total_weight' => $validated['total_weight'] ?? null,
+                'price_per_kg' => $validated['price_per_kg'] ?? null,
+                'payment_amount' => $paymentAmount,
+                'payment_method' => $paymentMethod,
+            ]);
+
 
             unset(
                 $validated['payment_amount'],
@@ -1125,6 +1138,13 @@ public function store(Request $request)
                 */
 
                 if ($newAmountPaid > $newTotalAmount) {
+                    Log::info('CHICKEN SALE PAYMENT CHECK', [
+    'sale_id' => $sale->id,
+    'current_amount_paid' => $currentAmountPaid,
+    'payment_amount' => $paymentAmount,
+    'new_amount_paid' => $newAmountPaid,
+    'new_total_amount' => $newTotalAmount,
+]);
 
                     throw new \Exception(
                         'Payment cannot exceed the total sale amount.'
@@ -1163,6 +1183,13 @@ public function store(Request $request)
                         }
 
                         if ($newAmountPaid > $newTotalAmount) {
+                            Log::info('CHICKEN SALE PAYMENT CHECK', [
+    'sale_id' => $sale->id,
+    'current_amount_paid' => $currentAmountPaid,
+    'payment_amount' => $paymentAmount,
+    'new_amount_paid' => $newAmountPaid,
+    'new_total_amount' => $newTotalAmount,
+]);
                             throw new \Exception(
                                 'Payment cannot exceed the total sale amount.'
                             );
