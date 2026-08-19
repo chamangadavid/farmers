@@ -922,7 +922,6 @@ public function store(Request $request)
             empty($validated['unit_price']) ||
             $validated['unit_price'] <= 0
         ) {
-
             throw new \Exception(
                 'Price per bird is required.'
             );
@@ -937,18 +936,15 @@ public function store(Request $request)
             empty($validated['total_weight']) ||
             $validated['total_weight'] <= 0
         ) {
-
             throw new \Exception(
                 'Total weight is required.'
             );
         }
 
-
         if (
             empty($validated['price_per_kg']) ||
             $validated['price_per_kg'] <= 0
         ) {
-
             throw new \Exception(
                 'Price per Kg is required.'
             );
@@ -991,9 +987,7 @@ public function store(Request $request)
 
         if ($difference > 0) {
 
-            if (
-                $batch->birds_remaining < $difference
-            ) {
+            if ($batch->birds_remaining < $difference) {
 
                 throw new \Exception(
                     'Not enough birds available.'
@@ -1041,7 +1035,6 @@ public function store(Request $request)
 
         }
 
-
         $batch->save();
 
 
@@ -1053,29 +1046,47 @@ public function store(Request $request)
 
         if ($validated['sale_type'] === 'Per Kg') {
 
+            $totalWeight = (float) $validated['total_weight'];
+
+            $pricePerKg = (float) $validated['price_per_kg'];
+
             $newTotalAmount = round(
-                (float) $validated['total_weight']
-                *
-                (float) $validated['price_per_kg'],
+                $totalWeight * $pricePerKg,
                 2
             );
 
-            $unitPrice =
-                (float) $validated['price_per_kg'];
+            $unitPrice = round(
+                $pricePerKg,
+                2
+            );
 
         } else {
 
-            $newTotalAmount = round(
-                (float) $validated['quantity']
-                *
+            $quantity = (float) $validated['quantity'];
+
+            $unitPrice = round(
                 (float) $validated['unit_price'],
                 2
             );
 
-            $unitPrice =
-                (float) $validated['unit_price'];
+            $newTotalAmount = round(
+                $quantity * $unitPrice,
+                2
+            );
 
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORCE TOTAL TO TWO DECIMAL PLACES
+        |--------------------------------------------------------------------------
+        */
+
+        $newTotalAmount = round(
+            (float) $newTotalAmount,
+            2
+        );
 
 
         /*
@@ -1093,7 +1104,7 @@ public function store(Request $request)
 
         /*
         |--------------------------------------------------------------------------
-        | Convert Payment Amount to 2 Decimal Places
+        | Convert Payment Amount to Two Decimal Places
         |--------------------------------------------------------------------------
         */
 
@@ -1232,10 +1243,26 @@ public function store(Request $request)
             */
 
             $newAmountPaid = round(
-                $currentAmountPaid
-                +
-                $paymentAmount,
+                $currentAmountPaid + $paymentAmount,
                 2
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Convert Money To Integer Cents
+            |--------------------------------------------------------------------------
+            |
+            | This avoids floating-point comparison problems.
+            |
+            */
+
+            $totalAmountCents = (int) round(
+                $newTotalAmount * 100
+            );
+
+            $newAmountPaidCents = (int) round(
+                $newAmountPaid * 100
             );
 
 
@@ -1264,6 +1291,15 @@ public function store(Request $request)
                     'new_total_amount' =>
                         $newTotalAmount,
 
+                    'new_amount_paid_cents' =>
+                        $newAmountPaidCents,
+
+                    'total_amount_cents' =>
+                        $totalAmountCents,
+
+                    'difference_cents' =>
+                        $newAmountPaidCents - $totalAmountCents,
+
                 ]
             );
 
@@ -1274,7 +1310,7 @@ public function store(Request $request)
             |--------------------------------------------------------------------------
             */
 
-            if ($newAmountPaid < 0) {
+            if ($newAmountPaidCents < 0) {
 
                 throw new \Exception(
                     'Payment adjustment cannot make the total amount paid negative.'
@@ -1287,12 +1323,9 @@ public function store(Request $request)
             |--------------------------------------------------------------------------
             | Prevent Overpayment
             |--------------------------------------------------------------------------
-            |
-            | Both values have already been rounded to 2 decimals.
-            |
             */
 
-            if ($newAmountPaid > $newTotalAmount) {
+            if ($newAmountPaidCents > $totalAmountCents) {
 
                 throw new \Exception(
                     'Payment cannot exceed the total sale amount.'
@@ -1338,9 +1371,7 @@ public function store(Request $request)
 
                 'notes' =>
                     $paymentAmount < 0
-
                         ? 'Payment adjustment during sale update'
-
                         : 'Payment added during sale update',
 
             ]);
@@ -1363,6 +1394,7 @@ public function store(Request $request)
 
     ]);
 }
+
 
 
 
